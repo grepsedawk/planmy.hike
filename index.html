@@ -1,0 +1,90 @@
+<h1>Food Planner</h1>
+<p>Use this tool to plan your food!</p>
+
+<script>
+class Food {
+  constructor(uuid = self.crypto.randomUUID(), name = "") {
+    this.uuid = uuid
+    this.name = name
+  }
+}
+
+class FoodRenderer {
+  constructor(food) {
+    this.food = new Food(food.uuid, food.name)
+  }
+  
+  static renderAll(parent) {
+    let foods = this.all()
+    Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
+    this.renderBlankFood()
+  }
+  
+  static renderFood(food) {
+    let foodRenderer = new FoodRenderer(food)
+    foodRenderer.render()
+    foodRenderer.renderDeleteButton(foodRenderer.div)
+    
+    return foodRenderer
+  }
+  
+  static renderBlankFood() {
+    let foodRenderer = new FoodRenderer(new Food())
+    foodRenderer.render()
+    
+    foodRenderer.nameInput
+                .addEventListener("input", () => {
+                  foodRenderer.renderDeleteButton(foodRenderer.div)
+                  this.renderBlankFood()
+                }, { once: true })
+  }
+  
+  static all() {
+    return JSON.parse(localStorage.getItem("foods")) || {}
+  } 
+  
+  renderNameInput(parent) {
+    this.nameInput = document.createElement("input")
+    this.nameInput.placeholder = "Name"
+    this.nameInput.value = this.food.name
+    this.nameInput.addEventListener("blur", () => this.save())
+    
+    parent.appendChild(this.nameInput)
+    return this.nameInput
+  }
+  
+  renderDeleteButton(parent) {
+    let deleteButton = document.createElement("button")
+    deleteButton.innerText = "Delete"
+    deleteButton.addEventListener("click", () => this.delete())
+    parent.appendChild(deleteButton)
+    
+    return deleteButton
+  }
+  
+  render() {
+    this.div = document.createElement("div")
+    this.renderNameInput(this.div)
+
+    document.body.appendChild(this.div)
+  }
+  
+  save() {
+    this.food.name = this.nameInput.value
+    let foods = this.constructor.all()
+    foods[this.food.uuid] = this.food
+    localStorage.setItem("foods", JSON.stringify(foods))
+  }
+  
+  delete() {
+    this.div.remove()
+
+    let foods = this.constructor.all()
+    delete foods[this.food.uuid]
+
+    localStorage.setItem("foods", JSON.stringify(foods))
+  }
+}
+
+FoodRenderer.renderAll()
+</script>
