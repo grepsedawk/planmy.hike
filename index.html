@@ -3,17 +3,19 @@
 <h1>Food Planner</h1>
 <p>Use this tool to plan your food!</p>
 
-<p>Total Calories: <span id=calTotal>?</span></p>
+<p>Total Calories: <span id=totalCalories>?</span></p>
+<p>Total Carbs: <span id=totalCarbs>?</span></p>
 <div style="max-width: 500px" id="reader"></div>
 
 <script src="html5-qrcode.min.js"></script>
 
 <script>
 class Food {
-  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0) {
+  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0, carbs = 0) {
     this.uuid = uuid
     this.name = name
     this.calories = calories
+    this.carbs = carbs
   }
 }
 
@@ -26,7 +28,7 @@ class FoodRenderer {
     let foods = this.all()
     Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
     this.renderBlankFood()
-    this.updateCalorieCount()
+    this.updateTotals()
   }
   
   static renderFood(food) {
@@ -71,6 +73,17 @@ class FoodRenderer {
     
     parent.appendChild(this.calInput)
     return this.nameInput
+  }
+  
+  renderCarbsInput(parent) {
+    this.carbsInput = document.createElement("input")
+    this.carbsInput.type = "number"
+    this.carbsInput.pattern = "[0-9]"
+    this.carbsInput.value = this.food.carbs
+    this.carbsInput.addEventListener("input", () => this.save())
+    
+    parent.appendChild(this.carbsInput)
+    return this.nameInput
   } 
   
   renderDeleteButton(parent) {
@@ -87,6 +100,7 @@ class FoodRenderer {
     this.renderNameInput(this.div)
     
     this.renderCalorieInput(this.div)
+    this.renderCarbsInput(this.div)
 
     document.body.appendChild(this.div)
   }
@@ -94,12 +108,13 @@ class FoodRenderer {
   save() {
     this.food.name = this.nameInput.value
     this.food.calories = parseInt(this.calInput.value)
+    this.food.carbs = parseInt(this.carbsInput.value)
     this.calInput.value = this.food.calories
     let foods = this.constructor.all()
     foods[this.food.uuid] = this.food
     localStorage.setItem("foods", JSON.stringify(foods))
     
-    this.constructor.updateCalorieCount()
+    this.constructor.updateTotals()
   }
   
   delete() {
@@ -111,9 +126,17 @@ class FoodRenderer {
     localStorage.setItem("foods", JSON.stringify(foods))
   }
   
-  static updateCalorieCount() {
-    let total = Object.values(this.all()).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
-    document.getElementById("calTotal").innerText = total
+  static updateTotals() {
+    document.getElementById("totalCalories").innerText = this.totalCalories()
+    document.getElementById("totalCarbs").innerText = this.totalCarbs()
+  }
+  
+  static totalCalories() {
+    return Object.values(this.all()).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
+  }
+  
+  static totalCarbs() {
+    return Object.values(this.all()).reduce((total, food) => total + (parseInt(food.carbs) || 0), 0)
   }
 }
 
@@ -127,6 +150,6 @@ async function onScanSuccess(decodedText, decodedResult) {
 
 var html5QrcodeScanner = new Html5QrcodeScanner(
 	"reader", { fps: 10, qrbox: 250, showTorchButtonIfSupported: true})
-html5QrcodeScanner.render(onScanSuccess);
+html5QrcodeScanner.render(onScanSuccess)
 </script>
 
