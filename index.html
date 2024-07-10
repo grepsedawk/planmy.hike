@@ -1,7 +1,12 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <h1>Food Planner</h1>
 <p>Use this tool to plan your food!</p>
 
 <p>Total Calories: <span id=calTotal>?</span></p>
+<div style="max-width: 500px" id="reader"></div>
+
+<script src="html5-qrcode.min.js"></script>
 
 <script>
 class Food {
@@ -113,4 +118,15 @@ class FoodRenderer {
 }
 
 FoodRenderer.renderAll()
+
+async function onScanSuccess(decodedText, decodedResult) {
+    await fetch(`https://world.openfoodfacts.org/api/v3/product/${decodedText}.json`).then((r) => r.json()).then((data) => {
+      FoodRenderer.renderFood(new Food(self.crypto.randomUUID(), `${data["product"]["brands"]} ${data["product"]["product_name"]}`, data["product"]["nutriments"]["energy-kcal"])).save()
+    })
+}
+
+var html5QrcodeScanner = new Html5QrcodeScanner(
+	"reader", { fps: 10, qrbox: 250, showTorchButtonIfSupported: true})
+html5QrcodeScanner.render(onScanSuccess);
 </script>
+
