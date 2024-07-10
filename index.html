@@ -3,10 +3,8 @@
 <h1>Food Planner</h1>
 <p>Use this tool to plan your food!</p>
 
-<p>Total Calories: <span id=totalCalories>?</span></p>
-<p>Total Carbs: <span id=totalCarbs>?</span></p>
 <div style="max-width: 500px" id="reader"></div>
-
+<div id=totals></div>
 <script src="html5-qrcode.min.js"></script>
 
 <script>
@@ -28,7 +26,6 @@ class FoodRenderer {
     let foods = this.all()
     Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
     this.renderBlankFood()
-    this.updateTotals()
   }
   
   static renderFood(food) {
@@ -72,7 +69,7 @@ class FoodRenderer {
     this.calInput.addEventListener("input", () => this.save())
     
     parent.appendChild(this.calInput)
-    return this.nameInput
+    return this.calInput
   }
   
   renderCarbsInput(parent) {
@@ -83,7 +80,7 @@ class FoodRenderer {
     this.carbsInput.addEventListener("input", () => this.save())
     
     parent.appendChild(this.carbsInput)
-    return this.nameInput
+    return this.carbsInput
   } 
   
   renderDeleteButton(parent) {
@@ -114,7 +111,7 @@ class FoodRenderer {
     foods[this.food.uuid] = this.food
     localStorage.setItem("foods", JSON.stringify(foods))
     
-    this.constructor.updateTotals()
+    TotalsRenderer.render(document.getElementById("totals"))
   }
   
   delete() {
@@ -126,20 +123,34 @@ class FoodRenderer {
     localStorage.setItem("foods", JSON.stringify(foods))
   }
   
-  static updateTotals() {
-    document.getElementById("totalCalories").innerText = this.totalCalories()
-    document.getElementById("totalCarbs").innerText = this.totalCarbs()
+  
+}
+
+class TotalsRenderer {
+  static render(parent) {
+    new TotalsRenderer(parent).render()
   }
   
-  static totalCalories() {
-    return Object.values(this.all()).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
+  constructor(parent) {
+    this.foods = FoodRenderer.all()
+    this.parent = parent
   }
   
-  static totalCarbs() {
-    return Object.values(this.all()).reduce((total, food) => total + (parseInt(food.carbs) || 0), 0)
+  render() { 
+    this.parent.innerHTML = `<p>Total Calories: ${this.totalCalories()}</p>`
+    this.parent.innerHTML += `<p>Total Carbs: ${this.totalCarbs()}</p>`
+  }
+      
+  totalCalories() {
+    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
+  }
+  
+  totalCarbs() {
+    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.carbs) || 0), 0)
   }
 }
 
+TotalsRenderer.render(document.getElementById("totals"))
 FoodRenderer.renderAll()
 
 async function onScanSuccess(decodedText, decodedResult) {
