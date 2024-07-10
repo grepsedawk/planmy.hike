@@ -1,23 +1,27 @@
 <h1>Food Planner</h1>
 <p>Use this tool to plan your food!</p>
 
+<p>Total Calories: <span id=calTotal>?</span></p>
+
 <script>
 class Food {
-  constructor(uuid = self.crypto.randomUUID(), name = "") {
+  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0) {
     this.uuid = uuid
     this.name = name
+    this.calories = calories
   }
 }
 
 class FoodRenderer {
   constructor(food) {
-    this.food = new Food(food.uuid, food.name)
+    this.food = new Food(food.uuid, food.name, food.calories)
   }
   
   static renderAll(parent) {
     let foods = this.all()
     Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
     this.renderBlankFood()
+    this.updateCalorieCount()
   }
   
   static renderFood(food) {
@@ -53,6 +57,17 @@ class FoodRenderer {
     return this.nameInput
   }
   
+  renderCalorieInput(parent) {
+    this.calInput = document.createElement("input")
+    this.calInput.type = "number"
+    this.calInput.pattern = "[0-9]"
+    this.calInput.value = this.food.calories
+    this.calInput.addEventListener("input", () => this.save())
+    
+    parent.appendChild(this.calInput)
+    return this.nameInput
+  } 
+  
   renderDeleteButton(parent) {
     let deleteButton = document.createElement("button")
     deleteButton.innerText = "Delete"
@@ -65,15 +80,21 @@ class FoodRenderer {
   render() {
     this.div = document.createElement("div")
     this.renderNameInput(this.div)
+    
+    this.renderCalorieInput(this.div)
 
     document.body.appendChild(this.div)
   }
   
   save() {
     this.food.name = this.nameInput.value
+    this.food.calories = parseInt(this.calInput.value)
+    this.calInput.value = this.food.calories
     let foods = this.constructor.all()
     foods[this.food.uuid] = this.food
     localStorage.setItem("foods", JSON.stringify(foods))
+    
+    this.constructor.updateCalorieCount()
   }
   
   delete() {
@@ -83,6 +104,11 @@ class FoodRenderer {
     delete foods[this.food.uuid]
 
     localStorage.setItem("foods", JSON.stringify(foods))
+  }
+  
+  static updateCalorieCount() {
+    let total = Object.values(this.all()).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
+    document.getElementById("calTotal").innerText = total
   }
 }
 
