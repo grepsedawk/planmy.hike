@@ -9,17 +9,19 @@
 
 <script>
 class Food {
-  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0, carbs = 0) {
+  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0, carbs = 0, protein = 0, fat = 0) {
     this.uuid = uuid
     this.name = name
     this.calories = calories
     this.carbs = carbs
+    this.protein = protein
+    this.fat = fat
   }
 }
 
 class FoodRenderer {
   constructor(food) {
-    this.food = new Food(food.uuid, food.name, food.calories)
+    this.food = new Food(food.uuid, food.name, food.calories, food.carbs, food.protein, food.fat)
   }
   
   static renderAll(parent) {
@@ -61,27 +63,16 @@ class FoodRenderer {
     return this.nameInput
   }
   
-  renderCalorieInput(parent) {
-    this.calInput = document.createElement("input")
-    this.calInput.type = "number"
-    this.calInput.pattern = "[0-9]"
-    this.calInput.value = this.food.calories
-    this.calInput.addEventListener("input", () => this.save())
+  renderNumberInput(parent, initialValue = 0) {
+    let field = document.createElement("input")
+    field.type = "number"
+    field.value = initialValue
+    field.addEventListener("input", () => this.save())
     
-    parent.appendChild(this.calInput)
-    return this.calInput
+    parent.appendChild(field)
+    
+    return field
   }
-  
-  renderCarbsInput(parent) {
-    this.carbsInput = document.createElement("input")
-    this.carbsInput.type = "number"
-    this.carbsInput.pattern = "[0-9]"
-    this.carbsInput.value = this.food.carbs
-    this.carbsInput.addEventListener("input", () => this.save())
-    
-    parent.appendChild(this.carbsInput)
-    return this.carbsInput
-  } 
   
   renderDeleteButton(parent) {
     let deleteButton = document.createElement("button")
@@ -96,8 +87,10 @@ class FoodRenderer {
     this.div = document.createElement("div")
     this.renderNameInput(this.div)
     
-    this.renderCalorieInput(this.div)
-    this.renderCarbsInput(this.div)
+    this.calInput = this.renderNumberInput(this.div, this.food.calories)
+    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs)
+    this.proteinInput = this.renderNumberInput(this.div, this.food.protein)
+    this.fatInput = this.renderNumberInput(this.div, this.food.fat)
 
     document.body.appendChild(this.div)
   }
@@ -106,7 +99,9 @@ class FoodRenderer {
     this.food.name = this.nameInput.value
     this.food.calories = parseInt(this.calInput.value)
     this.food.carbs = parseInt(this.carbsInput.value)
-    this.calInput.value = this.food.calories
+    this.food.protein = parseInt(this.proteinInput.value)
+    this.food.fat = parseInt(this.fatInput.value)
+    
     let foods = this.constructor.all()
     foods[this.food.uuid] = this.food
     localStorage.setItem("foods", JSON.stringify(foods))
@@ -139,6 +134,9 @@ class TotalsRenderer {
   render() { 
     this.parent.innerHTML = `<p>Total Calories: ${this.totalCalories()}</p>`
     this.parent.innerHTML += `<p>Total Carbs: ${this.totalCarbs()}</p>`
+    this.parent.innerHTML += `<p>Total Protein: ${this.totalProtein()}</p>`
+    this.parent.innerHTML += `<p>Total Fat: ${this.totalFat()}</p>`
+        this.parent.innerHTML += `<p>Protein / Carb: ${this.proteinCarbRatio()}</p>`
   }
       
   totalCalories() {
@@ -147,6 +145,18 @@ class TotalsRenderer {
   
   totalCarbs() {
     return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.carbs) || 0), 0)
+  }
+  
+  totalProtein() {
+    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.protein) || 0), 0)
+  }
+  
+  totalFat() {
+    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.fat) || 0), 0)
+  }
+  
+  proteinCarbRatio() {
+    return this.totalProtein() / this.totalCarbs()
   }
 }
 
