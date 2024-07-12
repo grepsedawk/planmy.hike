@@ -6,33 +6,40 @@
 <div style="max-width: 500px" id="reader"></div>
 <div id=totals></div>
 <script src="html5-qrcode.min.js"></script>
+<script src="dexie.min.js"></script>
 
 <script>
-class SectionConfig {
-  constructor(miles) {
-    this.miles = miles
+var db = new Dexie("foods")
+
+db.version(1).stores({
+  foods: `
+    ++id,
+    name,
+    calories,
+    carbs,
+    protein,
+    fat`
+})
+
+class Food {
+  save() {
+    return db.foods.put(this) 
+  }
+  
+  delete() {
+    return db.foods.delete(this.id)
   }
 }
 
-class Food {
-  constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0, carbs = 0, protein = 0, fat = 0) {
-    this.uuid = uuid
-    this.name = name
-    this.calories = calories
-    this.carbs = carbs
-    this.protein = protein
-    this.fat = fat
-  }
-}
+db.foods.mapToClass(Food)
 
 class FoodRenderer {
   constructor(food) {
-    this.food = new Food(food.uuid, food.name, food.calories, food.carbs, food.protein, food.fat)
+    this.food = food
   }
   
-  static render(parent) {
-    let foods = this.all()
-    Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
+  static render(parent) { 
+    db.foods.toArray().then((foods) => foods.forEach((food) => this.renderFood(food)))
     this.renderBlankFood()
   }
   
@@ -54,11 +61,7 @@ class FoodRenderer {
                   this.renderBlankFood()
                 }, { once: true })
   }
-  
-  static all() {
-    return JSON.parse(localStorage.getItem("foods")) || {}
-  } 
-  
+
   renderNameInput(parent) {
     this.nameInput = document.createElement("input")
     this.nameInput.placeholder = "Name"
@@ -109,23 +112,15 @@ class FoodRenderer {
     this.food.protein = parseInt(this.proteinInput.value)
     this.food.fat = parseInt(this.fatInput.value)
     
-    let foods = this.constructor.all()
-    foods[this.food.uuid] = this.food
-    localStorage.setItem("foods", JSON.stringify(foods))
+    this.food.save()
     
     TotalsRenderer.render(document.getElementById("totals"))
   }
   
   delete() {
+    this.food.delete()
     this.div.remove()
-
-    let foods = this.constructor.all()
-    delete foods[this.food.uuid]
-
-    localStorage.setItem("foods", JSON.stringify(foods))
-  }
-  
-  
+  } 
 }
 
 class TotalsRenderer {
@@ -134,32 +129,33 @@ class TotalsRenderer {
   }
   
   constructor(parent) {
-    this.foods = FoodRenderer.all()
+    this.foods = db.foods.toArray()
     this.parent = parent
   }
   
-  render() { 
-    this.parent.innerHTML = `<p>Total Calories: ${this.totalCalories()}</p>`
-    this.parent.innerHTML += `<p>Total Carbs: ${this.totalCarbs()}</p>`
-    this.parent.innerHTML += `<p>Total Protein: ${this.totalProtein()}</p>`
-    this.parent.innerHTML += `<p>Total Fat: ${this.totalFat()}</p>`
-    this.parent.innerHTML += `<p>Protein / Carb: ${this.proteinCarbRatio()}</p>`
+  async render() { 
+    this.parent.innerHTML = `<p>Total Calories: ${await this.totalCalories()}</p>`
+    this.parent.innerHTML += `<p>Total Carbs: ${await this.totalCarbs()}</p>`
+    this.parent.innerHTML += `<p>Total Protein: ${await this.totalProtein()}</p>`
+    this.parent.innerHTML += `<p>Total Fat: ${await this.totalFat()}</p>`
+    this.parent.innerHTML += `<p>Protein / Carb: ${await this.proteinCarbRatio()}</p>`
   }
       
-  totalCalories() {
-    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.calories) || 0), 0)
+  async totalCalories() {
+    return await this.foods.then((foods) => foods.reduce((total, food) => total + food.calories, 0))
   }
   
-  totalCarbs() {
-    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.carbs) || 0), 0)
+  async totalCarbs() {
+      return await this.foods.then((foods) => foods.reduce((total, food) => total + food.carbs, 0))
+
   }
   
-  totalProtein() {
-    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.protein) || 0), 0)
+  async totalProtein() {
+      return await this.foods.then((foods) => foods.reduce((total, food) => total + food.protein, 0))
   }
   
-  totalFat() {
-    return Object.values(this.foods).reduce((total, food) => total + (parseInt(food.fat) || 0), 0)
+  async totalFat() {
+      return await this.foods.then((foods) => foods.reduce((total, food) => total + food.fat, 0))
   }
   
   proteinCarbRatio() {
@@ -196,14 +192,16 @@ class BarcodeScannerRenderer {
         this.cachedBarcodeLookup(code)
           .then((r) => r.json())
           .then((data) => {
-        FoodRenderer.renderFood(new Food(
-          self.crypto.randomUUID(),
-          `${data["product"]["brands"]} ${data["product"]["product_name"]}`,
-          data["product"]["nutriments"]["energy-kcal"],
-          data["product"]["nutriments"]["carbohydrates"],
-          data["product"]["nutriments"]["proteins"],
-          data["product"]["nutriments"]["fat"]
-        )).save()
+          let food = new Food()
+
+          food.name = `${data["product"]["brands"]} ${data["product"]["product_name"]}`,
+          food.calories = data["product"]["nutriments"]["energy-kcal_serving"],
+          food.carbs = data["product"]["nutriments"]["carbohydrates_serving"],
+          food.proteins = data["product"]["nutriments"]["proteins_serving"],
+          food.fat = data["product"]["nutriments"]["fat_serving"]
+          
+          food.save()
+          FoodRenderer.renderFood(food)
     })
     this.html5QrCode.stop().then(() => {
       div.remove()
