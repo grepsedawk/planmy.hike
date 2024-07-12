@@ -8,6 +8,12 @@
 <script src="html5-qrcode.min.js"></script>
 
 <script>
+class SectionConfig {
+  constructor(miles) {
+    this.miles = miles
+  }
+}
+
 class Food {
   constructor(uuid = self.crypto.randomUUID(), name = "", calories = 0, carbs = 0, protein = 0, fat = 0) {
     this.uuid = uuid
@@ -24,7 +30,7 @@ class FoodRenderer {
     this.food = new Food(food.uuid, food.name, food.calories, food.carbs, food.protein, food.fat)
   }
   
-  static renderAll(parent) {
+  static render(parent) {
     let foods = this.all()
     Object.keys(foods).forEach(uuid => this.renderFood(foods[uuid]))
     this.renderBlankFood()
@@ -60,6 +66,7 @@ class FoodRenderer {
     this.nameInput.addEventListener("blur", () => this.save())
     
     parent.appendChild(this.nameInput)
+ 
     return this.nameInput
   }
   
@@ -136,7 +143,7 @@ class TotalsRenderer {
     this.parent.innerHTML += `<p>Total Carbs: ${this.totalCarbs()}</p>`
     this.parent.innerHTML += `<p>Total Protein: ${this.totalProtein()}</p>`
     this.parent.innerHTML += `<p>Total Fat: ${this.totalFat()}</p>`
-        this.parent.innerHTML += `<p>Protein / Carb: ${this.proteinCarbRatio()}</p>`
+    this.parent.innerHTML += `<p>Protein / Carb: ${this.proteinCarbRatio()}</p>`
   }
       
   totalCalories() {
@@ -160,17 +167,60 @@ class TotalsRenderer {
   }
 }
 
-TotalsRenderer.render(document.getElementById("totals"))
-FoodRenderer.renderAll()
-
-async function onScanSuccess(decodedText, decodedResult) {
-    await fetch(`https://world.openfoodfacts.org/api/v3/product/${decodedText}.json`).then((r) => r.json()).then((data) => {
-      FoodRenderer.renderFood(new Food(self.crypto.randomUUID(), `${data["product"]["brands"]} ${data["product"]["product_name"]}`, data["product"]["nutriments"]["energy-kcal"])).save()
+class BarcodeScannerRenderer {
+  config = { fps: 10, qrbox: { width: 250, height: 250 } }
+  
+  static render() {
+    const button = document.createElement("button")
+    button.style = "position: absolute; bottom: 10px; right: 10px; height: 3rem; width: 3rem"
+    button.innerText = "📷"
+    button.addEventListener("click", () => new BarcodeScannerRenderer().start())
+    
+    document.body.appendChild(button)
+  } 
+  
+  start() {
+    let div = document.createElement("div")
+    div.style = "position: fixed; top: 0; left: 0; width: 100vw;"
+    let scanner = document.createElement("div")
+    scanner.id = "scanner"
+    scanner.style = "width: 100%"
+    div.appendChild(scanner)
+    document.body.appendChild(div)
+  
+    this.html5QrCode = new Html5Qrcode("scanner")
+    this.html5QrCode.start(
+      { facingMode: "environment" },
+      this.config,
+      (code, result) => {
+        this.cachedBarcodeLookup(code)
+          .then((r) => r.json())
+          .then((data) => {
+        FoodRenderer.renderFood(new Food(
+          self.crypto.randomUUID(),
+          `${data["product"]["brands"]} ${data["product"]["product_name"]}`,
+          data["product"]["nutriments"]["energy-kcal"],
+          data["product"]["nutriments"]["carbohydrates"],
+          data["product"]["nutriments"]["proteins"],
+          data["product"]["nutriments"]["fat"]
+        )).save()
     })
+    this.html5QrCode.stop().then(() => {
+      div.remove()
+    }).catch((err) => {})
+    }
+    )
+  }
+  
+  async cachedBarcodeLookup(code) {
+  console.log(`cachedBarcodeLookup(${code})`)
+    const url = `https://world.openfoodfacts.org/api/v3/product/${code}.json`
+    return caches.open("barcodes_v1").then((cache) => cache.match(url).then((r) => r || cache.add(url).then(then((r) => r))))
+  } 
 }
 
-var html5QrcodeScanner = new Html5QrcodeScanner(
-	"reader", { fps: 10, qrbox: 250, showTorchButtonIfSupported: true})
-html5QrcodeScanner.render(onScanSuccess)
+TotalsRenderer.render(document.getElementById("totals"))
+FoodRenderer.render()
+BarcodeScannerRenderer.render()
 </script>
 
