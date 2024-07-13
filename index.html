@@ -168,7 +168,7 @@ class BarcodeScannerRenderer {
   
   static render() {
     const button = document.createElement("button")
-    button.style = "position: absolute; bottom: 10px; right: 10px; height: 3rem; width: 3rem"
+    button.style = "position: fixed; bottom: 10px; right: 10px; height: 3rem; width: 3rem"
     button.innerText = "📷"
     button.addEventListener("click", () => new BarcodeScannerRenderer().start())
     
