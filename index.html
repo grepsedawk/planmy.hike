@@ -211,9 +211,8 @@ class BarcodeScannerRenderer {
   }
   
   async cachedBarcodeLookup(code) {
-  console.log(`cachedBarcodeLookup(${code})`)
     const url = `https://world.openfoodfacts.org/api/v3/product/${code}.json`
-    return caches.open("barcodes_v1").then((cache) => cache.match(url).then((r) => r || cache.add(url).then(then((r) => r))))
+    return caches.open("barcodes_v1").then((cache) => cache.match(url).then((r) => r || cache.add(url).then((r) => cache.match(url))))
   } 
 }
 
