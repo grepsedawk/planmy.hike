@@ -201,8 +201,7 @@ class BarcodeScannerRenderer {
           food.proteins = data["product"]["nutriments"]["proteins_serving"],
           food.fat = data["product"]["nutriments"]["fat_serving"]
           
-          food.save()
-          FoodRenderer.renderFood(food)
+          return new NewFood(food).render()
     })
     this.html5QrCode.stop().then(() => {
       div.remove()
