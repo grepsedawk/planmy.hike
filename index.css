@@ -1,0 +1,41 @@
+body {                                                                                                                                                      
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;                                                                                                                                                      
+}
+
+.card {
+  background-color: #fff;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;                                                                                                                                                      
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;                
+}
+
+.card div {
+  margin: 0.5rem;
+}
+
+.card div div {
+  text-align: center;
+  }
+
+.card button {
+  background-color: #007BFF;                                                                                                                                                      
+  color: #fff;
+  border: none; 
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card button.red {
+  background-color: #FF4136;  
+} 

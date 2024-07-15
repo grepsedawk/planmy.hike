@@ -48,12 +48,36 @@ class FoodRenderer extends Renderer {
     
     return foodRenderer
   }
+  
+  addDetail(parent, value, label, unit = "") {
+    const container = document.createElement("div")
+    const valueDisplay = document.createElement("div")
+    const labelDisplay = document.createElement("div")
+    
+    valueDisplay.innerText = value + unit
+    labelDisplay.innerText = label
+    
+    container.appendChild(valueDisplay)
+    container.appendChild(labelDisplay)
+    
+    parent.appendChild(container)
+    
+    return container
+  }
 
   render() {
     this.div = document.createElement("div")
+    this.div.classList.add("card")
     
-    this.div.innerText = this.food.name
+    this.addDetail(this.div, this.food.name, "")
+    this.addDetail(this.div, this.food.calories, "cal")
+    this.addDetail(this.div, this.food.carbs, "carbs", "g")
+    this.addDetail(this.div, this.food.protein, "protein", "g")
+    this.addDetail(this.div, this.food.fat, "fat", "g")
+
+
     this.deleteButton = this.renderButton(this.div, "Delete", () => this.delete())
+    this.deleteButton.classList.add("red")
 
     document.body.appendChild(this.div)
   }
@@ -72,11 +96,11 @@ class NewFood extends Renderer {
   
   static renderTrigger() {
     const button = document.createElement("button")
-    // TODO: css grid out these action buttons
+    // TODO: css flex out these action buttons
     button.innerText = "🆕"
     button.style = "position: fixed; bottom: 4rem; right: 1rem; height: 3rem; width: 3rem"
     button.addEventListener("click", () => new NewFood().render())
-    
+
     document.body.appendChild(button) 
   }
   
@@ -86,7 +110,7 @@ class NewFood extends Renderer {
   
   render() {
     this.div = document.createElement("div")
-    this.div.style = "position: fixed; bottom: 0; height: 100px"
+    this.div.style = "background: red; position: fixed; bottom: 0; height: 100px"
     this.nameInput = this.renderNameInput(this.div)
     
     this.calInput = this.renderNumberInput(this.div, this.food.calories)
@@ -119,7 +143,7 @@ class NewFood extends Renderer {
     this.food.save()
     
     this.div.remove()
-    FoodRenderer.render(this.food) 
+    FoodRenderer.renderFood(this.food) 
     
     TotalsRenderer.render(document.getElementById("totals"))
   }
