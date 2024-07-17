@@ -1,9 +1,18 @@
 class Renderer {
-  renderNumberInput(parent, initialValue = 0) {
+  renderNumberInput(parent, initialValue = 0, label = null) {
     let field = document.createElement("input")
     field.type = "number"
     field.value = initialValue
     
+    if (label) {      
+      let labelElement = document.createElement("label");                                                                                                                                                      
+      labelElement.innerText = label
+      labelElement.appendChild(field)
+      parent.appendChild(labelElement)
+      
+      return field
+    }
+
     parent.appendChild(field)
     
     return field

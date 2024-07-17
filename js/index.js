@@ -120,13 +120,12 @@ class NewFood extends Renderer {
   render() {
     this.div = document.createElement("div")
     this.div.classList.add("card", "float")
-    this.div.style = "position: fixed; bottom: 0; height: 100px"
-    this.nameInput = this.renderNameInput(this.div)
+    this.nameInput = this.renderNameInput(this.div) 
     
-    this.calInput = this.renderNumberInput(this.div, this.food.calories)
-    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs)
-    this.proteinInput = this.renderNumberInput(this.div, this.food.protein)
-    this.fatInput = this.renderNumberInput(this.div, this.food.fat)
+    this.calInput = this.renderNumberInput(this.div, this.food.calories, "Calories")
+    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs") 
+    this.proteinInput = this.renderNumberInput(this.div, this.food.protein, "Protein")
+    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat")
     
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 
@@ -144,6 +143,10 @@ class NewFood extends Renderer {
   }
   
   save() {
+    if (!this.validate()) {
+      return false
+    }
+  
     this.food.name = this.nameInput.value
     this.food.calories = parseInt(this.calInput.value)
     this.food.carbs = parseInt(this.carbsInput.value)
@@ -156,6 +159,31 @@ class NewFood extends Renderer {
     FoodRenderer.renderFood(this.food) 
     
     TotalsRenderer.render(document.getElementById("totals"))
+  }
+  
+  validate() {
+    if (!this.nameInput.value.trim()) {                                                                                                                                                      
+      this.renderError("Name is required")
+      return false
+    }
+    
+    return true
+  }
+  
+  renderError(message) {
+    const errorDiv = document.createElement("div")                                                                                                                                                      
+    errorDiv.className = "error"
+    errorDiv.textContent = message
+    
+     errorDiv.addEventListener("click", () => {                                                                                                                                                      
+      errorDiv.remove()
+    })
+ 
+    this.nameInput.addEventListener("input", () => {
+      errorDiv.remove()
+    })
+    
+    this.div.appendChild(errorDiv)
   }
 }
 
