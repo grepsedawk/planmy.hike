@@ -69,11 +69,20 @@ class FoodRenderer extends Renderer {
     this.div = document.createElement("div")
     this.div.classList.add("card")
     
-    this.addDetail(this.div, this.food.name, "")
-    this.addDetail(this.div, this.food.calories, "cal")
-    this.addDetail(this.div, this.food.carbs, "carbs", "g")
-    this.addDetail(this.div, this.food.protein, "protein", "g")
-    this.addDetail(this.div, this.food.fat, "fat", "g")
+    const title = document.createElement("h3")
+    title.innerText = this.food.name
+    
+    this.div.appendChild(title)
+    
+    const details = document.createElement("div")
+    details.classList.add("details")
+    
+    this.addDetail(details, this.food.calories, "cal")
+    this.addDetail(details, this.food.carbs, "carbs", "g")
+    this.addDetail(details, this.food.protein, "protein", "g")
+    this.addDetail(details, this.food.fat, "fat", "g")
+    
+    this.div.appendChild(details)
 
 
     this.deleteButton = this.renderButton(this.div, "Delete", () => this.delete())
@@ -110,7 +119,8 @@ class NewFood extends Renderer {
   
   render() {
     this.div = document.createElement("div")
-    this.div.style = "background: red; position: fixed; bottom: 0; height: 100px"
+    this.div.classList.add("card", "float")
+    this.div.style = "position: fixed; bottom: 0; height: 100px"
     this.nameInput = this.renderNameInput(this.div)
     
     this.calInput = this.renderNumberInput(this.div, this.food.calories)

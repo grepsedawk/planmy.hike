@@ -4,6 +4,13 @@ body {
   background-color: #f4f4f4;                                                                                                                                                      
 }
 
+.float {
+position: fixed;
+top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .card {
   background-color: #fff;
   margin: 10px;
@@ -11,25 +18,29 @@ body {
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+}
+
+.card .details {
   display: flex;                                                                                                                                                      
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  flex-wrap: wrap;                
-}
+  flex-wrap: wrap;
+} 
+  
 
-.card div {
+.card .details div {                                                                                                                                                      
   margin: 0.5rem;
 }
 
-.card div div {
+.card .details div div {
   text-align: center;
-  }
+}
 
 .card button {
   background-color: #007BFF;                                                                                                                                                      
   color: #fff;
-  border: none; 
+  border: none;
   padding: 10px 20px;
   border-radius: 3px;
   cursor: pointer;
