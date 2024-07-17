@@ -32,8 +32,8 @@ class ShowTotals {
     return await this.foods.then((foods) => foods.reduce((total, food) => total + food.fat, 0))
   }
   
-  proteinCarbRatio() {
-    return this.totalProtein() / this.totalCarbs()
+  async proteinCarbRatio() {
+    return await this.totalProtein() / await this.totalCarbs()
   }
 }
 
