@@ -1,4 +1,5 @@
 import Renderer from "./Renderer.js"
+import ShowTotals from "./ShowTotals.js"
 
 class ShowFood extends Renderer {
   constructor(food) {
@@ -66,6 +67,7 @@ class ShowFood extends Renderer {
   delete() {
     this.food.delete()
     this.div.remove()
+    ShowTotals.render(document.getElementById("totals"))
   } 
 }
 

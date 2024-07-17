@@ -64,7 +64,7 @@ class NewFood extends Renderer {
     this.div.remove()
     ShowFood.renderFood(this.food) 
     
-    ShowTotals .render(document.getElementById("totals"))
+    ShowTotals.render(document.getElementById("totals"))
   }
   
   validate() {
