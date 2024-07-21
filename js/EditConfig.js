@@ -1,20 +1,18 @@
 import Renderer from "./Renderer.js"
-import Food from "./Food.js"
-import ShowFood from "./ShowFood.js"
-import ShowTotals from "./ShowTotals.js"
 
-class NewFood extends Renderer {
-  constructor(food = new Food()) {
+class EditConfig extends Renderer {
+  constructor() {
     super()
-    this.food = food
   }
   
-  static renderTrigger(parent) {
+  static renderTrigger() {
     const button = document.createElement("button")
+    // TODO: css flex out these action buttons
     button.innerText = "🆕"
+    button.style = "position: fixed; bottom: 4rem; right: 1rem; height: 3rem; width: 3rem"
     button.addEventListener("click", () => new NewFood().render())
 
-    parent.appendChild(button) 
+    document.body.appendChild(button) 
   }
   
   static render(food = new Food()) {
@@ -62,7 +60,7 @@ class NewFood extends Renderer {
     this.div.remove()
     ShowFood.renderFood(this.food) 
     
-    ShowTotals.render(document.getElementById("totals"))
+    ShowTotals .render(document.getElementById("totals"))
   }
   
   validate() {

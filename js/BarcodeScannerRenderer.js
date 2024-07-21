@@ -1,13 +1,12 @@
 class BarcodeScannerRenderer {
   config = { fps: 10, qrbox: { width: 250, height: 250 } }
   
-  static renderTrigger() {
+  static renderTrigger(parent) {
     const button = document.createElement("button")
-    button.style = "position: fixed; bottom: 1rem; right: 1rem; height: 3rem; width: 3rem"
     button.innerText = "📷"
     button.addEventListener("click", () => new BarcodeScannerRenderer().start())
     
-    document.body.appendChild(button)
+    parent.appendChild(button)
   } 
   
   start() {

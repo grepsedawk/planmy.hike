@@ -21,5 +21,5 @@ db.foods.mapToClass(Food)
 
 ShowTotals.render(document.getElementById("totals"))
 ShowFood.render()
-BarcodeScannerRenderer.renderTrigger()
-NewFood.renderTrigger()
+BarcodeScannerRenderer.renderTrigger(document.getElementById("quickActions"))
+NewFood.renderTrigger(document.getElementById("quickActions"))
