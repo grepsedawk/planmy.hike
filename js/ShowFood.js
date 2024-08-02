@@ -61,7 +61,7 @@ class ShowFood extends Renderer {
     this.deleteButton = this.renderButton(this.div, "Delete", () => this.delete())
     this.deleteButton.classList.add("red")
 
-    document.body.appendChild(this.div)
+    document.getElementById("content").appendChild(this.div)
   }
   
   delete() {
