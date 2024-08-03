@@ -42,7 +42,9 @@ class FoodPage extends Page {
   }
 
   async render() {
+    console.log("render()")
     await this.renderPage()
+    console.log("rendered page")
 
     const quickActions = document.getElementById("quickActions")
 
