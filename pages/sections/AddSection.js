@@ -1,7 +1,7 @@
-import Renderer from "./Renderer.js"
-import Section from "./Section.js"
+import Renderer from "../../js/Renderer.js"
+import Section from "../../js/Section.js"
 
-class EditSection extends Renderer {
+class AddSection extends Renderer {
   constructor(section) {
     super()
     this.section = section
@@ -9,14 +9,14 @@ class EditSection extends Renderer {
 
   static renderTrigger(parent) {
     const button = document.createElement("button")
-    button.innerText = "🔧"
-    button.addEventListener("click", () => EditSection.render())
+    button.innerText = "➕"
+    button.addEventListener("click", () => AddSection.render())
 
     parent.appendChild(button)
   }
 
   static render(section = new Section()) {
-    return new EditSection(section).render()
+    return new AddSection(section).render()
   }
 
   render() {
@@ -78,4 +78,4 @@ class EditSection extends Renderer {
   }
 }
 
-export default EditSection
+export default AddSection

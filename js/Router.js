@@ -1,10 +1,11 @@
 import FoodPage from "../pages/food/FoodPage.js"
-
+import SectionsPage from "../pages/sections/SectionsPage.js"
 class Router {
   static routes = {
     404: FoodPage, // NotFoundPage,
     "/": FoodPage, // HomePage,
-    "/food": FoodPage
+    "/food": FoodPage,
+    "/sections": SectionsPage
   }
 
   static parseUrl() {
@@ -53,10 +54,9 @@ class Router {
       const { path, urlParams } = this.parseUrl()
       const page = this.matchRoute(path, urlParams)
 
-      page.render()
+      await page.render()
     } catch (e) {
       console.error(`Error Routing [${window.location.hash}]: ${e.message}`)
-      console.error(e.location)
     }
   }
 
