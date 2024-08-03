@@ -25,18 +25,18 @@ db.version(1).stores({
     currentMile,
     caloriesPerDay,
     milesPerDay
-    `
+    `,
 })
 
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
 
 const render = () => {
-ShowTotals.render(document.getElementById("totals"))
-ShowFood.render()
-BarcodeScannerRenderer.renderTrigger(document.getElementById("quickActions"))
-NewFood.renderTrigger(document.getElementById("quickActions"))
-EditSection.renderTrigger(document.getElementById("quickActions"))
+  ShowTotals.render(document.getElementById("totals"))
+  ShowFood.render()
+  BarcodeScannerRenderer.renderTrigger(document.getElementById("quickActions"))
+  NewFood.renderTrigger(document.getElementById("quickActions"))
+  EditSection.renderTrigger(document.getElementById("quickActions"))
 }
 
 export default render

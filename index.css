@@ -1,11 +1,13 @@
-*, *::before, *::after{
-    box-sizing: border-box; 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-body {                                                                                                                                                      
+body {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;                                                                                                                                                      
+  background-color: #f4f4f4;
 }
 
 .float {
@@ -25,15 +27,14 @@ body {
 }
 
 .card .details {
-  display: flex;                                                                                                                                                      
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-} 
-  
+}
 
-.card .details div {                                                                                                                                                      
+.card .details div {
   margin: 0.5rem;
 }
 
@@ -42,7 +43,7 @@ body {
 }
 
 .card button {
-  background-color: #007BFF;                                                                                                                                                      
+  background-color: #007bff;
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -52,12 +53,12 @@ body {
 }
 
 .card button.red {
-  background-color: #FF4136;  
+  background-color: #ff4136;
 }
 
 .error {
   color: red;
-} 
+}
 
 .quickActions {
   position: fixed;
