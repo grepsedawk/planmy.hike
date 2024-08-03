@@ -6,6 +6,7 @@ import NewFood from "../../js/NewFood.js"
 import EditSection from "../../js/EditSection.js"
 import ShowFood from "../../js/ShowFood.js"
 import BarcodeScannerRenderer from "../../js/BarcodeScannerRenderer.js"
+import Page from "../../js/Page.js"
 
 window.db = new Dexie("planmyhike")
 
@@ -31,12 +32,26 @@ db.version(1).stores({
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
 
-const render = () => {
-  ShowTotals.render(document.getElementById("totals"))
-  ShowFood.render()
-  BarcodeScannerRenderer.renderTrigger(document.getElementById("quickActions"))
-  NewFood.renderTrigger(document.getElementById("quickActions"))
-  EditSection.renderTrigger(document.getElementById("quickActions"))
+class FoodPage extends Page {
+  constructor(parent) {
+    super()
+    this.parent = parent
+    this.template = "/pages/food/index.html"
+    this.title = "Food Planner"
+    this.description = "plan food fast"
+  }
+
+  async render() {
+    await this.renderPage()
+
+    const quickActions = document.getElementById("quickActions")
+
+    ShowTotals.render(document.getElementById("totals"))
+    ShowFood.render()
+    BarcodeScannerRenderer.renderTrigger(quickActions)
+    NewFood.renderTrigger(quickActions)
+    EditSection.renderTrigger(quickActions)
+  }
 }
 
-export default render
+export default FoodPage
