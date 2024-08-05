@@ -23,6 +23,26 @@ class AddSection extends Renderer {
     this.div = document.createElement("div")
     this.div.classList.add("card", "float")
     this.nameInput = this.renderNameInput(this.div)
+    this.startMile = this.renderNumberInput(
+      this.div,
+      this.section.startMile,
+      "Start Mile",
+    )
+    this.endMile = this.renderNumberInput(
+      this.div,
+      this.section.endMile,
+      "End Mile",
+    )
+    this.caloriesPerDay = this.renderNumberInput(
+      this.div,
+      this.section.caloriesPerDay,
+      "Cal/day",
+    )
+    this.milesPerDay = this.renderNumberInput(
+      this.div,
+      this.section.milesPerDay,
+      "Miles per Day",
+    )
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 
@@ -45,7 +65,11 @@ class AddSection extends Renderer {
     }
 
     this.section.name = this.nameInput.value
-    // this.food.calories = parseInt(this.calInput.value)
+    this.section.startMile = this.startMile.value
+    this.section.endMile = this.endMile.value
+    this.section.caloriesPerDay = this.caloriesPerDay.value
+    this.section.milesPerDay = this.milesPerDay.value
+
     this.section.save()
 
     this.div.remove()

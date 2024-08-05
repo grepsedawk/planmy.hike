@@ -25,5 +25,5 @@ db.version(1).stores({
 
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
-console.log("db done")
+
 Router.init()

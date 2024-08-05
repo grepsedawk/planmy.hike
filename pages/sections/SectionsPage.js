@@ -18,18 +18,23 @@ class SectionPage extends Page {
     this.parent.appendChild(quickActions)
 
     AddSection.renderTrigger(quickActions)
-    
+
     db.sections
       .toArray()
       .then((sections) => sections.forEach((s) => this.renderSection(s)))
-}
+  }
 
-renderSection(section) {
-let display = document.createElement("div")
-display.innerText = section.name
+  renderSection(section) {
+    let display = document.createElement("div")
+    display.innerText = section.name
+    display.addEventListener(
+      "click",
+      () => (window.location = `#/sections/${section.id}/food`),
+    )
+    //   display.addEventListener("click", () => AddSection.render(section))
 
-this.parent.appendChild(display)
-}
+    this.parent.appendChild(display)
+  }
 }
 
 export default SectionPage

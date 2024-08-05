@@ -6,13 +6,16 @@ import BarcodeScannerRenderer from "../../js/BarcodeScannerRenderer.js"
 import Page from "../../js/Page.js"
 
 class FoodPage extends Page {
-  constructor(parent) {
   constructor(parent, params) {
     super()
     this.parent = parent
-    this.template = "/pages/food/index.html"
+    this.template = "./pages/food/index.html"
     this.title = "Food Planner"
     this.description = "plan food fast"
+
+    if (params["id"]) {
+      console.log(params["id"])
+    }
   }
 
   async render() {

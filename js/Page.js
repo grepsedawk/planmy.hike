@@ -1,8 +1,7 @@
 class Page {
   async renderPage() {
     try {
-
-        this.parent.innerHTML = await this.templateContent()
+      this.parent.innerHTML = await this.templateContent()
 
       document.title = this.title
 
@@ -15,11 +14,11 @@ class Page {
   }
 
   async templateContent() {
-  if (this.template) {
-    return await fetch(this.template).then((response) => response.text())
-  } else {
-  return ""
-  }
+    if (this.template) {
+      return await fetch(this.template).then((response) => response.text())
+    } else {
+      return ""
+    }
   }
 }
 

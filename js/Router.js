@@ -5,7 +5,8 @@ class Router {
     404: FoodPage, // NotFoundPage,
     "/": FoodPage, // HomePage,
     "/food": FoodPage,
-    "/sections": SectionsPage
+    "/sections": SectionsPage,
+    "/sections/:id/food": FoodPage,
   }
 
   static parseUrl() {
