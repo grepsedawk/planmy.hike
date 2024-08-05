@@ -7,6 +7,7 @@ import Page from "../../js/Page.js"
 
 class FoodPage extends Page {
   constructor(parent) {
+  constructor(parent, params) {
     super()
     this.parent = parent
     this.template = "/pages/food/index.html"
