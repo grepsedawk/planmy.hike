@@ -3,8 +3,7 @@ import SectionsPage from "../pages/sections/SectionsPage.js"
 class Router {
   static routes = {
     404: FoodPage, // NotFoundPage,
-    "/": FoodPage, // HomePage,
-    "/food": FoodPage,
+    "/": SectionsPage, // HomePage,
     "/sections": SectionsPage,
     "/sections/:id/food": FoodPage,
   }

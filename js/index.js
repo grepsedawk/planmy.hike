@@ -19,7 +19,7 @@ db.version(1).stores({
     endMile,
     currentMile,
     caloriesPerDay,
-    milesPerDay
+    days
     `,
 })
 

@@ -38,10 +38,10 @@ class AddSection extends Renderer {
       this.section.caloriesPerDay,
       "Cal/day",
     )
-    this.milesPerDay = this.renderNumberInput(
+    this.days = this.renderNumberInput(
       this.div,
-      this.section.milesPerDay,
-      "Miles per Day",
+      this.section.days,
+      "Days"
     )
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
@@ -68,7 +68,7 @@ class AddSection extends Renderer {
     this.section.startMile = this.startMile.value
     this.section.endMile = this.endMile.value
     this.section.caloriesPerDay = this.caloriesPerDay.value
-    this.section.milesPerDay = this.milesPerDay.value
+    this.section.days = this.days.value
 
     this.section.save()
 

@@ -5,9 +5,44 @@
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em 1em;
+  font-family: sans-serif;
+}
+pre {
+  padding: 1em;
+  max-width: 100%;
+  overflow-x: auto;
+}
+img {
+  height: auto;
+  width: 100%;
+}
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 1em;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+nav a {
+  padding: 1em;
+}
+nav svg {
+  width: 8em;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #333;
+  }
+  body,
+  a {
+    color: white;
+  }
 }
 
 .float {
