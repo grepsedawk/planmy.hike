@@ -1,7 +1,7 @@
 class ShowTotals {
-  static render(parent, section) {
+  static async render(parent, section) {
     new ShowTotals(parent, section)
-      .render()
+      .render().catch((e) => console.error("Error in ShowTotals:", e.message))
   }
 
   constructor(parent, section) {
@@ -11,9 +11,8 @@ class ShowTotals {
 
   async render() {
     this.foods = await this.section.foods.toArray()
-    console.log("this.foods", this.foods)
 
-    this.parent.innerHTML = `<p>Total Calories: ${await this.totalCalories()}</p>
+    this.parent.innerHTML = `<p>Total Calories: ${this.totalCalories()}/${this.section.requiredCalories }</p>
 <p>Total Carbs: ${this.totalCarbs()}</p>
 <p>Total Protein: ${this.totalProtein()}</p>
 <p>Total Fat: ${this.totalFat()}</p>
