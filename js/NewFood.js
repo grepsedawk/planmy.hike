@@ -4,15 +4,16 @@ import ShowFood from "./ShowFood.js"
 import ShowTotals from "./ShowTotals.js"
 
 class NewFood extends Renderer {
-  constructor(food = new Food()) {
+  constructor(section, food = new Food()) {
     super()
+    this.section = section
     this.food = food
   }
 
-  static renderTrigger(parent) {
+  static renderTrigger(parent, section) {
     const button = document.createElement("button")
     button.innerText = "🆕"
-    button.addEventListener("click", () => new NewFood().render())
+    button.addEventListener("click", () => new NewFood(section).render())
 
     parent.appendChild(button)
   }
@@ -64,6 +65,7 @@ class NewFood extends Renderer {
     this.food.carbs = parseInt(this.carbsInput.value)
     this.food.protein = parseInt(this.proteinInput.value)
     this.food.fat = parseInt(this.fatInput.value)
+    this.food.sectionId = parseInt(this.section.id)
 
     this.food.save()
 

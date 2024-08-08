@@ -50,19 +50,21 @@ class Router {
   }
 
   static async route() {
-    try {
-      const { path, urlParams } = this.parseUrl()
-      const page = this.matchRoute(path, urlParams)
+    const { path, urlParams } = this.parseUrl()
+    const page = this.matchRoute(path, urlParams)
 
-      await page.render()
-    } catch (e) {
-      console.error(`Error Routing [${window.location.hash}]: ${e.message}`)
-    }
+    return page
+      .render()
+      .catch((e) =>
+        console.error(
+          `Error Rendering [${window.location.hash}]: ${e.message}`,
+        ),
+      )
   }
 
   static async init() {
     window.addEventListener("hashchange", () => this.route())
-    this.route()
+    await this.route()
   }
 }
 

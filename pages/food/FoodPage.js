@@ -4,6 +4,7 @@ import NewFood from "../../js/NewFood.js"
 import ShowFood from "../../js/ShowFood.js"
 import BarcodeScannerRenderer from "../../js/BarcodeScannerRenderer.js"
 import Page from "../../js/Page.js"
+import Section from "../../js/Section.js"
 
 class FoodPage extends Page {
   constructor(parent, params) {
@@ -12,10 +13,7 @@ class FoodPage extends Page {
     this.template = "./pages/food/index.html"
     this.title = "Food Planner"
     this.description = "plan food fast"
-
-    if (params["id"]) {
-      console.log(params["id"])
-    }
+    this.sectionId = parseInt(params["id"])
   }
 
   async render() {
@@ -23,10 +21,12 @@ class FoodPage extends Page {
 
     const quickActions = document.getElementById("quickActions")
 
-    ShowTotals.render(document.getElementById("totals"))
-    ShowFood.render()
-    BarcodeScannerRenderer.renderTrigger(quickActions)
-    NewFood.renderTrigger(quickActions)
+    Section.find(this.sectionId).then(async (section) => {
+      await ShowTotals.render(document.getElementById("totals"), section)
+      await ShowFood.render(document.getElementById("food"), section)
+      await NewFood.renderTrigger(quickActions, section)
+    })
+    await BarcodeScannerRenderer.renderTrigger(quickActions)
   }
 }
 

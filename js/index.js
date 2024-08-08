@@ -2,16 +2,18 @@ import Router from "./Router.js"
 import Food from "./Food.js"
 import Section from "./Section.js"
 
-window.db = new Dexie("planmyhike")
+window.db = new Dexie("planmyhikedev")
 
 db.version(1).stores({
   foods: `
     ++id,
+    sectionId,
     name,
     calories,
     carbs,
     protein,
-    fat`,
+    fat 
+    `,
   sections: `
     ++id,
     name,

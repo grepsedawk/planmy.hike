@@ -7,8 +7,8 @@ class ShowFood extends Renderer {
     this.food = food
   }
 
-  static render(parent) {
-    db.foods
+  static render(parent, section) {
+    section.foods
       .toArray()
       .then((foods) => foods.forEach((food) => this.renderFood(food)))
   }

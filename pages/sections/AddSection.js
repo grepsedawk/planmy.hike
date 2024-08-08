@@ -38,11 +38,7 @@ class AddSection extends Renderer {
       this.section.caloriesPerDay,
       "Cal/day",
     )
-    this.days = this.renderNumberInput(
-      this.div,
-      this.section.days,
-      "Days"
-    )
+    this.days = this.renderNumberInput(this.div, this.section.days, "Days")
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 
