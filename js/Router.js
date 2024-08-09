@@ -1,5 +1,6 @@
 import FoodPage from "../pages/food/FoodPage.js"
 import SectionsPage from "../pages/sections/SectionsPage.js"
+
 class Router {
   static routes = {
     404: FoodPage, // NotFoundPage,
@@ -63,8 +64,10 @@ class Router {
   }
 
   static async init() {
+    console.debug("Starting Router.init()")
     window.addEventListener("hashchange", () => this.route())
     await this.route()
+    console.debug("Router.init() completed successfully!")
   }
 }
 

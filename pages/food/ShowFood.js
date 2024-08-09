@@ -1,4 +1,4 @@
-import Renderer from "./Renderer.js"
+import Renderer from "../../js/Renderer.js"
 import ShowTotals from "./ShowTotals.js"
 
 class ShowFood extends Renderer {

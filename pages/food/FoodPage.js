@@ -1,8 +1,8 @@
 import Renderer from "../../js/Renderer.js"
-import ShowTotals from "../../js/ShowTotals.js"
-import NewFood from "../../js/NewFood.js"
-import ShowFood from "../../js/ShowFood.js"
-import BarcodeScannerRenderer from "../../js/BarcodeScannerRenderer.js"
+import ShowTotals from "./ShowTotals.js"
+import NewFood from "./NewFood.js"
+import ShowFood from "./ShowFood.js"
+import BarcodeScannerRenderer from "./BarcodeScannerRenderer.js"
 import Page from "../../js/Page.js"
 import Section from "../../js/Section.js"
 
