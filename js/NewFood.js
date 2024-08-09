@@ -18,8 +18,8 @@ class NewFood extends Renderer {
     parent.appendChild(button)
   }
 
-  static render(food = new Food()) {
-    return new NewFood(food).render()
+  static render(section, food = new Food()) {
+    return new NewFood(section, food).render()
   }
 
   render() {
@@ -70,9 +70,9 @@ class NewFood extends Renderer {
     this.food.save()
 
     this.div.remove()
-    ShowFood.renderFood(this.food)
+    ShowFood.renderFood(this.food, this.section)
 
-    ShowTotals.render(document.getElementById("totals"))
+    ShowTotals.render(document.getElementById("totals"), this.section)
   }
 
   validate() {

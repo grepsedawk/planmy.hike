@@ -2,19 +2,20 @@ import Renderer from "./Renderer.js"
 import ShowTotals from "./ShowTotals.js"
 
 class ShowFood extends Renderer {
-  constructor(food) {
+  constructor(food, section) {
     super()
     this.food = food
+    this.section = section
   }
 
   static render(parent, section) {
     section.foods
       .toArray()
-      .then((foods) => foods.forEach((food) => this.renderFood(food)))
+      .then((foods) => foods.forEach((food) => this.renderFood(food, section)))
   }
 
-  static renderFood(food) {
-    let foodRenderer = new ShowFood(food)
+  static renderFood(food, section) {
+    let foodRenderer = new ShowFood(food, section)
     foodRenderer.render()
 
     return foodRenderer
@@ -66,7 +67,7 @@ class ShowFood extends Renderer {
   delete() {
     this.food.delete()
     this.div.remove()
-    ShowTotals.render(document.getElementById("totals"))
+    ShowTotals.render(document.getElementById("totals"), this.section)
   }
 }
 
