@@ -63,8 +63,10 @@ class Router {
   }
 
   static async init() {
+    console.debug("Starting Router.init()")
     window.addEventListener("hashchange", () => this.route())
     await this.route()
+    console.debug("Router.init() completed successfully!")
   }
 }
 

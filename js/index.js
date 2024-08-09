@@ -2,7 +2,11 @@ import Router from "./Router.js"
 import Food from "./Food.js"
 import Section from "./Section.js"
 
+console.debug("app booting...")
+
 window.db = new Dexie("planmyhikedev")
+
+console.log("test")
 
 db.version(1).stores({
   foods: `
