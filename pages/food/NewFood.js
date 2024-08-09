@@ -1,5 +1,5 @@
-import Renderer from "./Renderer.js"
-import Food from "./Food.js"
+import Renderer from "../../js/Renderer.js"
+import Food from "../../js/Food.js"
 import ShowFood from "./ShowFood.js"
 import ShowTotals from "./ShowTotals.js"
 

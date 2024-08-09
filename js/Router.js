@@ -1,5 +1,6 @@
 import FoodPage from "../pages/food/FoodPage.js"
 import SectionsPage from "../pages/sections/SectionsPage.js"
+
 class Router {
   static routes = {
     404: FoodPage, // NotFoundPage,

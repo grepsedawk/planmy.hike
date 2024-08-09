@@ -6,8 +6,6 @@ console.debug("app booting...")
 
 window.db = new Dexie("planmyhikedev")
 
-console.log("test")
-
 db.version(1).stores({
   foods: `
     ++id,
