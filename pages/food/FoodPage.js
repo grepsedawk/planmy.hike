@@ -25,8 +25,8 @@ class FoodPage extends Page {
       await ShowTotals.render(document.getElementById("totals"), section)
       await ShowFood.render(document.getElementById("food"), section)
       await NewFood.renderTrigger(quickActions, section)
+      await BarcodeScannerRenderer.renderTrigger(quickActions, this.section)
     })
-    await BarcodeScannerRenderer.renderTrigger(quickActions)
   }
 }
 

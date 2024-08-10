@@ -1,10 +1,17 @@
+import Food from "../../js/Food.js"
+import NewFood from "./NewFood.js"
+
 class BarcodeScannerRenderer {
   config = { fps: 10, qrbox: { width: 250, height: 250 } }
+  
+  constructor(section) {
+    this.section = section
+  } 
 
-  static renderTrigger(parent) {
+  static renderTrigger(parent, section) {
     const button = document.createElement("button")
     button.innerText = "📷"
-    button.addEventListener("click", () => new BarcodeScannerRenderer().start())
+    button.addEventListener("click", () => new BarcodeScannerRenderer(section).start())
 
     parent.appendChild(button)
   }
@@ -26,19 +33,19 @@ class BarcodeScannerRenderer {
         this.cachedBarcodeLookup(code)
           .then((r) => r.json())
           .then((data) => {
+            console.debug(data)
             let food = new Food()
 
-            ;(food.name = `${data["product"]["brands"]} ${data["product"]["product_name"]}`),
-              (food.calories =
-                data["product"]["nutriments"]["energy-kcal_serving"]),
-              (food.carbs =
-                data["product"]["nutriments"]["carbohydrates_serving"]),
-              (food.proteins =
-                data["product"]["nutriments"]["proteins_serving"]),
-              (food.fat = data["product"]["nutriments"]["fat_serving"])
+            food.name = `${data["product"]["brands"]} ${data["product"]["product_name"]}`
+            food.calories = data["product"]["nutriments"]["energy-kcal_serving"]
+            food.carbs = data["product"]["nutriments"]["carbohydrates_serving"]
+            food.protein = data["product"]["nutriments"]["proteins_serving"]
+            food.fat = data["product"]["nutriments"]["fat_serving"]
+            food.servingSize = data["product"]["serving_quantity"]
+            food.netWeight = data["product"]["product_quantity"]
 
-            return new NewFood(food).render()
-          })
+            return new NewFood(this.section, food).render()
+          }).catch((e) => console.error("Error fetching/parsing barcode:", e.message))
         this.html5QrCode
           .stop()
           .then(() => {

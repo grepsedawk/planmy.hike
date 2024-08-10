@@ -4,7 +4,7 @@ import Section from "./Section.js"
 
 console.debug("app booting...")
 
-window.db = new Dexie("planmyhikedev")
+window.db = new Dexie("planmyhikedev2")
 
 db.version(1).stores({
   foods: `
@@ -14,7 +14,9 @@ db.version(1).stores({
     calories,
     carbs,
     protein,
-    fat 
+    fat,
+    netWeight,
+    servingSize
     `,
   sections: `
     ++id,

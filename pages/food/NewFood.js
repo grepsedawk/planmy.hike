@@ -32,13 +32,19 @@ class NewFood extends Renderer {
       this.food.calories,
       "Calories",
     )
-    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs")
+    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat (g)")
+    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs (g)")
     this.proteinInput = this.renderNumberInput(
       this.div,
       this.food.protein,
-      "Protein",
+      "Protein (g)",
     )
-    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat")
+    this.netWeight = this.renderNumberInput(
+      this.div,
+      this.food.netWeight,
+      "Net Weight (g)",
+    )
+    this.servingSize = this.renderNumberInput(this.div, this.food.servingSize, "Serving Size (g)")
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 
@@ -65,6 +71,8 @@ class NewFood extends Renderer {
     this.food.carbs = parseInt(this.carbsInput.value)
     this.food.protein = parseInt(this.proteinInput.value)
     this.food.fat = parseInt(this.fatInput.value)
+    this.food.netWeight = parseInt(this.netWeight.value)
+    this.food.servingSize = parseInt(this.servingSize.value)
     this.food.sectionId = parseInt(this.section.id)
 
     this.food.save()
