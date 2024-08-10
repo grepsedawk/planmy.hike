@@ -35,15 +35,6 @@ nav a {
 nav svg {
   width: 8em;
 }
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #333;
-  }
-  body,
-  a {
-    color: white;
-  }
-}
 
 .float {
   position: fixed;
@@ -107,4 +98,17 @@ nav svg {
   margin: 0.5rem;
   height: 3rem;
   width: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #333;
+  }
+  body,
+  a {
+    color: white;
+  }
+  .card {
+    background-color: #555;
+  } 
 }
