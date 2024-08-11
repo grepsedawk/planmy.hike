@@ -11,6 +11,7 @@ db.version(1).stores({
     ++id,
     sectionId,
     name,
+    quantity,
     calories,
     carbs,
     protein,

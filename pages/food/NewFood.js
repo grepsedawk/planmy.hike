@@ -26,7 +26,11 @@ class NewFood extends Renderer {
     this.div = document.createElement("div")
     this.div.classList.add("card", "float")
     this.nameInput = this.renderNameInput(this.div)
-
+this.quantity = this.renderNumberInput(
+      this.div,
+       this.food.quantity,
+      "Quantity",
+    )
     this.calInput = this.renderNumberInput(
       this.div,
       this.food.calories,
@@ -67,12 +71,13 @@ class NewFood extends Renderer {
     }
 
     this.food.name = this.nameInput.value
-    this.food.calories = parseInt(this.calInput.value)
-    this.food.carbs = parseInt(this.carbsInput.value)
-    this.food.protein = parseInt(this.proteinInput.value)
-    this.food.fat = parseInt(this.fatInput.value)
-    this.food.netWeight = parseInt(this.netWeight.value)
-    this.food.servingSize = parseInt(this.servingSize.value)
+    this.food.quantity = parseFloat(this.quantity.value)
+    this.food.calories = parseFloat(this.calInput.value)
+    this.food.carbs = parseFloat(this.carbsInput.value)
+    this.food.protein = parseFloat(this.proteinInput.value)
+    this.food.fat = parseFloat(this.fatInput.value)
+    this.food.netWeight = parseFloat(this.netWeight.value)
+    this.food.servingSize = parseFloat(this.servingSize.value)
     this.food.sectionId = parseInt(this.section.id)
 
     this.food.save()
