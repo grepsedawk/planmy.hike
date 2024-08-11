@@ -49,10 +49,11 @@ class ShowFood extends Renderer {
     const details = document.createElement("div")
     details.classList.add("details")
 
-    this.addDetail(details, this.food.calories, "cal")
-    this.addDetail(details, this.food.carbs, "carbs", "g")
-    this.addDetail(details, this.food.protein, "protein", "g")
-    this.addDetail(details, this.food.fat, "fat", "g")
+    this.addDetail(details, this.food.netWeight, "net weight", "g")
+    this.addDetail(details, this.food.totalCalories, "cal")
+    this.addDetail(details, this.food.totalCarbs, "carbs", "g")
+    this.addDetail(details, this.food.totalProtein, "protein", "g")
+    this.addDetail(details, this.food.totalFat, "fat", "g")
 
     this.div.appendChild(details)
 

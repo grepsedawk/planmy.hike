@@ -1,7 +1,7 @@
 class ShowTotals {
   static async render(parent, section) {
     new ShowTotals(parent, section)
-      .render().catch((e) => console.error("Error in ShowTotals:", e.message))
+      .render().catch((e) => console.error("Error in ShowTotals:", e.name, e.message))
   }
 
   constructor(parent, section) {
@@ -21,19 +21,19 @@ class ShowTotals {
   }
 
   totalCalories() {
-    return this.foods.reduce((total, food) => total + food.calories, 0)
+    return this.foods.reduce((total, food) => total + food.totalCalories, 0)
   }
 
   totalCarbs() {
-    return this.foods.reduce((total, food) => total + food.carbs, 0)
+    return this.foods.reduce((total, food) => total + food.totalCarbs, 0)
   }
 
   totalProtein() {
-    return this.foods.reduce((total, food) => total + food.protein, 0)
+    return this.foods.reduce((total, food) => total + food.totalProtein, 0)
   }
 
   totalFat() {
-    return this.foods.reduce((total, food) => total + food.fat, 0)
+    return this.foods.reduce((total, food) => total + food.totalFat, 0)
   }
 
   proteinCarbRatio() {
