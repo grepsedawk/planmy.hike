@@ -3,7 +3,7 @@ import SectionsPage from "../pages/sections/SectionsPage.js"
 
 class Router {
   static routes = {
-    404: FoodPage, // NotFoundPage,
+    "/404": SectionsPage, // NotFoundPage,
     "/": SectionsPage, // HomePage,
     "/sections": SectionsPage,
     "/sections/:id/food": FoodPage,
@@ -38,13 +38,14 @@ class Router {
           acc[key] = paramValues[index]
           return acc
         }, additionalParams)
+        console.debug("params", params)
         return new this.routes[route](
           document.getElementById("content"),
           params,
         )
       }
     }
-    return new this.routes["404"](
+    return new this.routes["/404"](
       document.getElementById("content"),
       additionalParams,
     )
@@ -53,6 +54,8 @@ class Router {
   static async route() {
     const { path, urlParams } = this.parseUrl()
     const page = this.matchRoute(path, urlParams)
+    console.debug("Routing to", path, page)
+
 
     return page
       .render()
@@ -65,7 +68,7 @@ class Router {
 
   static async init() {
     console.debug("Starting Router.init()")
-    window.addEventListener("hashchange", () => this.route())
+    window.addEventListener("hashchange", () => this.route().catch((e) => console.error("Error routing:", e.message)))
     await this.route()
     console.debug("Router.init() completed successfully!")
   }

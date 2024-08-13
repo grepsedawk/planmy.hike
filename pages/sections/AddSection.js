@@ -66,10 +66,9 @@ class AddSection extends Renderer {
     this.section.caloriesPerDay = this.caloriesPerDay.value
     this.section.days = this.days.value
 
-    this.section.save()
+    this.section.save().then((id) => window.location = `#/sections/${id}/food`)
 
     this.div.remove()
-    // ShowFood.renderFood(this.food)
   }
 
   validate() {

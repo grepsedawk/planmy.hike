@@ -26,7 +26,7 @@ class FoodPage extends Page {
       await ShowFood.render(document.getElementById("food"), section)
       await NewFood.renderTrigger(quickActions, section)
       await BarcodeScannerRenderer.renderTrigger(quickActions, section)
-    })
+    }).catch((e) => window.location = "#/404") 
   }
 }
 
