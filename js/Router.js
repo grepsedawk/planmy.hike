@@ -1,11 +1,12 @@
 import FoodPage from "../pages/food/FoodPage.js"
 import SectionsPage from "../pages/sections/SectionsPage.js"
 import NotFoundPage from "../pages/404/NotFoundPage.js"
+import HomePage from "../pages/home/index.js"
 
 class Router {
   static routes = {
     "/404": NotFoundPage, 
-    "/": SectionsPage, // HomePage,
+    "/": HomePage,
     "/sections": SectionsPage,
     "/sections/:id/food": FoodPage,
   }
