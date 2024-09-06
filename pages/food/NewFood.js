@@ -31,24 +31,24 @@ this.quantity = this.renderNumberInput(
        this.food.quantity,
       "Quantity",
     )
-    this.calInput = this.renderNumberInput(
-      this.div,
-      this.food.calories,
-      "Calories",
-    )
-    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat (g)")
-    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs (g)")
-    this.proteinInput = this.renderNumberInput(
-      this.div,
-      this.food.protein,
-      "Protein (g)",
-    )
     this.netWeight = this.renderNumberInput(
       this.div,
       this.food.netWeight,
       "Net Weight (g)",
     )
     this.servingSize = this.renderNumberInput(this.div, this.food.servingSize, "Serving Size (g)")
+    this.calInput = this.renderNumberInput(
+      this.div,
+      this.food.calories,
+      "Calories [per serving]",
+    )
+    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat (g) [per serving]")
+    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs (g) [per serving]")
+    this.proteinInput = this.renderNumberInput(
+      this.div,
+      this.food.protein,
+      "Protein (g) [per serving]",
+    )
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 

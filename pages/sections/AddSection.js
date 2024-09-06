@@ -46,11 +46,13 @@ class AddSection extends Renderer {
   }
 
   renderNameInput(parent) {
+    const div = document.createElement("div")
     const input = document.createElement("input")
     input.placeholder = "Name"
     input.value = this.section.name
 
-    parent.appendChild(input)
+    div.appendChild(input)
+    parent.appendChild(div)
 
     return input
   }

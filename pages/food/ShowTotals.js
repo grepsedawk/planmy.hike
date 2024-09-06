@@ -1,10 +1,13 @@
-class ShowTotals {
+import Renderer from "../../js/Renderer.js"
+
+class ShowTotals extends Renderer {
   static async render(parent, section) {
     new ShowTotals(parent, section)
       .render().catch((e) => console.error("Error in ShowTotals:", e.name, e.message))
   }
 
   constructor(parent, section) {
+    super()
     this.parent = parent
     this.section = section
   }
@@ -12,12 +15,28 @@ class ShowTotals {
   async render() {
     this.foods = await this.section.foods.toArray()
 
-    this.parent.innerHTML = `<p>Total Calories: ${this.totalCalories()}/${this.section.requiredCalories }</p>
-<p>Total Carbs: ${this.totalCarbs()}</p>
-<p>Total Protein: ${this.totalProtein()}</p>
-<p>Total Fat: ${this.totalFat()}</p>
-<p>Protein / Carb: ${this.proteinCarbRatio()}</p>
-    `
+    this.div = document.createElement("div")
+    this.div.classList.add("card")
+
+    const title = document.createElement("h3")
+    title.innerText = "Stats"
+    this.div.appendChild(title)
+
+    const details = document.createElement("div")
+    details.classList.add("details")
+
+    this.addDetail(details, this.totalCalories(), "Total Calories")
+    this.addDetail(details, this.totalCarbs(), "Total Carbs", "g")
+    this.addDetail(details, this.totalProtein(), "Total Protein", "g")
+    this.addDetail(details, this.totalFat(), "Total Fat", "g")
+    this.addDetail(details, this.proteinCarbRatio(), "Protein / Carb")
+    this.addDetail(details, this.caloriesPerOunce(), "Calories / Ounce")
+    this.addDetail(details, this.totalNetWeight(), "Total Net Weight", "g")
+    this.addDetail(details, this.totalNetWeight() / 453.592, "Total Net Weight", "lbs")
+
+    this.div.appendChild(details)
+    this.parent.innerHTML = ""
+    this.parent.appendChild(this.div)
   }
 
   totalCalories() {
@@ -38,6 +57,14 @@ class ShowTotals {
 
   proteinCarbRatio() {
     return this.totalProtein() / this.totalCarbs()
+  }
+
+  totalNetWeight() {
+    return this.foods.reduce((total, food) => total + food.netWeight, 0)
+  }
+
+  caloriesPerOunce() {
+    return this.totalCalories() / (this.totalNetWeight() * 28.3495)
   }
 }
 

@@ -21,22 +21,6 @@ class ShowFood extends Renderer {
     return foodRenderer
   }
 
-  addDetail(parent, value, label, unit = "") {
-    const container = document.createElement("div")
-    const valueDisplay = document.createElement("div")
-    const labelDisplay = document.createElement("div")
-
-    valueDisplay.innerText = value + unit
-    labelDisplay.innerText = label
-
-    container.appendChild(valueDisplay)
-    container.appendChild(labelDisplay)
-
-    parent.appendChild(container)
-
-    return container
-  }
-
   render() {
     this.div = document.createElement("div")
     this.div.classList.add("card")
@@ -50,10 +34,12 @@ class ShowFood extends Renderer {
     details.classList.add("details")
 
     this.addDetail(details, this.food.netWeight, "net weight", "g")
-    this.addDetail(details, this.food.totalCalories, "cal")
-    this.addDetail(details, this.food.totalCarbs, "carbs", "g")
-    this.addDetail(details, this.food.totalProtein, "protein", "g")
-    this.addDetail(details, this.food.totalFat, "fat", "g")
+    this.addDetail(details, this.food.totalCalories, "total cal")
+    this.addDetail(details, this.food.totalCarbs, "total carbs", "g")
+    this.addDetail(details, this.food.totalProtein, "total protein", "g")
+    this.addDetail(details, this.food.totalFat, "total fat", "g")
+    this.addDetail(details, this.food.proteinToCarbsRatio, "P:C ratio")
+    this.addDetail(details, this.food.caloriePerOunce, "cal/oz")
 
     this.div.appendChild(details)
 

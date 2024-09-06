@@ -1,11 +1,11 @@
 class Renderer {
   renderNumberInput(parent, initialValue = 0, label = null) {
-    let field = document.createElement("input")
+    const field = document.createElement("input")
     field.type = "number"
     field.value = initialValue
 
     if (label) {
-      let labelElement = document.createElement("label")
+      const labelElement = document.createElement("label")
       labelElement.innerText = label
       labelElement.appendChild(field)
       parent.appendChild(labelElement)
@@ -19,7 +19,7 @@ class Renderer {
   }
 
   renderButton(parent, text, onClick) {
-    let button = document.createElement("button")
+    const button = document.createElement("button")
     button.innerText = text
     button.addEventListener("click", onClick)
 
@@ -27,6 +27,23 @@ class Renderer {
 
     return button
   }
+
+  addDetail(parent, value, label, unit = "", round = 2) {
+    const container = document.createElement("div")
+    const valueDisplay = document.createElement("div")
+    const labelDisplay = document.createElement("div")
+
+    valueDisplay.innerText = `${value.toFixed(round)} ${unit}`.trim()
+    labelDisplay.innerText = label
+
+    container.appendChild(valueDisplay)
+    container.appendChild(labelDisplay)
+
+    parent.appendChild(container)
+
+    return container
+  }
+
 }
 
 export default Renderer

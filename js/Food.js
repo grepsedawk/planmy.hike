@@ -28,9 +28,17 @@ class Food {
     return this.carbs * this.servings
   }
   
-  get totalProtein() {                                                                                                                                                      
+  get totalProtein() {
     return this.protein * this.servings
   } 
+
+  get caloriePerOunce() {
+    return this.totalCalories / (this.netWeight * this.quantity / 28.3495)
+  }
+
+  get proteinToCarbsRatio() {
+    return this.totalProtein / this.totalCarbs
+  }
 }
 
 export default Food
