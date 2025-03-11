@@ -3,7 +3,8 @@ import Renderer from "../../js/Renderer.js"
 class ShowTotals extends Renderer {
   static async render(parent, section) {
     new ShowTotals(parent, section)
-      .render().catch((e) => console.error("Error in ShowTotals:", e.name, e.message))
+      .render()
+      .catch((e) => console.error("Error in ShowTotals:", e.name, e.message))
   }
 
   constructor(parent, section) {
@@ -25,14 +26,20 @@ class ShowTotals extends Renderer {
     const details = document.createElement("div")
     details.classList.add("details")
 
-    this.addDetail(details, this.totalCalories(), "Total Calories")
+    this.addDetail(details, this.totalCalories(), "Calories")
+    this.addDetail(details, this.goalCalories(), "Goal Calories")
     this.addDetail(details, this.totalCarbs(), "Total Carbs", "g")
     this.addDetail(details, this.totalProtein(), "Total Protein", "g")
     this.addDetail(details, this.totalFat(), "Total Fat", "g")
     this.addDetail(details, this.proteinCarbRatio(), "Protein / Carb")
     this.addDetail(details, this.caloriesPerOunce(), "Calories / Ounce")
     this.addDetail(details, this.totalNetWeight(), "Total Net Weight", "g")
-    this.addDetail(details, this.totalNetWeight() / 453.592, "Total Net Weight", "lbs")
+    this.addDetail(
+      details,
+      this.totalNetWeight() / 453.592,
+      "Total Net Weight",
+      "lbs",
+    )
 
     this.div.appendChild(details)
     this.parent.innerHTML = ""
@@ -41,6 +48,10 @@ class ShowTotals extends Renderer {
 
   totalCalories() {
     return this.foods.reduce((total, food) => total + food.totalCalories, 0)
+  }
+
+  goalCalories() {
+    return this.section.caloriesPerDay * this.section.days
   }
 
   totalCarbs() {

@@ -110,7 +110,7 @@ nav svg {
   }
   .card {
     background-color: #555;
-  } 
+  }
 }
 
 label {
@@ -122,4 +122,9 @@ input {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.editable {
+  cursor: pointer;
+  border: 1px dashed #aaa;
 }
