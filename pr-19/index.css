@@ -1,0 +1,143 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em 1em;
+  font-family: sans-serif;
+}
+pre {
+  padding: 1em;
+  max-width: 100%;
+  overflow-x: auto;
+}
+img {
+  height: auto;
+  width: 100%;
+}
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 1em;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+nav a {
+  padding: 1em;
+}
+nav svg {
+  width: 8em;
+}
+
+.float {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 90vh;
+  max-width: 90vw;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+@media (max-height: 700px) {
+  .float {
+    top: 5%;
+    transform: translate(-50%, 0);
+    max-height: 85vh;
+  }
+}
+
+.card {
+  background-color: #fff;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.card .details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.card .details div {
+  margin: 0.5rem;
+}
+
+.card .details div div {
+  text-align: center;
+}
+
+.card button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card button.red {
+  background-color: #ff4136;
+}
+
+.error {
+  color: red;
+}
+
+.quickActions {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.quickActions button {
+  margin: 0.5rem;
+  height: 3rem;
+  width: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #333;
+  }
+  body,
+  a {
+    color: white;
+  }
+  .card {
+    background-color: #555;
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.editable {
+  cursor: pointer;
+  border: 1px dashed #aaa;
+}
