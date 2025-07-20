@@ -944,7 +944,7 @@ p {
 }
 
 .stat-item {
-  background: var(--gray-50);
+  background: var(--bg-secondary);
   padding: var(--spacing-3);
   border-radius: var(--radius-base);
   text-align: center;
