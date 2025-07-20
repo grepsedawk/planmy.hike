@@ -19,10 +19,10 @@ class Section {
   get foods() {
     return db.foods.where({ sectionId: this.id })
   }
-  
+
   get requiredCalories() {
     return this.caloriesPerDay * this.days
-  } 
+  }
 }
 
 export default Section
