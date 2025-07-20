@@ -823,7 +823,7 @@ p {
 }
 
 .config-item {
-  background: var(--gray-50);
+  background: var(--bg-secondary);
   border-radius: var(--radius-base);
   padding: var(--spacing-3);
   text-align: center;
@@ -833,7 +833,7 @@ p {
 }
 
 .config-item:hover {
-  background: var(--gray-100);
+  background: var(--bg-tertiary);
   border-color: var(--primary-200);
 }
 
