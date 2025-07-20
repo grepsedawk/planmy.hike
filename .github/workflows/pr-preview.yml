@@ -5,9 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
   pull-requests: write
 
 concurrency:
@@ -16,9 +14,6 @@ concurrency:
 
 jobs:
   deploy-preview:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR code
@@ -26,39 +21,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Checkout existing gh-pages for preservation
-        uses: actions/checkout@v4
+      - name: Deploy PR Preview
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          ref: gh-pages
-          path: gh-pages-existing
-        continue-on-error: true
-        
-      - name: Create preview deployment structure
-        run: |
-          # Create deployment directory
-          mkdir -p deploy
+          folder: '.'
+          target-folder: pr-${{ github.event.number }}
+          clean: false  # Don't clean the entire site
           
-          # Copy existing gh-pages content to preserve main branch app and other PR previews
-          if [ -d "gh-pages-existing" ]; then
-            cp -r gh-pages-existing/* deploy/ 2>/dev/null || true
-          fi
-          
-          # Create the PR preview directory and copy current PR files (exclude hidden files and deployment directories)
-          mkdir -p deploy/pr-${{ github.event.number }}
-          cp -r *.html *.css *.js *.json *.md js/ pages/ deploy/pr-${{ github.event.number }}/ 2>/dev/null || true
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: deploy
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        
       - name: Comment on PR
         uses: actions/github-script@v7
         with:

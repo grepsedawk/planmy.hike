@@ -6,9 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -16,45 +14,14 @@ concurrency:
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Checkout existing gh-pages for PR previews
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages-existing
-        continue-on-error: true
-        
-      - name: Prepare deployment directory
-        run: |
-          # Create deployment directory
-          mkdir -p deploy
-          
-          # Copy main branch files to deploy directory
-          cp *.html deploy/ 2>/dev/null || true
-          cp *.css deploy/ 2>/dev/null || true
-          cp -r js/ deploy/ 2>/dev/null || true
-          cp -r pages/ deploy/ 2>/dev/null || true
-          
-          # Copy existing PR previews if they exist
-          if [ -d "gh-pages-existing" ]; then
-            cp -r gh-pages-existing/pr-* deploy/ 2>/dev/null || true
-          fi
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: deploy
-          
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: '.'
+          clean: false  # Don't clean to preserve PR previews
+          clean-exclude: 'pr-*'  # Preserve PR preview folders
