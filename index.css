@@ -11,7 +11,6 @@ body {
   font-family: sans-serif;
 }
 pre {
-  
   padding: 1em;
   max-width: 100%;
   overflow-x: auto;
@@ -42,6 +41,18 @@ nav svg {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  max-height: 90vh;
+  max-width: 90vw;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+@media (max-height: 700px) {
+  .float {
+    top: 5%;
+    transform: translate(-50%, 0);
+    max-height: 85vh;
+  }
 }
 
 .card {
@@ -51,6 +62,7 @@ nav svg {
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .card .details {

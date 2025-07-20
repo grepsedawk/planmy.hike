@@ -17,13 +17,24 @@ class BarcodeScannerRenderer {
   }
 
   start() {
-    let div = document.createElement("div")
-    div.style = "position: fixed; top: 0; left: 0; width: 100vw;"
+    this.scannerDiv = document.createElement("div")
+    this.scannerDiv.style = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 1000;"
+    
+    // Create close button
+    let closeButton = document.createElement("button")
+    closeButton.innerText = "✕"
+    closeButton.style = "position: absolute; top: 20px; right: 20px; z-index: 1001; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; color: #333;"
+    closeButton.addEventListener("click", () => {
+      this.close()
+    })
+    
     let scanner = document.createElement("div")
     scanner.id = "scanner"
-    scanner.style = "width: 100%"
-    div.appendChild(scanner)
-    document.body.appendChild(div)
+    scanner.style = "width: 100%; height: 100%;"
+    
+    this.scannerDiv.appendChild(closeButton)
+    this.scannerDiv.appendChild(scanner)
+    document.body.appendChild(this.scannerDiv)
 
     this.html5QrCode = new Html5Qrcode("scanner")
     this.html5QrCode.start(
@@ -49,11 +60,32 @@ class BarcodeScannerRenderer {
         this.html5QrCode
           .stop()
           .then(() => {
-            div.remove()
+            this.close()
           })
           .catch((err) => {})
       },
     )
+  }
+
+  close() {
+    if (this.html5QrCode) {
+      this.html5QrCode.stop().then(() => {
+        if (this.scannerDiv) {
+          this.scannerDiv.remove()
+          this.scannerDiv = null
+        }
+      }).catch(() => {
+        if (this.scannerDiv) {
+          this.scannerDiv.remove()
+          this.scannerDiv = null
+        }
+      })
+    } else {
+      if (this.scannerDiv) {
+        this.scannerDiv.remove()
+        this.scannerDiv = null
+      }
+    }
   }
 
   cachedBarcodeLookup(code) {
