@@ -39,8 +39,11 @@ jobs:
           # Create deployment directory
           mkdir -p deploy
           
-          # Copy main branch files to root (exclude hidden files and deployment directories)
-          cp -r *.html *.css *.js *.json *.md js/ pages/ deploy/ 2>/dev/null || true
+          # Copy main branch files to deploy directory
+          cp *.html deploy/ 2>/dev/null || true
+          cp *.css deploy/ 2>/dev/null || true
+          cp -r js/ deploy/ 2>/dev/null || true
+          cp -r pages/ deploy/ 2>/dev/null || true
           
           # Copy existing PR previews if they exist
           if [ -d "gh-pages-existing" ]; then
