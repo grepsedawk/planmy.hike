@@ -17,7 +17,9 @@ This repository is configured with automatic PR preview deployments. When you op
 3. **Live Updates**: The preview updates automatically when you push new commits
 4. **Automatic Cleanup**: Preview deployments are cleaned up when PRs are closed
 
-Preview URLs follow the pattern: `https://grepsedawk.github.io/planmy.hike/pr-{number}/`
+**Deployment Structure:**
+- **Main app**: The `main` branch is deployed to the root URL: `https://grepsedawk.github.io/planmy.hike/`
+- **PR previews**: Each PR gets its own preview URL: `https://grepsedawk.github.io/planmy.hike/pr-{number}/`
 
 ### Local Development
 

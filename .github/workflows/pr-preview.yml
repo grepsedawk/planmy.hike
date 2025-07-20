@@ -29,67 +29,31 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
-      - name: Checkout main branch for existing pages
+      - name: Checkout existing gh-pages for preservation
         uses: actions/checkout@v4
         with:
           ref: gh-pages
-          path: gh-pages
+          path: gh-pages-existing
         continue-on-error: true
         
-      - name: Create preview directory structure
+      - name: Create preview deployment structure
         run: |
-          # Create the preview directory if it doesn't exist
-          mkdir -p gh-pages/pr-${{ github.event.number }}
+          # Create deployment directory
+          mkdir -p deploy
           
-          # Copy the current PR files to the preview directory
-          find . -maxdepth 1 -not -name gh-pages -not -name . -not -name .git -exec cp -r {} gh-pages/pr-${{ github.event.number }}/ \;
-          
-          # Create an index.html for the root if it doesn't exist
-          if [ ! -f gh-pages/index.html ]; then
-            cat > gh-pages/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>PR Previews - planmy.hike</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 40px; }
-              .preview-link { display: block; margin: 10px 0; padding: 10px; border: 1px solid #ddd; text-decoration: none; color: #333; }
-              .preview-link:hover { background-color: #f5f5f5; }
-            </style>
-          </head>
-          <body>
-            <h1>PR Previews</h1>
-            <p>This page lists all active PR previews for the planmy.hike repository.</p>
-            <div id="previews"></div>
-            <script>
-              // Auto-discover PR preview directories
-              fetch('./')
-                .then(response => response.text())
-                .then(html => {
-                  const matches = html.match(/href="pr-\d+\/"/g) || [];
-                  const previews = matches.map(match => match.slice(6, -2));
-                  const container = document.getElementById('previews');
-                  if (previews.length === 0) {
-                    container.innerHTML = '<p>No active PR previews found.</p>';
-                  } else {
-                    container.innerHTML = previews.map(pr => 
-                      `<a href="${pr}/" class="preview-link">Preview for ${pr.toUpperCase()}</a>`
-                    ).join('');
-                  }
-                })
-                .catch(() => {
-                  document.getElementById('previews').innerHTML = '<p>Unable to load preview list.</p>';
-                });
-            </script>
-          </body>
-          </html>
-          EOF
+          # Copy existing gh-pages content to preserve main branch app and other PR previews
+          if [ -d "gh-pages-existing" ]; then
+            cp -r gh-pages-existing/* deploy/ 2>/dev/null || true
           fi
+          
+          # Create the PR preview directory and copy current PR files
+          mkdir -p deploy/pr-${{ github.event.number }}
+          find . -maxdepth 1 -not -name deploy -not -name gh-pages-existing -not -name . -not -name .git -exec cp -r {} deploy/pr-${{ github.event.number }}/ \;
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: gh-pages
+          path: deploy
           
       - name: Deploy to GitHub Pages
         id: deployment
