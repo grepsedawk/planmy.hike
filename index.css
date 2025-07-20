@@ -484,12 +484,19 @@ p {
   color: var(--text-tertiary);
 }
 
-/* Stats Grid */
+/* Stats Grids */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-6);
+}
+
+.stats-mini {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
 }
 
 .stat-card {
