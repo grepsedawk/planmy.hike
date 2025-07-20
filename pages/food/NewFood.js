@@ -83,7 +83,7 @@ this.quantity = this.renderNumberInput(
     this.food.save()
 
     this.div.remove()
-    ShowFood.renderFood(this.food, this.section)
+    ShowFood.renderFood(document.getElementById("food"), this.food, this.section)
 
     ShowTotals.render(document.getElementById("totals"), this.section)
   }

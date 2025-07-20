@@ -33,11 +33,12 @@ class Food {
   } 
 
   get caloriePerOunce() {
-    return this.totalCalories / (this.netWeight * this.quantity / 28.3495)
+    const weightInOunces = (this.netWeight * this.quantity) / 28.3495
+    return weightInOunces > 0 ? this.totalCalories / weightInOunces : 0
   }
 
   get proteinToCarbsRatio() {
-    return this.totalProtein / this.totalCarbs
+    return this.totalCarbs > 0 ? this.totalProtein / this.totalCarbs : 0
   }
 }
 
