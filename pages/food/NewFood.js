@@ -25,15 +25,16 @@ class NewFood extends Renderer {
   render() {
     this.div = document.createElement("div")
     this.div.classList.add("card", "float")
-    
+
     // Add close button
     this.closeButton = this.renderButton(this.div, "✕", () => this.close())
-    this.closeButton.style.cssText = "position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: #ff4136; font-size: 16px;"
-    
+    this.closeButton.style.cssText =
+      "position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: #ff4136; font-size: 16px; display: flex; align-items: center; justify-content: center;"
+
     this.nameInput = this.renderNameInput(this.div)
-this.quantity = this.renderNumberInput(
+    this.quantity = this.renderNumberInput(
       this.div,
-       this.food.quantity,
+      this.food.quantity,
       "Quantity",
     )
     this.netWeight = this.renderNumberInput(
@@ -41,14 +42,26 @@ this.quantity = this.renderNumberInput(
       this.food.netWeight,
       "Net Weight (g)",
     )
-    this.servingSize = this.renderNumberInput(this.div, this.food.servingSize, "Serving Size (g)")
+    this.servingSize = this.renderNumberInput(
+      this.div,
+      this.food.servingSize,
+      "Serving Size (g)",
+    )
     this.calInput = this.renderNumberInput(
       this.div,
       this.food.calories,
       "Calories [per serving]",
     )
-    this.fatInput = this.renderNumberInput(this.div, this.food.fat, "Fat (g) [per serving]")
-    this.carbsInput = this.renderNumberInput(this.div, this.food.carbs, "Carbs (g) [per serving]")
+    this.fatInput = this.renderNumberInput(
+      this.div,
+      this.food.fat,
+      "Fat (g) [per serving]",
+    )
+    this.carbsInput = this.renderNumberInput(
+      this.div,
+      this.food.carbs,
+      "Carbs (g) [per serving]",
+    )
     this.proteinInput = this.renderNumberInput(
       this.div,
       this.food.protein,
@@ -88,7 +101,11 @@ this.quantity = this.renderNumberInput(
     this.food.save()
 
     this.div.remove()
-    ShowFood.renderFood(document.getElementById("food"), this.food, this.section)
+    ShowFood.renderFood(
+      document.getElementById("food"),
+      this.food,
+      this.section,
+    )
 
     ShowTotals.render(document.getElementById("totals"), this.section)
   }
