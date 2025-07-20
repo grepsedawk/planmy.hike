@@ -1,34 +1,40 @@
-const CACHE_NAME = "planmyhike-v1"
+const CACHE_NAME = "planmyhike-v2"
+// Get the base path from the service worker location
+const BASE_PATH = self.location.pathname.substring(
+  0,
+  self.location.pathname.lastIndexOf("/") + 1,
+)
+
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/index.css",
-  "/manifest.json",
-  "/js/index.js",
-  "/js/Router.js",
-  "/js/Page.js",
-  "/js/Renderer.js",
-  "/js/Food.js",
-  "/js/Section.js",
-  "/js/dexie.min.js",
-  "/js/html5-qrcode.min.js",
-  "/pages/home/index.html",
-  "/pages/home/index.js",
-  "/pages/sections/SectionsPage.js",
-  "/pages/sections/AddSection.js",
-  "/pages/sections/Section/index.html",
-  "/pages/food/index.html",
-  "/pages/food/FoodPage.js",
-  "/pages/food/BarcodeScannerRenderer.js",
-  "/pages/food/ConfigureSection.js",
-  "/pages/food/NewFood.js",
-  "/pages/food/ShowFood.js",
-  "/pages/food/ShowTotals.js",
-  "/pages/404/index.html",
-  "/pages/404/NotFoundPage.js",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png",
-]
+  "./",
+  "./index.html",
+  "./index.css",
+  "./manifest.json",
+  "./js/index.js",
+  "./js/Router.js",
+  "./js/Page.js",
+  "./js/Renderer.js",
+  "./js/Food.js",
+  "./js/Section.js",
+  "./js/dexie.min.js",
+  "./js/html5-qrcode.min.js",
+  "./pages/home/index.html",
+  "./pages/home/index.js",
+  "./pages/sections/SectionsPage.js",
+  "./pages/sections/AddSection.js",
+  "./pages/sections/Section/index.html",
+  "./pages/food/index.html",
+  "./pages/food/FoodPage.js",
+  "./pages/food/BarcodeScannerRenderer.js",
+  "./pages/food/ConfigureSection.js",
+  "./pages/food/NewFood.js",
+  "./pages/food/ShowFood.js",
+  "./pages/food/ShowTotals.js",
+  "./pages/404/index.html",
+  "./pages/404/NotFoundPage.js",
+  "./icons/icon-192x192.png",
+  "./icons/icon-512x512.png",
+].map((url) => new URL(url, self.location).href)
 
 // Install event - cache app shell
 self.addEventListener("install", (event) => {
@@ -57,7 +63,7 @@ self.addEventListener("fetch", (event) => {
       .catch(() => {
         // If both cache and network fail, return offline page for navigations
         if (event.request.mode === "navigate") {
-          return caches.match("/index.html")
+          return caches.match(new URL("./index.html", self.location).href)
         }
       }),
   )
