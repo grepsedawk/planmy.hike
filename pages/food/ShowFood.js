@@ -13,7 +13,9 @@ class ShowFood extends Renderer {
     parent.innerHTML = "" // Clear previous food items
     section.foods
       .toArray()
-      .then((foods) => foods.forEach((food) => this.renderFood(parent, food, section)))
+      .then((foods) =>
+        foods.forEach((food) => this.renderFood(parent, food, section)),
+      )
   }
 
   static renderFood(parent, food, section) {
