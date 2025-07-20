@@ -14,7 +14,25 @@ class NewFood extends Renderer {
     const button = document.createElement("button")
     button.classList.add("btn", "btn-primary", "btn-sm")
     button.innerHTML = `<span class="material-icons">add</span> Add Food`
-    button.addEventListener("click", () => new NewFood(section).render())
+    button.addEventListener("click", () => {
+      // Create a simple test food item
+      const food = new Food()
+      food.name = "Sample Trail Mix"
+      food.quantity = 1
+      food.calories = 150
+      food.carbs = 15
+      food.protein = 5
+      food.fat = 8
+      food.netWeight = 50
+      food.servingSize = 50
+      food.sectionId = parseInt(section.id)
+      
+      food.save()
+      
+      // Refresh the displays
+      ShowFood.render(document.getElementById("food"), section)
+      ShowTotals.render(document.getElementById("totals"), section)
+    })
 
     parent.appendChild(button)
   }
