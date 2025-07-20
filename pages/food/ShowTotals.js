@@ -67,7 +67,8 @@ class ShowTotals extends Renderer {
   }
 
   proteinCarbRatio() {
-    return this.totalProtein() / this.totalCarbs()
+    const totalCarbs = this.totalCarbs()
+    return totalCarbs > 0 ? this.totalProtein() / totalCarbs : 0
   }
 
   totalNetWeight() {
@@ -75,7 +76,8 @@ class ShowTotals extends Renderer {
   }
 
   caloriesPerOunce() {
-    return this.totalCalories() / (this.totalNetWeight() * 28.3495)
+    const totalWeight = this.totalNetWeight()
+    return totalWeight > 0 ? this.totalCalories() / (totalWeight / 28.3495) : 0
   }
 }
 
