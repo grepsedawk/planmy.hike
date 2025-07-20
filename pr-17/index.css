@@ -952,17 +952,17 @@ p {
 }
 
 .stat-item.primary {
-  background: var(--primary-50);
+  background: var(--bg-tertiary);
   border-color: var(--primary-200);
 }
 
 .stat-item.success {
-  background: #e8f5e8;
+  background: var(--bg-tertiary);
   border-color: var(--success-500);
 }
 
 .stat-item.warning {
-  background: #fff3e0;
+  background: var(--bg-tertiary);
   border-color: var(--warning-500);
 }
 
