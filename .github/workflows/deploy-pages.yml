@@ -39,16 +39,13 @@ jobs:
           # Create deployment directory
           mkdir -p deploy
           
-          # Copy main branch files to root
-          find . -maxdepth 1 -not -name deploy -not -name gh-pages-existing -not -name . -not -name .git -exec cp -r {} deploy/ \;
+          # Copy main branch files to root (exclude hidden files and deployment directories)
+          cp -r *.html *.css *.js *.json *.md js/ pages/ deploy/ 2>/dev/null || true
           
           # Copy existing PR previews if they exist
           if [ -d "gh-pages-existing" ]; then
-            find gh-pages-existing -name "pr-*" -type d -exec cp -r {} deploy/ \;
+            cp -r gh-pages-existing/pr-* deploy/ 2>/dev/null || true
           fi
-          
-          # Remove the gh-pages-existing directory from deploy
-          rm -rf deploy/gh-pages-existing 2>/dev/null || true
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

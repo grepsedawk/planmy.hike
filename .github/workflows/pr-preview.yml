@@ -46,9 +46,9 @@ jobs:
             cp -r gh-pages-existing/* deploy/ 2>/dev/null || true
           fi
           
-          # Create the PR preview directory and copy current PR files
+          # Create the PR preview directory and copy current PR files (exclude hidden files and deployment directories)
           mkdir -p deploy/pr-${{ github.event.number }}
-          find . -maxdepth 1 -not -name deploy -not -name gh-pages-existing -not -name . -not -name .git -exec cp -r {} deploy/pr-${{ github.event.number }}/ \;
+          cp -r *.html *.css *.js *.json *.md js/ pages/ deploy/pr-${{ github.event.number }}/ 2>/dev/null || true
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
