@@ -3,15 +3,17 @@ import NewFood from "./NewFood.js"
 
 class BarcodeScannerRenderer {
   config = { fps: 10, qrbox: { width: 250, height: 250 } }
-  
+
   constructor(section) {
     this.section = section
-  } 
+  }
 
   static renderTrigger(parent, section) {
     const button = document.createElement("button")
     button.innerText = "📷"
-    button.addEventListener("click", () => new BarcodeScannerRenderer(section).start())
+    button.addEventListener("click", () =>
+      new BarcodeScannerRenderer(section).start(),
+    )
 
     parent.appendChild(button)
   }
@@ -56,7 +58,10 @@ class BarcodeScannerRenderer {
             food.netWeight = data["product"]["product_quantity"]
 
             return new NewFood(this.section, food).render()
-          }).catch((e) => console.error("Error fetching/parsing barcode:", e.message))
+          })
+          .catch((e) =>
+            console.error("Error fetching/parsing barcode:", e.message),
+          )
         this.html5QrCode
           .stop()
           .then(() => {
