@@ -92,6 +92,15 @@
   /* Transitions */
   --transition-base: all 0.15s ease-in-out;
   --transition-colors: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+
+  /* Default Semantic Colors (Light Mode Fallback) */
+  --bg-primary: #ffffff;
+  --bg-secondary: var(--gray-50);
+  --bg-tertiary: var(--gray-100);
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-700);
+  --text-tertiary: var(--gray-500);
+  --border-color: var(--gray-300);
 }
 
 /* Dark Mode Variables */
