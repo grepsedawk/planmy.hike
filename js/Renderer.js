@@ -33,7 +33,8 @@ class Renderer {
     const valueDisplay = document.createElement("div")
     const labelDisplay = document.createElement("div")
 
-    valueDisplay.innerText = `${value.toFixed(round)} ${unit}`.trim()
+    const numValue = value == null ? 0 : parseFloat(value) || 0
+    valueDisplay.innerText = `${numValue.toFixed(round)} ${unit}`.trim()
     labelDisplay.innerText = label
 
     container.appendChild(valueDisplay)

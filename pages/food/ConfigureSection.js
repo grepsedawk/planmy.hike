@@ -33,6 +33,36 @@ class ConfigureSection extends Renderer {
 
     this.addEditableElement(
       details,
+      this.section.startMile || 0,
+      "start mile",
+      "number",
+      (value) => {
+        this.section.startMile = value
+        this.section.save()
+      },
+      {
+        unit: "mi",
+        round: 1,
+      },
+    )
+
+    this.addEditableElement(
+      details,
+      this.section.endMile || 0,
+      "end mile",
+      "number",
+      (value) => {
+        this.section.endMile = value
+        this.section.save()
+      },
+      {
+        unit: "mi",
+        round: 1,
+      },
+    )
+
+    this.addEditableElement(
+      details,
       this.section.currentMile || 0,
       "current mile",
       "number",
