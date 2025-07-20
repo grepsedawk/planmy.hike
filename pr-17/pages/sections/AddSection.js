@@ -9,7 +9,11 @@ class AddSection extends Renderer {
 
   static renderTrigger(parent) {
     const button = document.createElement("button")
-    button.innerText = "➕"
+    button.classList.add("btn", "btn-primary")
+    button.innerHTML = `
+      <span class="material-icons">add</span>
+      Create New Section
+    `
     button.addEventListener("click", () => AddSection.render())
 
     parent.appendChild(button)
