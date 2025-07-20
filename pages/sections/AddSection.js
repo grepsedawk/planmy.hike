@@ -39,6 +39,13 @@ class AddSection extends Renderer {
       "Cal/day",
     )
     this.days = this.renderNumberInput(this.div, this.section.days, "Days")
+    
+    // Add GPS tracking checkbox
+    this.gpsTrackingCheckbox = this.renderCheckbox(
+      this.div,
+      this.section.gpsTrackingEnabled || false,
+      "Enable GPS Tracking (PCT)"
+    )
 
     this.saveButton = this.renderButton(this.div, "Save", () => this.save())
 
@@ -67,6 +74,8 @@ class AddSection extends Renderer {
     this.section.endMile = this.endMile.value
     this.section.caloriesPerDay = this.caloriesPerDay.value
     this.section.days = this.days.value
+    this.section.gpsTrackingEnabled = this.gpsTrackingCheckbox.checked
+    this.section.trail = "PCT" // Default to PCT for now
 
     this.section.save().then((id) => window.location = `#/sections/${id}/food`)
 

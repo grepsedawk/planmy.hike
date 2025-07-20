@@ -28,6 +28,25 @@ class Renderer {
     return button
   }
 
+  renderCheckbox(parent, initialValue = false, label = null) {
+    const field = document.createElement("input")
+    field.type = "checkbox"
+    field.checked = initialValue
+
+    if (label) {
+      const labelElement = document.createElement("label")
+      labelElement.innerText = label
+      labelElement.appendChild(field)
+      parent.appendChild(labelElement)
+
+      return field
+    }
+
+    parent.appendChild(field)
+
+    return field
+  }
+
   addDetail(parent, value, label, unit = "", round = 2) {
     const container = document.createElement("div")
     const valueDisplay = document.createElement("div")

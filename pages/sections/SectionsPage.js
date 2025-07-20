@@ -26,12 +26,44 @@ class SectionPage extends Page {
 
   renderSection(section) {
     let display = document.createElement("div")
-    display.innerText = section.name
+    display.classList.add("section-item")
+    
+    // Section name and basic info
+    const nameDiv = document.createElement("div")
+    nameDiv.classList.add("section-name")
+    nameDiv.innerText = section.name
+    display.appendChild(nameDiv)
+    
+    // Mile information
+    const mileInfo = document.createElement("div")
+    mileInfo.classList.add("section-miles")
+    
+    let mileText = `Miles: ${section.startMile || 0} - ${section.endMile || 0}`
+    if (section.currentMile) {
+      mileText += ` (Current: ${section.currentMile})`
+      const progress = section.progressPercentage
+      if (progress > 0) {
+        mileText += ` [${progress.toFixed(1)}%]`
+      }
+    }
+    
+    mileInfo.innerText = mileText
+    display.appendChild(mileInfo)
+    
+    // GPS tracking status
+    if (section.gpsTrackingEnabled) {
+      const gpsStatus = document.createElement("div")
+      gpsStatus.classList.add("gps-status")
+      gpsStatus.innerText = "📍 GPS Tracking Enabled"
+      gpsStatus.style.color = "#28a745"
+      gpsStatus.style.fontSize = "0.9em"
+      display.appendChild(gpsStatus)
+    }
+    
     display.addEventListener(
       "click",
-      () => (window.location = `#/sections/${section.id}/food`),
+      () => (window.location = `#/sections/${section.id}`),
     )
-    //   display.addEventListener("click", () => AddSection.render(section))
 
     this.parent.appendChild(display)
   }
