@@ -25,6 +25,11 @@ class NewFood extends Renderer {
   render() {
     this.div = document.createElement("div")
     this.div.classList.add("card", "float")
+    
+    // Add close button
+    this.closeButton = this.renderButton(this.div, "✕", () => this.close())
+    this.closeButton.style.cssText = "position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: #ff4136; font-size: 16px;"
+    
     this.nameInput = this.renderNameInput(this.div)
     this.quantity = this.renderNumberInput(
       this.div,
@@ -127,6 +132,10 @@ class NewFood extends Renderer {
     })
 
     this.div.appendChild(errorDiv)
+  }
+
+  close() {
+    this.div.remove()
   }
 }
 
