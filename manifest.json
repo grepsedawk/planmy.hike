@@ -2,12 +2,12 @@
   "name": "Plan My Hike",
   "short_name": "PlanMyHike",
   "description": "Simple tools to plan your hike",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2196f3",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "./",
   "icons": [
     {
       "src": "icons/icon-192x192.png",
