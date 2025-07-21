@@ -3,8 +3,6 @@ import Food from "./Food.js"
 import Section from "./Section.js"
 import GPSTracker from "./GPSTracker.js"
 import MileLogger from "./MileLogger.js"
-import SyncManager from "./SyncManager.js"
-import SyncSettings from "./SyncSettings.js"
 
 console.debug("app booting...")
 
@@ -22,7 +20,7 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-window.db = new Dexie("planmyhikedev2")
+window.db = new Dexie("planmyhikedev2", { addons: [Dexie.cloud] })
 
 db.version(1).stores({
   foods: `
@@ -50,18 +48,18 @@ db.version(1).stores({
     `,
 })
 
+// Configure Dexie Cloud for sync
+db.cloud.configure({
+  databaseUrl: "https://dexie.cloud",
+  requireAuth: false // Allow anonymous usage for simplicity
+})
+
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
 
 // Initialize GPS tracker and mile logger
 window.gpsTracker = new GPSTracker()
 window.mileLogger = new MileLogger()
-
-// Initialize sync manager
-window.syncManager = new SyncManager(db)
-
-// Initialize sync settings UI
-window.syncSettings = new SyncSettings(window.syncManager)
 
 // Load mile logging data
 window.mileLogger.loadLogs()

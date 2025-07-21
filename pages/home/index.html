@@ -47,43 +47,30 @@
 
   <div class="card">
     <div class="card-header">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="card-title">Quick Actions</h3>
-          <p class="card-subtitle">Get started with your hike planning</p>
-        </div>
-        <div id="syncStatus">
-          <!-- Sync status will be inserted here -->
-        </div>
-        <button class="btn btn-sm btn-outline" onclick="window.syncSettings?.showSyncModal()">
-          <span class="material-icons text-sm">settings</span>
-          Sync Settings
-        </button>
-      </div>
+      <h3 class="card-title">Quick Actions</h3>
+      <p class="card-subtitle">Get started with your hike planning</p>
     </div>
     <div class="card-content">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="material-icons text-sm">sync</span>
+          <span class="text-sm">Sync Status:</span>
+          <span id="syncStatus" class="text-sm font-medium">...</span>
+        </div>
+      </div>
       <div class="grid grid-cols-3">
         <a href="#/sections" class="btn btn-primary btn-lg">
           <span class="material-icons">add</span>
           Create Section
         </a>
-        <button class="btn btn-outline btn-lg" onclick="importData()">
-          <span class="material-icons">upload</span>
-          Import Data
-        </button>
         <button class="btn btn-outline btn-lg" onclick="exportData()">
           <span class="material-icons">download</span>
           Export Data
         </button>
-      </div>
-      <div class="mt-4 p-3 bg-gray-50 rounded-lg">
-        <p class="text-sm text-tertiary mb-2">
-          <span class="material-icons text-sm mr-1">sync</span>
-          Sync your data across devices by exporting from one device and importing on another.
-        </p>
-        <p class="text-xs text-tertiary">
-          Your data is automatically backed up locally and can be exported as a backup file.
-        </p>
+        <button class="btn btn-outline btn-lg" onclick="importData()">
+          <span class="material-icons">upload</span>
+          Import Data
+        </button>
       </div>
     </div>
   </div>
