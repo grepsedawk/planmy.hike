@@ -77,6 +77,12 @@ class ShowTotals extends Renderer {
     const proteinCalorieProgress = this.createProteinCalorieProgressBar()
     progressSection.appendChild(proteinCalorieProgress)
 
+    // Distance progress bar
+    const distanceProgress = this.createDistanceProgressBar()
+    if (distanceProgress) {
+      progressSection.appendChild(distanceProgress)
+    }
+
     this.div.appendChild(progressSection)
 
     this.parent.innerHTML = ""
@@ -259,6 +265,27 @@ class ShowTotals extends Renderer {
   caloriesPerOunce() {
     const totalWeight = this.totalNetWeight()
     return totalWeight > 0 ? this.totalCalories() / (totalWeight / 28.3495) : 0
+  }
+
+  createDistanceProgressBar() {
+    // Only show distance progress if we have current mile and section boundaries
+    if (
+      !this.section.currentMile ||
+      !this.section.startMile ||
+      !this.section.endMile
+    ) {
+      return null
+    }
+
+    const progressPercentage = this.section.progressPercentage || 0
+    const variant = progressPercentage >= 100 ? "success" : "primary"
+
+    return this.createProgressBar(
+      "Distance Progress",
+      this.section.currentMile - this.section.startMile,
+      this.section.endMile - this.section.startMile,
+      variant,
+    )
   }
 }
 
