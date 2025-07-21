@@ -3,7 +3,7 @@ import NewFood from "./NewFood.js"
 
 /**
  * Optimized Barcode Scanner with performance and reliability improvements:
- * - Optimized FPS (20) for stable scanning across devices
+ * - Optimized FPS (30) for stable scanning across devices
  * - Rectangular scanning area optimized for 1D barcodes
  * - Simplified camera constraints for faster initialization
  * - Torch/flashlight support for low-light scanning
@@ -12,11 +12,11 @@ import NewFood from "./NewFood.js"
 
 class BarcodeScannerRenderer {
   config = {
-    fps: 20, // Optimized for stability and battery life
+    fps: 30, // Optimized for stability and battery life
     qrbox: (viewfinderWidth, viewfinderHeight) => {
       // Optimized rectangular area for barcode scanning
       const width = Math.min(Math.floor(viewfinderWidth * 0.8), 350)
-      const height = Math.min(Math.floor(viewfinderHeight * 0.3), 150)
+      const height = Math.min(Math.floor(viewfinderHeight * 0.6), 350)
       return { width, height }
     },
     aspectRatio: 1.0,
