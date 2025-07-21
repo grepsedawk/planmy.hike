@@ -1,11 +1,12 @@
 // GPS tracking service for automatic mile calculation
 class GPSTracker {
-  constructor() {
+  constructor(snapDistance = 5000) {
     this.currentPosition = null
     this.tracking = false
     this.watchId = null
     this.onMileUpdate = null
     this.mileMarkers = []
+    this.snapDistance = snapDistance // Maximum distance in meters to snap to a mile marker
   }
 
   // Load mile markers from GPX data
@@ -35,7 +36,7 @@ class GPSTracker {
   // Load PCT mile markers from GPX file
   async loadPCTGPXData() {
     try {
-      const response = await fetch("/data/Full_PCT_Mile_Marker.gpx")
+      const response = await fetch("./data/Full_PCT_Mile_Marker.gpx")
       if (!response.ok) {
         throw new Error(`Failed to fetch GPX file: ${response.status}`)
       }
@@ -203,7 +204,6 @@ class GPSTracker {
 
     let closestMile = null
     let minDistance = Infinity
-    const MAX_SNAP_DISTANCE = 5000 // Maximum 5km to snap to a mile marker
 
     for (const marker of this.mileMarkers) {
       const distance = this.calculateDistance(
@@ -220,7 +220,7 @@ class GPSTracker {
     }
 
     // Only return the mile if it's within reasonable snapping distance
-    if (minDistance <= MAX_SNAP_DISTANCE) {
+    if (minDistance <= this.snapDistance) {
       console.debug(
         `GPS snapped to mile ${closestMile} (${Math.round(minDistance)}m away)`,
       )

@@ -9,14 +9,14 @@ class GPSButton {
     const button = document.createElement("button")
     button.classList.add("btn", "btn-outline", "btn-sm")
     button.innerHTML = `<span class="material-icons">my_location</span> Log Mile (GPS)`
-    button.addEventListener("click", () => {
-      new GPSButton(section).logCurrentMile()
+    button.addEventListener("click", (event) => {
+      new GPSButton(section).logCurrentMile(event)
     })
 
     parent.appendChild(button)
   }
 
-  async logCurrentMile() {
+  async logCurrentMile(event) {
     try {
       // Show loading state
       const button = event.target.closest("button")
@@ -79,10 +79,12 @@ class GPSButton {
       this.showMessage(errorMessage, "error")
     } finally {
       // Restore button state
-      const button = document.querySelector("button[disabled]")
-      if (button) {
-        button.innerHTML = `<span class="material-icons">my_location</span> Log Mile (GPS)`
-        button.disabled = false
+      if (event && event.target) {
+        const button = event.target.closest("button")
+        if (button) {
+          button.innerHTML = `<span class="material-icons">my_location</span> Log Mile (GPS)`
+          button.disabled = false
+        }
       }
     }
   }

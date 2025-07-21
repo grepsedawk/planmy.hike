@@ -23,19 +23,12 @@ class MileLogger {
     return logEntry
   }
 
-  // Save logs to local storage
+  // Save logs to storage
   async saveLogs() {
     try {
-      // Store in IndexedDB using Dexie if available
-      if (window.db) {
-        // Create mile_logs table if it doesn't exist
-        if (!db.mile_logs) {
-          // For now, store in localStorage since we can't modify DB schema easily
-          localStorage.setItem('mile_logs', JSON.stringify(this.logs))
-        }
-      } else {
-        localStorage.setItem('mile_logs', JSON.stringify(this.logs))
-      }
+      // Currently using localStorage for simplicity
+      // TODO: Migrate to IndexedDB for better performance and storage capacity
+      localStorage.setItem('mile_logs', JSON.stringify(this.logs))
     } catch (error) {
       console.error('Failed to save mile logs:', error)
     }

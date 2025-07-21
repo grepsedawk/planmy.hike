@@ -27,7 +27,7 @@ class Section {
   }
 
   // Update current mile (can be called manually or by GPS tracker)
-  updateCurrentMile(mile, source = 'manual') {
+  async updateCurrentMile(mile, source = 'manual') {
     const previousMile = this.currentMile
     this.currentMile = mile
     
@@ -43,7 +43,7 @@ class Section {
     }
     
     // Save the updated section
-    this.save()
+    await this.save()
     
     console.debug(`Section ${this.id} mile updated: ${previousMile} -> ${mile} (${source})`)
     return mile
