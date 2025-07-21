@@ -6,6 +6,7 @@ class BarcodeScannerRenderer {
 
   constructor(section) {
     this.section = section
+    this.isScannerStopped = false
   }
 
   static renderTrigger(parent, section) {
@@ -82,7 +83,8 @@ class BarcodeScannerRenderer {
         this.html5QrCode
           .stop()
           .then(() => {
-            this.close()
+            this.isScannerStopped = true
+            this.cleanup()
           })
           .catch((err) => {})
       },
@@ -90,24 +92,26 @@ class BarcodeScannerRenderer {
   }
 
   close() {
-    if (this.html5QrCode) {
+    if (this.html5QrCode && !this.isScannerStopped) {
       this.html5QrCode.stop().then(() => {
-        if (this.scannerDiv) {
-          this.scannerDiv.remove()
-          this.scannerDiv = null
-        }
+        this.isScannerStopped = true
+        this.cleanup()
       }).catch(() => {
-        if (this.scannerDiv) {
-          this.scannerDiv.remove()
-          this.scannerDiv = null
-        }
+        this.isScannerStopped = true
+        this.cleanup()
       })
     } else {
-      if (this.scannerDiv) {
-        this.scannerDiv.remove()
-        this.scannerDiv = null
-      }
+      this.cleanup()
     }
+  }
+
+  cleanup() {
+    if (this.scannerDiv) {
+      this.scannerDiv.remove()
+      this.scannerDiv = null
+    }
+    this.html5QrCode = null
+    this.isScannerStopped = true
   }
 
   cachedBarcodeLookup(code) {
