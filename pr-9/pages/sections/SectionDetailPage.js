@@ -313,6 +313,15 @@ class SectionDetailPage extends Page {
     console.debug("refreshMileLog starting...")
     
     try {
+      // Find or create log container
+      if (!this.logContainer) {
+        this.logContainer = this.parent.querySelector('.log-entries')
+        if (!this.logContainer) {
+          console.warn("Log container not found, skipping mile log refresh")
+          return
+        }
+      }
+      
       const logs = window.mileLogger.getLogsForSection(this.section.id)
       this.logContainer.innerHTML = ""
       
@@ -340,7 +349,9 @@ class SectionDetailPage extends Page {
       console.debug("refreshMileLog completed, displayed", logs.length, "logs")
     } catch (error) {
       console.error("Error in refreshMileLog:", error)
-      this.logContainer.innerHTML = "<p>Error loading mile logs.</p>"
+      if (this.logContainer) {
+        this.logContainer.innerHTML = "<p>Error loading mile logs.</p>"
+      }
     }
   }
 
