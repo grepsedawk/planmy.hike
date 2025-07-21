@@ -1,9 +1,11 @@
 import Page from "../../js/Page.js"
 
 class AddGearModal {
-  constructor() {
+  constructor(gearItem = null) {
     this.modal = null
     this.form = null
+    this.gearItem = gearItem // For editing existing gear
+    this.isEditing = !!gearItem
   }
 
   show() {
@@ -36,7 +38,7 @@ class AddGearModal {
     this.modal.innerHTML = `
       <div class="modal">
         <div class="modal-header">
-          <h3>Add Gear Item</h3>
+          <h3>${this.isEditing ? 'Edit Gear Item' : 'Add Gear Item'}</h3>
           <button type="button" class="modal-close" aria-label="Close">
             <span class="material-icons">close</span>
           </button>
@@ -46,7 +48,7 @@ class AddGearModal {
             <div class="form-row">
               <div class="form-group">
                 <label for="gearName">Name *</label>
-                <input type="text" id="gearName" name="name" required class="form-control" placeholder="e.g., Osprey Atmos 65">
+                <input type="text" id="gearName" name="name" required class="form-control" placeholder="e.g., Osprey Atmos 65" value="${this.isEditing ? this.gearItem.name : ''}">
               </div>
               <div class="form-group">
                 <label for="gearCategory">Category</label>
@@ -59,46 +61,46 @@ class AddGearModal {
             <div class="form-row">
               <div class="form-group">
                 <label for="gearWeight">Weight (grams)</label>
-                <input type="number" id="gearWeight" name="weight" min="0" step="0.1" class="form-control" placeholder="e.g., 2040">
+                <input type="number" id="gearWeight" name="weight" min="0" step="0.1" class="form-control" placeholder="e.g., 2040" value="${this.isEditing ? this.gearItem.weight : ''}">
               </div>
               <div class="form-group">
                 <label for="gearQuantity">Quantity</label>
-                <input type="number" id="gearQuantity" name="quantity" min="1" value="1" class="form-control">
+                <input type="number" id="gearQuantity" name="quantity" min="1" value="${this.isEditing ? this.gearItem.quantity : '1'}" class="form-control">
               </div>
             </div>
             
             <div class="form-row">
               <div class="form-group">
                 <label for="gearPrice">Price ($)</label>
-                <input type="number" id="gearPrice" name="price" min="0" step="0.01" class="form-control" placeholder="e.g., 249.95">
+                <input type="number" id="gearPrice" name="price" min="0" step="0.01" class="form-control" placeholder="e.g., 249.95" value="${this.isEditing && this.gearItem.price ? (this.gearItem.price / 100).toFixed(2) : ''}">
               </div>
               <div class="form-group">
                 <label for="gearVendor">Brand/Vendor</label>
-                <input type="text" id="gearVendor" name="vendor" class="form-control" placeholder="e.g., Osprey">
+                <input type="text" id="gearVendor" name="vendor" class="form-control" placeholder="e.g., Osprey" value="${this.isEditing ? this.gearItem.vendor || '' : ''}">
               </div>
             </div>
             
             <div class="form-group">
               <label for="gearDescription">Description</label>
-              <textarea id="gearDescription" name="description" class="form-control" rows="2" placeholder="Optional description..."></textarea>
+              <textarea id="gearDescription" name="description" class="form-control" rows="2" placeholder="Optional description...">${this.isEditing ? this.gearItem.description || '' : ''}</textarea>
             </div>
             
             <div class="form-group">
               <label for="gearUrl">URL/Reference</label>
-              <input type="url" id="gearUrl" name="url" class="form-control" placeholder="https://...">
+              <input type="url" id="gearUrl" name="url" class="form-control" placeholder="https://..." value="${this.isEditing ? this.gearItem.url || '' : ''}">
             </div>
             
             <div class="form-group">
               <label for="gearNotes">Notes</label>
-              <textarea id="gearNotes" name="notes" class="form-control" rows="2" placeholder="Personal notes, usage tips, etc."></textarea>
+              <textarea id="gearNotes" name="notes" class="form-control" rows="2" placeholder="Personal notes, usage tips, etc.">${this.isEditing ? this.gearItem.notes || '' : ''}</textarea>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
           <button type="submit" form="addGearForm" class="btn btn-primary">
-            <span class="material-icons">add</span>
-            Add Gear
+            <span class="material-icons">${this.isEditing ? 'save' : 'add'}</span>
+            ${this.isEditing ? 'Update Gear' : 'Add Gear'}
           </button>
         </div>
       </div>
@@ -108,6 +110,12 @@ class AddGearModal {
   async setupEventListeners() {
     // Load categories for the dropdown
     await this.loadCategories()
+    
+    // Set selected category if editing
+    if (this.isEditing && this.gearItem.categoryId) {
+      const select = this.modal.querySelector('#gearCategory')
+      select.value = this.gearItem.categoryId
+    }
     
     // Close button
     const closeBtn = this.modal.querySelector('.modal-close')
@@ -174,9 +182,19 @@ class AddGearModal {
       url: formData.get('url').trim(),
       notes: formData.get('notes').trim(),
       categoryId: formData.get('categoryId') || null,
-      dateAdded: new Date(),
-      lastUsed: null,
-      timesUsed: 0
+    }
+    
+    if (this.isEditing) {
+      // Update existing gear
+      gearData.id = this.gearItem.id
+      gearData.dateAdded = this.gearItem.dateAdded
+      gearData.lastUsed = this.gearItem.lastUsed
+      gearData.timesUsed = this.gearItem.timesUsed
+    } else {
+      // New gear
+      gearData.dateAdded = new Date()
+      gearData.lastUsed = null
+      gearData.timesUsed = 0
     }
     
     if (!gearData.name) {
@@ -185,7 +203,12 @@ class AddGearModal {
     }
     
     try {
-      await db.gear.add(gearData)
+      if (this.isEditing) {
+        await db.gear.put(gearData)
+      } else {
+        await db.gear.add(gearData)
+      }
+      
       this.hide()
       
       // Trigger refresh of gear list if GearPage is available
@@ -194,21 +217,21 @@ class AddGearModal {
       }
       
       // Show success message
-      this.showSuccessMessage(gearData.name)
+      this.showSuccessMessage(gearData.name, this.isEditing)
     } catch (error) {
       console.error('Error saving gear:', error)
       alert('Error saving gear item. Please try again.')
     }
   }
 
-  showSuccessMessage(gearName) {
+  showSuccessMessage(gearName, isEditing = false) {
     // Simple success message - could be enhanced with a proper toast system
     const message = document.createElement('div')
     message.className = 'success-message'
     message.innerHTML = `
       <div class="success-content">
         <span class="material-icons">check_circle</span>
-        "${gearName}" added successfully!
+        "${gearName}" ${isEditing ? 'updated' : 'added'} successfully!
       </div>
     `
     document.body.appendChild(message)
