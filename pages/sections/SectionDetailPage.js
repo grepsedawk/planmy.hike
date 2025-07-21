@@ -169,6 +169,11 @@ class SectionDetailPage extends Page {
 
   updateMileManually() {
     const mileInput = document.getElementById('mile-input')
+    if (!mileInput) {
+      alert("Mile input not found")
+      return
+    }
+    
     const mile = parseFloat(mileInput.value)
     if (isNaN(mile)) {
       alert("Please enter a valid mile number")
@@ -388,18 +393,6 @@ class SectionDetailPage extends Page {
       
       this.updateStatus(`Mile updated to ${mileData.mile}`)
     }
-  }
-
-  updateMileManually() {
-    const mile = parseFloat(this.mileInput.value)
-    if (isNaN(mile)) {
-      this.updateStatus("Please enter a valid mile number")
-      return
-    }
-    
-    this.section.updateCurrentMile(mile, 'manual')
-    this.refreshSectionInfo()
-    this.updateStatus(`Mile manually updated to ${mile}`)
   }
 
   refreshSectionInfo() {

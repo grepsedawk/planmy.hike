@@ -11,13 +11,77 @@ class GPSTracker {
   // Load mile markers from GPX data
   async loadMileMarkers(trail = 'PCT') {
     try {
-      // For now, we'll use sample data until we can integrate real GPX files
-      // This represents mile markers with lat/lng coordinates
-      this.mileMarkers = await this.loadSamplePCTData()
+      if (trail === 'PCT') {
+        this.mileMarkers = await this.loadPCTGPXData()
+      } else {
+        // Fallback to sample data for other trails
+        this.mileMarkers = await this.loadSamplePCTData()
+      }
       console.debug(`Loaded ${this.mileMarkers.length} mile markers for ${trail}`)
       return this.mileMarkers
     } catch (error) {
       console.error('Failed to load mile markers:', error)
+      // Fallback to sample data if GPX loading fails
+      this.mileMarkers = await this.loadSamplePCTData()
+      console.debug(`Fallback: Loaded ${this.mileMarkers.length} sample mile markers`)
+      return this.mileMarkers
+    }
+  }
+
+  // Load PCT mile markers from GPX file
+  async loadPCTGPXData() {
+    try {
+      const response = await fetch('/data/Full_PCT_Mile_Marker.gpx')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch GPX file: ${response.status}`)
+      }
+      
+      const gpxText = await response.text()
+      const parser = new DOMParser()
+      const gpxDoc = parser.parseFromString(gpxText, 'application/xml')
+      
+      // Check for parsing errors
+      const parseError = gpxDoc.querySelector('parsererror')
+      if (parseError) {
+        throw new Error('Failed to parse GPX file: ' + parseError.textContent)
+      }
+      
+      const waypoints = gpxDoc.querySelectorAll('wpt')
+      const mileMarkers = []
+      
+      waypoints.forEach(wpt => {
+        const lat = parseFloat(wpt.getAttribute('lat'))
+        const lng = parseFloat(wpt.getAttribute('lon'))
+        
+        // Get child elements directly without namespace issues
+        // Note: The <n> element in the GPX gets parsed as <name> by the browser
+        const children = Array.from(wpt.children)
+        const mileElement = children.find(child => child.tagName === 'name')
+        const descElement = children.find(child => child.tagName === 'desc')
+        
+        if (mileElement && !isNaN(lat) && !isNaN(lng)) {
+          const mile = parseFloat(mileElement.textContent)
+          const desc = descElement ? descElement.textContent : `Mile ${mile}`
+          
+          if (!isNaN(mile)) {
+            mileMarkers.push({
+              mile: mile,
+              lat: lat,
+              lng: lng,
+              name: desc
+            })
+          }
+        }
+      })
+      
+      // Sort by mile number for easier processing
+      mileMarkers.sort((a, b) => a.mile - b.mile)
+      
+      console.debug(`Parsed ${mileMarkers.length} mile markers from GPX file`)
+      return mileMarkers
+      
+    } catch (error) {
+      console.error('Error loading PCT GPX data:', error)
       throw error
     }
   }
@@ -25,7 +89,7 @@ class GPSTracker {
   // Sample PCT mile marker data (Southern California section)
   async loadSamplePCTData() {
     // These are approximate coordinates for PCT mile markers 0-10
-    // In real implementation, this would be loaded from GPX files
+    // Used as fallback when GPX loading fails
     return [
       { mile: 0, lat: 32.5951, lng: -116.4656, name: "Mexican Border" },
       { mile: 1, lat: 32.6023, lng: -116.4703, name: "Mile 1" },
