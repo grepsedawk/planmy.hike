@@ -77,7 +77,7 @@ class SectionPage extends Page {
         : "0"
 
     // Current mile and progress display
-    const currentMileInfo = section.currentMile 
+    const currentMileInfo = section.currentMile
       ? `<div class="stat-item">
            <div class="stat-number">${section.currentMile}</div>
            <div class="stat-label">Current Mile</div>
@@ -86,21 +86,7 @@ class SectionPage extends Page {
            <div class="stat-number">${(section.progressPercentage || 0).toFixed(1)}%</div>
            <div class="stat-label">Progress</div>
          </div>`
-      : ''
-
-    // Progress bar for distance
-    const progressPercentage = section.progressPercentage || 0
-    const progressBar = section.currentMile && section.startMile && section.endMile 
-      ? `<div style="margin-top: var(--spacing-4);">
-           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
-             <span style="font-size: var(--font-size-sm); color: var(--text-secondary);">Distance Progress</span>
-             <span style="font-size: var(--font-size-sm); color: var(--text-tertiary);">${section.currentMile} / ${section.endMile} mi</span>
-           </div>
-           <div class="progress">
-             <div class="progress-bar ${progressPercentage >= 100 ? 'success' : 'primary'}" style="width: ${Math.min(progressPercentage, 100)}%"></div>
-           </div>
-         </div>`
-      : ''
+      : ""
 
     sectionCard.innerHTML = `
       <div class="card-header">
@@ -130,7 +116,6 @@ class SectionPage extends Page {
             <div class="stat-label">Cal/Day</div>
           </div>
         </div>
-        ${progressBar}
       </div>
       <div class="card-actions">
         <button class="btn btn-primary btn-sm">
