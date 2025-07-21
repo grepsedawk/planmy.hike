@@ -35,17 +35,24 @@ describe('Router', () => {
       remove: jest.fn()
     };
     
-    global.document = {
-      getElementById: jest.fn().mockReturnValue(mockContentElement)
-    };
+    // Mock document with Object.defineProperty to work with jsdom
+    const mockGetElementById = jest.fn().mockReturnValue(mockContentElement);
+    Object.defineProperty(document, 'getElementById', {
+      value: mockGetElementById,
+      configurable: true
+    });
 
-    // Mock window.location
-    global.window = {
-      location: {
-        hash: ''
-      },
-      addEventListener: jest.fn()
-    };
+    // Mock window.location and addEventListener
+    Object.defineProperty(window, 'location', {
+      value: { hash: '' },
+      configurable: true,
+      writable: true
+    });
+    
+    Object.defineProperty(window, 'addEventListener', {
+      value: jest.fn(),
+      configurable: true
+    });
 
     // Mock console methods
     global.console = {
@@ -302,11 +309,21 @@ describe('Router', () => {
 
   describe('Edge Cases', () => {
     test('should handle null content element', () => {
-      global.document.getElementById = jest.fn().mockReturnValue(null);
+      // Temporarily override getElementById to return null
+      Object.defineProperty(document, 'getElementById', {
+        value: jest.fn().mockReturnValue(null),
+        configurable: true
+      });
       
       const page = Router.matchRoute('/');
 
       expect(MockHomePage).toHaveBeenCalledWith(null, {});
+      
+      // Restore the original mock
+      Object.defineProperty(document, 'getElementById', {
+        value: jest.fn().mockReturnValue(mockContentElement),
+        configurable: true
+      });
     });
 
     test('should handle routes with special characters', () => {

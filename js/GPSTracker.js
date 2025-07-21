@@ -125,10 +125,14 @@ class GPSTracker {
     }
 
     return new Promise((resolve, reject) => {
+      let firstPositionReceived = false;
       this.watchId = navigator.geolocation.watchPosition(
         (position) => {
           this.handlePositionUpdate(position)
-          if (!this.currentPosition) resolve() // First position acquired
+          if (!firstPositionReceived) {
+            firstPositionReceived = true;
+            resolve() // First position acquired
+          }
         },
         (error) => {
           console.error("GPS error:", error)

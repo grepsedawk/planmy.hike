@@ -55,8 +55,8 @@ class Router {
   }
 
   static async route() {
-    const { path, urlParams } = this.parseUrl()
-    const page = this.matchRoute(path, urlParams)
+    const { path, params } = this.parseUrl()
+    const page = this.matchRoute(path, params)
     console.debug("Routing to", path, page)
 
     return page

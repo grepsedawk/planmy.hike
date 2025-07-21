@@ -77,12 +77,24 @@ global.navigator = {
 };
 
 // Mock DOM elements for testing
+const mockElement = {
+  innerHTML: '',
+  appendChild: jest.fn(),
+  remove: jest.fn()
+};
+
 global.document = {
-  getElementById: jest.fn().mockReturnValue({
-    innerHTML: '',
-    appendChild: jest.fn(),
-    remove: jest.fn()
-  })
+  getElementById: jest.fn().mockReturnValue(mockElement)
+};
+
+// Mock window object
+global.window = {
+  location: {
+    hash: '',
+    href: 'http://localhost'
+  },
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn()
 };
 
 // Mock fetch for API calls
