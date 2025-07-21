@@ -145,6 +145,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  overflow-x: hidden !important;
 }
 
 body {
@@ -159,6 +160,7 @@ body {
   transition: var(--transition-colors);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden !important;
 }
 /* App Layout */
 .app {
@@ -272,6 +274,10 @@ p {
   margin-bottom: var(--spacing-4);
   transition: var(--transition-base);
   border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .card:hover {
@@ -803,6 +809,8 @@ p {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-4);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .food-planner-layout {
@@ -812,14 +820,18 @@ p {
     "config stats"
     "items items";
   grid-template-columns: 1fr 1fr;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .food-config-section {
   grid-area: config;
+  min-width: 0;
 }
 
 .food-stats-section {
   grid-area: stats;
+  min-width: 0;
 }
 
 .food-items-section {
@@ -885,6 +897,8 @@ p {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--spacing-3);
+  min-width: 0;
+  width: 100%;
 }
 
 .config-item {
@@ -1006,6 +1020,8 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-4);
+  min-width: 0;
+  width: 100%;
 }
 
 .stat-item {
@@ -1118,6 +1134,8 @@ p {
   /* Food planner mobile optimizations */
   .food-planner-container {
     padding: var(--spacing-3);
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .food-planner-layout {
@@ -1125,8 +1143,17 @@ p {
       "config"
       "stats"
       "items";
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     gap: var(--spacing-3);
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .food-config-section,
+  .food-stats-section {
+    max-width: 100% !important;
+    overflow-x: hidden;
+    width: 100% !important;
   }
 
   .food-form-grid {
@@ -1137,13 +1164,13 @@ p {
     grid-column: span 1;
   }
 
-  .stats-overview {
-    grid-template-columns: 1fr;
+  .config-grid {
+    grid-template-columns: 1fr !important;
     gap: var(--spacing-2);
   }
 
-  .config-grid {
-    grid-template-columns: 1fr;
+  .stats-overview {
+    grid-template-columns: 1fr !important;
     gap: var(--spacing-2);
   }
 }
