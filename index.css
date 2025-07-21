@@ -359,12 +359,12 @@ p {
 }
 
 .btn-secondary {
-  background-color: var(--gray-200);
+  background-color: var(--bg-tertiary);
   color: var(--text-primary);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--gray-300);
+  background-color: var(--bg-secondary);
 }
 
 .btn-success {
