@@ -12,8 +12,16 @@ class NewFood extends Renderer {
 
   static renderTrigger(parent, section) {
     const button = document.createElement("button")
-    button.innerText = "🆕"
-    button.addEventListener("click", () => new NewFood(section).render())
+    button.classList.add("btn", "btn-primary", "btn-sm")
+    button.innerHTML = `<span class="material-icons">add</span> Add Food`
+    button.addEventListener("click", () => {
+      // Open the food form for user input
+      const newFood = new Food()
+      newFood.sectionId = parseInt(section.id)
+      
+      const newFoodForm = new NewFood(section, newFood)
+      newFoodForm.render()
+    })
 
     parent.appendChild(button)
   }
@@ -23,62 +31,111 @@ class NewFood extends Renderer {
   }
 
   render() {
+    // Create modal overlay
+    this.overlay = document.createElement("div")
+    this.overlay.classList.add("food-form-modal")
+    
     this.div = document.createElement("div")
-    this.div.classList.add("card", "float")
+    this.div.classList.add("food-form-container")
     
-    // Add close button
-    this.closeButton = this.renderButton(this.div, "✕", () => this.close())
-    this.closeButton.style.cssText = "position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: #ff4136; font-size: 16px;"
+    // Header
+    const header = document.createElement("div")
+    header.classList.add("food-form-header")
     
-    this.nameInput = this.renderNameInput(this.div)
-    this.quantity = this.renderNumberInput(
-      this.div,
-      this.food.quantity,
-      "Quantity",
-    )
-    this.netWeight = this.renderNumberInput(
-      this.div,
-      this.food.netWeight,
-      "Net Weight (g)",
-    )
-    this.servingSize = this.renderNumberInput(
-      this.div,
-      this.food.servingSize,
-      "Serving Size (g)",
-    )
-    this.calInput = this.renderNumberInput(
-      this.div,
-      this.food.calories,
-      "Calories [per serving]",
-    )
-    this.fatInput = this.renderNumberInput(
-      this.div,
-      this.food.fat,
-      "Fat (g) [per serving]",
-    )
-    this.carbsInput = this.renderNumberInput(
-      this.div,
-      this.food.carbs,
-      "Carbs (g) [per serving]",
-    )
-    this.proteinInput = this.renderNumberInput(
-      this.div,
-      this.food.protein,
-      "Protein (g) [per serving]",
-    )
-
-    this.saveButton = this.renderButton(this.div, "Save", () => this.save())
-
-    document.body.appendChild(this.div)
+    const title = document.createElement("h3")
+    title.textContent = this.food.id ? "Edit Food Item" : "Add New Food Item"
+    title.style.margin = "0"
+    
+    this.closeButton = document.createElement("button")
+    this.closeButton.classList.add("food-form-close")
+    this.closeButton.innerHTML = `<span class="material-icons">close</span>`
+    this.closeButton.addEventListener("click", () => this.close())
+    
+    header.appendChild(title)
+    header.appendChild(this.closeButton)
+    this.div.appendChild(header)
+    
+    // Form container
+    const formContainer = document.createElement("div")
+    formContainer.classList.add("food-form-grid")
+    
+    // Name input (full width)
+    this.nameInput = this.renderFormGroup(formContainer, "Food Name", "text", this.food.name, "Enter food name...", ["food-form-group"])
+    
+    // Quantity and net weight
+    this.quantity = this.renderFormGroup(formContainer, "Quantity", "number", this.food.quantity, "1", ["food-form-group-half"])
+    this.netWeight = this.renderFormGroup(formContainer, "Net Weight (g)", "number", this.food.netWeight, "0", ["food-form-group-half"])
+    
+    // Serving size and calories
+    this.servingSize = this.renderFormGroup(formContainer, "Serving Size (g)", "number", this.food.servingSize, "0", ["food-form-group-half"])
+    this.calInput = this.renderFormGroup(formContainer, "Calories (per serving)", "number", this.food.calories, "0", ["food-form-group-half"])
+    
+    // Macros
+    this.fatInput = this.renderFormGroup(formContainer, "Fat (g)", "number", this.food.fat, "0", ["food-form-group-half"])
+    this.carbsInput = this.renderFormGroup(formContainer, "Carbs (g)", "number", this.food.carbs, "0", ["food-form-group-half"])
+    this.proteinInput = this.renderFormGroup(formContainer, "Protein (g)", "number", this.food.protein, "0", ["food-form-group-half"])
+    
+    // Save button (full width)
+    const buttonContainer = document.createElement("div")
+    buttonContainer.classList.add("food-form-group")
+    this.saveButton = document.createElement("button")
+    this.saveButton.classList.add("btn", "btn-primary", "btn-lg")
+    this.saveButton.innerHTML = `<span class="material-icons">save</span> Save Food Item`
+    this.saveButton.style.width = "100%"
+    this.saveButton.addEventListener("click", () => this.save())
+    buttonContainer.appendChild(this.saveButton)
+    
+    formContainer.appendChild(buttonContainer)
+    this.div.appendChild(formContainer)
+    this.overlay.appendChild(this.div)
+    
+    // Close on overlay click
+    this.overlay.addEventListener("click", (e) => {
+      if (e.target === this.overlay) {
+        this.close()
+      }
+    })
+    
+    document.body.appendChild(this.overlay)
+    
+    // Focus on name input
+    setTimeout(() => this.nameInput.focus(), 100)
   }
 
-  renderNameInput(parent) {
+  renderFormGroup(parent, label, type, value, placeholder, classNames = ["food-form-group"]) {
+    const group = document.createElement("div")
+    
+    // Handle multiple class names properly
+    if (Array.isArray(classNames)) {
+      classNames.forEach(cls => {
+        if (cls && cls.trim()) {
+          group.classList.add(cls.trim())
+        }
+      })
+    } else {
+      // Fallback for string input
+      const classes = classNames.split(" ")
+      classes.forEach(cls => {
+        if (cls.trim()) {
+          group.classList.add(cls.trim())
+        }
+      })
+    }
+    
+    const labelEl = document.createElement("label")
+    labelEl.classList.add("form-label")
+    labelEl.textContent = label
+    
     const input = document.createElement("input")
-    input.placeholder = "Name"
-    input.value = this.food.name
-
-    parent.appendChild(input)
-
+    input.classList.add("form-control")
+    input.type = type
+    input.value = value || ""
+    input.placeholder = placeholder
+    
+    group.appendChild(labelEl)
+    group.appendChild(input)
+    parent.appendChild(group)
+    
     return input
   }
 
@@ -88,30 +145,42 @@ class NewFood extends Renderer {
     }
 
     this.food.name = this.nameInput.value
-    this.food.quantity = parseFloat(this.quantity.value)
-    this.food.calories = parseFloat(this.calInput.value)
-    this.food.carbs = parseFloat(this.carbsInput.value)
-    this.food.protein = parseFloat(this.proteinInput.value)
-    this.food.fat = parseFloat(this.fatInput.value)
-    this.food.netWeight = parseFloat(this.netWeight.value)
-    this.food.servingSize = parseFloat(this.servingSize.value)
+    this.food.quantity = parseFloat(this.quantity.value) || 1
+    this.food.calories = parseFloat(this.calInput.value) || 0
+    this.food.carbs = parseFloat(this.carbsInput.value) || 0
+    this.food.protein = parseFloat(this.proteinInput.value) || 0
+    this.food.fat = parseFloat(this.fatInput.value) || 0
+    this.food.netWeight = parseFloat(this.netWeight.value) || 0
+    this.food.servingSize = parseFloat(this.servingSize.value) || 0
     this.food.sectionId = parseInt(this.section.id)
 
     this.food.save()
 
-    this.div.remove()
-    ShowFood.renderFood(
-      document.getElementById("food"),
-      this.food,
-      this.section,
-    )
-
+    this.close()
+    
+    // Refresh the entire food display to show the new item
+    ShowFood.render(document.getElementById("food"), this.section)
     ShowTotals.render(document.getElementById("totals"), this.section)
+    
+    // Scroll to make the new food item visible
+    setTimeout(() => {
+      const foodContainer = document.getElementById("food")
+      if (foodContainer && foodContainer.lastElementChild) {
+        foodContainer.lastElementChild.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest' 
+        })
+      }
+    }, 100)
   }
 
   validate() {
+    // Remove any existing error messages
+    const existingErrors = this.div.querySelectorAll(".error-message")
+    existingErrors.forEach(error => error.remove())
+    
     if (!this.nameInput.value.trim()) {
-      this.renderError("Name is required")
+      this.renderError("Food name is required")
       return false
     }
 
@@ -120,9 +189,9 @@ class NewFood extends Renderer {
 
   renderError(message) {
     const errorDiv = document.createElement("div")
-    errorDiv.className = "error"
+    errorDiv.className = "error-message"
     errorDiv.textContent = message
-
+    
     errorDiv.addEventListener("click", () => {
       errorDiv.remove()
     })
@@ -131,11 +200,15 @@ class NewFood extends Renderer {
       errorDiv.remove()
     })
 
-    this.div.appendChild(errorDiv)
+    // Insert error after the form header
+    const header = this.div.querySelector(".food-form-header")
+    header.insertAdjacentElement("afterend", errorDiv)
   }
 
   close() {
-    this.div.remove()
+    if (this.overlay) {
+      this.overlay.remove()
+    }
   }
 }
 

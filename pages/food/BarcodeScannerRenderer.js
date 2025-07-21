@@ -6,11 +6,13 @@ class BarcodeScannerRenderer {
 
   constructor(section) {
     this.section = section
+    this.isScannerStopped = false
   }
 
   static renderTrigger(parent, section) {
     const button = document.createElement("button")
-    button.innerText = "📷"
+    button.classList.add("btn", "btn-outline", "btn-sm")
+    button.innerHTML = `<span class="material-icons">qr_code_scanner</span> Scan Barcode`
     button.addEventListener("click", () =>
       new BarcodeScannerRenderer(section).start(),
     )
@@ -20,22 +22,38 @@ class BarcodeScannerRenderer {
 
   start() {
     this.scannerDiv = document.createElement("div")
-    this.scannerDiv.style = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 1000;"
+    this.scannerDiv.classList.add("modal-overlay")
+    this.scannerDiv.style.background = "black"
+    
+    // Create scanner container
+    const scannerContainer = document.createElement("div")
+    scannerContainer.style.cssText = "position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;"
     
     // Create close button
     let closeButton = document.createElement("button")
-    closeButton.innerText = "✕"
-    closeButton.style = "position: absolute; top: 20px; right: 20px; z-index: 1001; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; color: #333;"
+    closeButton.classList.add("btn", "btn-danger")
+    closeButton.innerHTML = `<span class="material-icons">close</span> Close Scanner`
+    closeButton.style.cssText = "position: absolute; top: 20px; right: 20px; z-index: 1001;"
     closeButton.addEventListener("click", () => {
       this.close()
     })
     
+    // Create instruction text
+    const instructions = document.createElement("div")
+    instructions.style.cssText = "color: white; text-align: center; margin-bottom: 20px; padding: 0 20px;"
+    instructions.innerHTML = `
+      <h3 style="color: white; margin-bottom: 10px;">Barcode Scanner</h3>
+      <p style="color: rgba(255,255,255,0.8); margin: 0;">Position the barcode within the frame to scan</p>
+    `
+    
     let scanner = document.createElement("div")
     scanner.id = "scanner"
-    scanner.style = "width: 100%; height: 100%;"
+    scanner.style.cssText = "max-width: 400px; width: 90%; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5);"
     
-    this.scannerDiv.appendChild(closeButton)
-    this.scannerDiv.appendChild(scanner)
+    scannerContainer.appendChild(closeButton)
+    scannerContainer.appendChild(instructions)
+    scannerContainer.appendChild(scanner)
+    this.scannerDiv.appendChild(scannerContainer)
     document.body.appendChild(this.scannerDiv)
 
     this.html5QrCode = new Html5Qrcode("scanner")
@@ -65,7 +83,8 @@ class BarcodeScannerRenderer {
         this.html5QrCode
           .stop()
           .then(() => {
-            this.close()
+            this.isScannerStopped = true
+            this.cleanup()
           })
           .catch((err) => {})
       },
@@ -73,24 +92,26 @@ class BarcodeScannerRenderer {
   }
 
   close() {
-    if (this.html5QrCode) {
+    if (this.html5QrCode && !this.isScannerStopped) {
       this.html5QrCode.stop().then(() => {
-        if (this.scannerDiv) {
-          this.scannerDiv.remove()
-          this.scannerDiv = null
-        }
+        this.isScannerStopped = true
+        this.cleanup()
       }).catch(() => {
-        if (this.scannerDiv) {
-          this.scannerDiv.remove()
-          this.scannerDiv = null
-        }
+        this.isScannerStopped = true
+        this.cleanup()
       })
     } else {
-      if (this.scannerDiv) {
-        this.scannerDiv.remove()
-        this.scannerDiv = null
-      }
+      this.cleanup()
     }
+  }
+
+  cleanup() {
+    if (this.scannerDiv) {
+      this.scannerDiv.remove()
+      this.scannerDiv = null
+    }
+    this.html5QrCode = null
+    this.isScannerStopped = true
   }
 
   cachedBarcodeLookup(code) {

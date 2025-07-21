@@ -1,3 +1,108 @@
-<h1>Plan my Hike!</h1>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1 class="mb-2">Welcome to Plan My Hike!</h1>
+    <p class="mb-6">Your comprehensive hiking planning companion</p>
+  </div>
 
-<p>Simple tools to plan your hike</p>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-value" id="totalSections">0</span>
+      <span class="stat-label">Total Sections</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="totalMiles">0</span>
+      <span class="stat-label">Total Miles</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="totalDays">0</span>
+      <span class="stat-label">Total Days</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="totalCalories">0</span>
+      <span class="stat-label">Total Calories</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Planning Progress</h3>
+      </div>
+      <div class="card-content">
+        <canvas id="progressChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Activity</h3>
+      </div>
+      <div class="card-content">
+        <div id="recentActivity">
+          <p class="text-center text-tertiary">No recent activity</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Quick Actions</h3>
+      <p class="card-subtitle">Get started with your hike planning</p>
+    </div>
+    <div class="card-content">
+      <div class="grid grid-cols-3">
+        <a href="#/sections" class="btn btn-primary btn-lg">
+          <span class="material-icons">add</span>
+          Create Section
+        </a>
+        <button class="btn btn-outline btn-lg" onclick="importData()">
+          <span class="material-icons">upload</span>
+          Import Data
+        </button>
+        <button class="btn btn-outline btn-lg" onclick="exportData()">
+          <span class="material-icons">download</span>
+          Export Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Features</h3>
+    </div>
+    <div class="card-content">
+      <div class="grid grid-cols-2">
+        <div class="feature-item">
+          <div class="flex items-center mb-3">
+            <span class="material-icons text-primary mr-3">map</span>
+            <h4 class="mb-0">Section Planning</h4>
+          </div>
+          <p>Plan your hiking sections with detailed mile markers, elevation, and daily calorie requirements.</p>
+        </div>
+        <div class="feature-item">
+          <div class="flex items-center mb-3">
+            <span class="material-icons text-primary mr-3">restaurant</span>
+            <h4 class="mb-0">Food Planning</h4>
+          </div>
+          <p>Track nutrition with barcode scanning, macro analysis, and calorie optimization for your hike.</p>
+        </div>
+        <div class="feature-item">
+          <div class="flex items-center mb-3">
+            <span class="material-icons text-primary mr-3">analytics</span>
+            <h4 class="mb-0">Progress Tracking</h4>
+          </div>
+          <p>Visual progress tracking with charts and graphs to monitor your planning progress.</p>
+        </div>
+        <div class="feature-item">
+          <div class="flex items-center mb-3">
+            <span class="material-icons text-primary mr-3">offline_bolt</span>
+            <h4 class="mb-0">Offline Ready</h4>
+          </div>
+          <p>Progressive Web App that works offline - perfect for planning on the trail.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
