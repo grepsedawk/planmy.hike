@@ -139,9 +139,9 @@ class CategoryManager {
     const addBtn = this.modal.querySelector("#addCategoryBtn")
     addBtn.addEventListener("click", () => this.showAddForm())
 
-    // Save category button
+    // Save category button - use onclick instead of addEventListener to avoid double handlers
     const saveBtn = this.modal.querySelector("#saveCategoryBtn")
-    saveBtn.addEventListener("click", () => this.saveCategory())
+    saveBtn.onclick = () => this.saveCategory()
 
     // Cancel add category
     const cancelAddBtn = this.modal.querySelector("#cancelCategoryBtn")
@@ -198,7 +198,7 @@ class CategoryManager {
     form.querySelector("#categoryDescription").value = ""
     form.querySelector("#categoryColor").value = "#2196f3"
 
-    // Reset button
+    // Reset button to add mode
     saveBtn.textContent = "Save Category"
     saveBtn.onclick = () => this.saveCategory()
   }
