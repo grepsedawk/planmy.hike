@@ -65,9 +65,6 @@ class AddSection extends Renderer {
     this.days = this.renderFormGroup(formContainer, "Days", "number", this.section.days, "1", ["food-form-group-half"])
     this.caloriesPerDay = this.renderFormGroup(formContainer, "Calories Per Day", "number", this.section.caloriesPerDay, "2500", ["food-form-group-half"])
     
-    // GPS tracking checkbox (full width)
-    this.gpsTrackingCheckbox = this.renderCheckboxGroup(formContainer, "Enable GPS Tracking (PCT)", this.section.gpsTrackingEnabled || false)
-    
     // Save button (full width)
     const buttonContainer = document.createElement("div")
     buttonContainer.classList.add("food-form-group")
@@ -148,33 +145,6 @@ class AddSection extends Renderer {
     return input
   }
 
-  renderCheckboxGroup(parent, label, checked) {
-    const group = document.createElement("div")
-    group.classList.add("food-form-group")
-    
-    const checkboxContainer = document.createElement("div")
-    checkboxContainer.style.display = "flex"
-    checkboxContainer.style.alignItems = "center"
-    checkboxContainer.style.gap = "8px"
-    
-    const checkbox = document.createElement("input")
-    checkbox.type = "checkbox"
-    checkbox.id = "gps-tracking"
-    checkbox.checked = checked
-    
-    const labelEl = document.createElement("label")
-    labelEl.htmlFor = "gps-tracking"
-    labelEl.textContent = label
-    labelEl.style.cursor = "pointer"
-    
-    checkboxContainer.appendChild(checkbox)
-    checkboxContainer.appendChild(labelEl)
-    group.appendChild(checkboxContainer)
-    parent.appendChild(group)
-    
-    return checkbox
-  }
-
   save() {
     if (!this.validate()) {
       return false
@@ -185,7 +155,6 @@ class AddSection extends Renderer {
     this.section.endMile = parseFloat(this.endMile.value) || 0
     this.section.caloriesPerDay = parseFloat(this.caloriesPerDay.value) || 2500
     this.section.days = parseInt(this.days.value) || 1
-    this.section.gpsTrackingEnabled = this.gpsTrackingCheckbox.checked
     this.section.trail = "PCT" // Default to PCT for now
 
     this.section

@@ -20,7 +20,6 @@ const urlsToCache = [
   "./pages/home/index.js",
   "./pages/sections/SectionsPage.js",
   "./pages/sections/AddSection.js",
-  "./pages/sections/SectionDetailPage.js",
   "./pages/sections/Section/index.html",
   "./pages/food/index.html",
   "./pages/food/FoodPage.js",
