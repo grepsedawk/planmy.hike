@@ -883,7 +883,7 @@ p {
 
 .config-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--spacing-3);
 }
 
@@ -1003,7 +1003,7 @@ p {
 /* Stats improvements */
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-4);
 }
@@ -1115,13 +1115,18 @@ p {
     right: var(--spacing-4);
   }
 
+  /* Food planner mobile optimizations */
+  .food-planner-container {
+    padding: var(--spacing-3);
+  }
+
   .food-planner-layout {
     grid-template-areas:
       "config"
       "stats"
       "items";
     grid-template-columns: 1fr;
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
   }
 
   .food-form-grid {
@@ -1134,10 +1139,40 @@ p {
 
   .stats-overview {
     grid-template-columns: 1fr;
+    gap: var(--spacing-2);
   }
 
   .config-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .food-planner-container {
+    padding: var(--spacing-2);
+  }
+
+  .config-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+
+  .stats-overview {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+
+  .food-planner-layout {
+    gap: var(--spacing-3);
+  }
+
+  /* Ensure cards are properly constrained */
+  .card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
