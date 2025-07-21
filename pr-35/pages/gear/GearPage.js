@@ -508,13 +508,7 @@ class GearPage extends Page {
           const newCategory = {
             name: categoryName,
             description: `Imported from LighterPack`,
-            parentId: null,
-            weight: 0,
-            price: 0,
-            vendor: "",
-            url: "",
             color: this.getRandomCategoryColor(),
-            sortOrder: 0,
             dateCreated: new Date()
           }
           categoryId = await db.gearCategories.add(newCategory)
