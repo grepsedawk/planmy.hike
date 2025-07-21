@@ -29,8 +29,11 @@ class GearPage extends Page {
         db.gearCategories.toArray()
       ])
 
-      this.renderGearList(gear, categories)
-      this.updateStats(gear, categories)
+      // Apply current filters and sorting
+      const filteredAndSortedGear = this.applyFiltersAndSort(gear)
+      
+      this.renderGearList(filteredAndSortedGear, categories)
+      this.updateStats(gear, categories) // Use original gear for stats
     } catch (error) {
       console.error('Error loading gear:', error)
     }
@@ -147,9 +150,19 @@ class GearPage extends Page {
       modal.show()
     }
 
-    window.editGear = (id) => {
-      // TODO: Implement edit gear
-      alert(`Edit gear ${id} functionality coming soon!`)
+    window.editGear = async (id) => {
+      try {
+        const gearItem = await db.gear.get(id)
+        if (gearItem) {
+          const modal = new AddGearModal(gearItem)
+          modal.show()
+        } else {
+          alert('Gear item not found')
+        }
+      } catch (error) {
+        console.error('Error loading gear for edit:', error)
+        alert('Error loading gear item')
+      }
     }
 
     window.deleteGear = async (id) => {
@@ -216,21 +229,67 @@ class GearPage extends Page {
   }
 
   setupFilters() {
-    // TODO: Implement filtering and sorting
     const sortSelect = document.getElementById('sortSelect')
     const filterInput = document.getElementById('filterInput')
     
     if (sortSelect) {
       sortSelect.addEventListener('change', () => {
-        // TODO: Implement sorting
+        this.loadGear() // Reload with new sorting
       })
     }
     
     if (filterInput) {
       filterInput.addEventListener('input', () => {
-        // TODO: Implement filtering
+        this.loadGear() // Reload with new filtering
       })
     }
+  }
+
+  applyFiltersAndSort(gear) {
+    let filteredGear = [...gear]
+    
+    // Apply text filter
+    const filterInput = document.getElementById('filterInput')
+    if (filterInput && filterInput.value.trim()) {
+      const filterText = filterInput.value.toLowerCase().trim()
+      filteredGear = filteredGear.filter(item => 
+        item.name.toLowerCase().includes(filterText) ||
+        (item.description && item.description.toLowerCase().includes(filterText)) ||
+        (item.vendor && item.vendor.toLowerCase().includes(filterText)) ||
+        (item.notes && item.notes.toLowerCase().includes(filterText))
+      )
+    }
+    
+    // Apply sorting
+    const sortSelect = document.getElementById('sortSelect')
+    if (sortSelect && sortSelect.value) {
+      const sortBy = sortSelect.value
+      
+      filteredGear.sort((a, b) => {
+        switch (sortBy) {
+          case 'name':
+            return a.name.localeCompare(b.name)
+          case 'name-desc':
+            return b.name.localeCompare(a.name)
+          case 'weight':
+            return a.totalWeight - b.totalWeight
+          case 'weight-desc':
+            return b.totalWeight - a.totalWeight
+          case 'price':
+            return a.totalPrice - b.totalPrice
+          case 'price-desc':
+            return b.totalPrice - a.totalPrice
+          case 'date':
+            return new Date(a.dateAdded) - new Date(b.dateAdded)
+          case 'date-desc':
+            return new Date(b.dateAdded) - new Date(a.dateAdded)
+          default:
+            return 0
+        }
+      })
+    }
+    
+    return filteredGear
   }
 
   showImportModal() {

@@ -162,12 +162,19 @@ class CategoryManager {
     })
   }
 
-  showAddForm() {
+  showAddForm(category = null) {
     const form = this.modal.querySelector('#addCategoryForm')
     const addBtn = this.modal.querySelector('#addCategoryBtn')
+    const saveBtn = this.modal.querySelector('#saveCategoryBtn')
     
     form.style.display = 'block'
     addBtn.style.display = 'none'
+    
+    // Reset button for add mode
+    if (!category) {
+      saveBtn.textContent = 'Save Category'
+      saveBtn.onclick = () => this.saveCategory()
+    }
     
     // Focus name input
     const nameInput = form.querySelector('#categoryName')
@@ -177,6 +184,7 @@ class CategoryManager {
   hideAddForm() {
     const form = this.modal.querySelector('#addCategoryForm')
     const addBtn = this.modal.querySelector('#addCategoryBtn')
+    const saveBtn = this.modal.querySelector('#saveCategoryBtn')
     
     form.style.display = 'none'
     addBtn.style.display = 'block'
@@ -185,6 +193,10 @@ class CategoryManager {
     form.querySelector('#categoryName').value = ''
     form.querySelector('#categoryDescription').value = ''
     form.querySelector('#categoryColor').value = '#2196f3'
+    
+    // Reset button
+    saveBtn.textContent = 'Save Category'
+    saveBtn.onclick = () => this.saveCategory()
   }
 
   async saveCategory() {
@@ -233,8 +245,70 @@ class CategoryManager {
   }
 
   async editCategory(id) {
-    // TODO: Implement edit category functionality
-    alert(`Edit category ${id} - Coming soon!`)
+    const category = this.categories.find(c => c.id === id)
+    if (!category) return
+    
+    // Show the form with current values
+    this.showAddForm(category)
+    
+    // Update form title and button
+    const form = this.modal.querySelector('#addCategoryForm')
+    const saveBtn = this.modal.querySelector('#saveCategoryBtn')
+    
+    // Fill form with current values
+    form.querySelector('#categoryName').value = category.name
+    form.querySelector('#categoryDescription').value = category.description || ''
+    form.querySelector('#categoryColor').value = category.color || '#2196f3'
+    
+    // Change save button to update
+    saveBtn.textContent = 'Update Category'
+    saveBtn.onclick = () => this.updateCategory(id)
+  }
+
+  async updateCategory(id) {
+    const nameInput = this.modal.querySelector('#categoryName')
+    const descInput = this.modal.querySelector('#categoryDescription')
+    const colorInput = this.modal.querySelector('#categoryColor')
+    
+    const name = nameInput.value.trim()
+    if (!name) {
+      alert('Category name is required')
+      nameInput.focus()
+      return
+    }
+    
+    try {
+      const categoryData = {
+        id: id,
+        name: name,
+        description: descInput.value.trim(),
+        color: colorInput.value,
+        // Keep existing fields
+        parentId: null,
+        weight: 0,
+        price: 0,
+        vendor: '',
+        url: '',
+        sortOrder: 0
+      }
+      
+      await db.gearCategories.put(categoryData)
+      
+      // Refresh the category list
+      await this.loadCategories()
+      this.refreshCategoryList()
+      this.hideAddForm()
+      
+      // Refresh gear page if available
+      if (window.currentGearPage && typeof window.currentGearPage.loadGear === 'function') {
+        window.currentGearPage.loadGear()
+      }
+      
+      this.showSuccessMessage(`Category "${name}" updated successfully!`)
+    } catch (error) {
+      console.error('Error updating category:', error)
+      alert('Error updating category. Please try again.')
+    }
   }
 
   async deleteCategory(id) {
