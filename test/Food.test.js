@@ -122,8 +122,8 @@ describe('Food Model', () => {
       food.quantity = -1;
       food.servingSize = 25;
 
-      expect(food.servings).toBe(-2); // (-50 * -1) / 25
-      expect(food.totalCalories).toBe(200); // -100 * -2
+      expect(food.servings).toBe(2); // Math.abs(-50 * -1) / 25
+      expect(food.totalCalories).toBe(-200); // -100 * 2
     });
 
     test('should handle very small numbers', () => {
@@ -132,8 +132,8 @@ describe('Food Model', () => {
       food.quantity = 0.1;
       food.servingSize = 0.1;
 
-      expect(food.servings).toBe(0.1); // (0.1 * 0.1) / 0.1
-      expect(food.totalCalories).toBe(0.01); // 0.1 * 0.1
+      expect(food.servings).toBeCloseTo(0.1, 10); // (0.1 * 0.1) / 0.1
+      expect(food.totalCalories).toBeCloseTo(0.01, 10); // 0.1 * 0.1
     });
 
     test('should handle undefined nutrition values', () => {

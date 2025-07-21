@@ -295,14 +295,14 @@ describe('Router', () => {
       await hashChangeHandler();
 
       expect(global.console.error).toHaveBeenCalledWith(
-        'Error routing: Hash change error'
+        'Error Rendering [#/sections]: Hash change error'
       );
     });
   });
 
   describe('Edge Cases', () => {
     test('should handle null content element', () => {
-      global.document.getElementById.mockReturnValue(null);
+      global.document.getElementById = jest.fn().mockReturnValue(null);
       
       const page = Router.matchRoute('/');
 

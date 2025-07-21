@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Integration Tests - Plan My Hike</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .summary {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Browser Integration Tests</h1>
+    <p>These tests verify the planmy.hike application works correctly in a real browser environment.</p>
+    
+    <div class="test-container">
+        <h2>Test Controls</h2>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <button onclick="runBasicTests()">Run Basic Tests Only</button>
+    </div>
+
+    <div id="results"></div>
+
+    <!-- Load the application scripts -->
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/html5-qrcode.min.js"></script>
+    
+    <script type="module">
+        import Router from '../js/Router.js';
+        import Food from '../js/Food.js';
+        import Section from '../js/Section.js';
+        import GPSTracker from '../js/GPSTracker.js';
+        import MileLogger from '../js/MileLogger.js';
+
+        // Initialize database for testing
+        window.db = new Dexie("planmyhike_test");
+        db.version(1).stores({
+            foods: `++id, sectionId, name, quantity, calories, carbs, protein, fat, netWeight, servingSize`,
+            sections: `++id, name, startMile, endMile, currentMile, caloriesPerDay, days, gpsTrackingEnabled, trail`
+        });
+        db.foods.mapToClass(Food);
+        db.sections.mapToClass(Section);
+
+        // Test utilities
+        const testResults = [];
+        
+        function logResult(testName, passed, message = '') {
+            testResults.push({ name: testName, passed, message });
+            updateResultsDisplay();
+        }
+
+        function updateResultsDisplay() {
+            const resultsDiv = document.getElementById('results');
+            
+            const passed = testResults.filter(r => r.passed).length;
+            const failed = testResults.filter(r => !r.passed).length;
+            const total = testResults.length;
+            
+            let html = `<div class="summary">Test Results: ${passed} passed, ${failed} failed, ${total} total</div>`;
+            
+            testResults.forEach(result => {
+                const cssClass = result.passed ? 'test-pass' : 'test-fail';
+                const status = result.passed ? '✓' : '✗';
+                html += `<div class="test-result ${cssClass}">
+                    ${status} ${result.name}
+                    ${result.message ? `<br><small>${result.message}</small>` : ''}
+                </div>`;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        // Test implementations
+        async function testDatabaseConnection() {
+            try {
+                await db.open();
+                logResult('Database Connection', true, 'Successfully connected to IndexedDB');
+            } catch (error) {
+                logResult('Database Connection', false, `Failed to connect: ${error.message}`);
+            }
+        }
+
+        async function testFoodModel() {
+            try {
+                const food = new Food();
+                food.name = 'Test Trail Mix';
+                food.calories = 500;
+                food.netWeight = 100;
+                food.quantity = 1;
+                food.servingSize = 50;
+                
+                // Test calculated properties
+                const servings = food.servings;
+                const totalCalories = food.totalCalories;
+                
+                if (servings === 2 && totalCalories === 1000) {
+                    logResult('Food Model Calculations', true, 'Nutrition calculations working correctly');
+                } else {
+                    logResult('Food Model Calculations', false, `Expected 2 servings and 1000 calories, got ${servings} and ${totalCalories}`);
+                }
+                
+                // Test database operations
+                const savedId = await food.save();
+                if (savedId) {
+                    logResult('Food Database Save', true, `Food saved with ID: ${savedId}`);
+                    
+                    // Clean up
+                    await food.delete();
+                    logResult('Food Database Delete', true, 'Food deleted successfully');
+                } else {
+                    logResult('Food Database Save', false, 'Failed to save food');
+                }
+            } catch (error) {
+                logResult('Food Model', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function testSectionModel() {
+            try {
+                const section = new Section();
+                section.name = 'Test Section';
+                section.startMile = 0;
+                section.endMile = 100;
+                section.currentMile = 25;
+                section.caloriesPerDay = 3000;
+                section.days = 5;
+                
+                // Test calculated properties
+                const progress = section.progressPercentage;
+                const remaining = section.remainingMiles;
+                const requiredCals = section.requiredCalories;
+                
+                if (progress === 25 && remaining === 75 && requiredCals === 15000) {
+                    logResult('Section Model Calculations', true, 'Progress and calorie calculations working correctly');
+                } else {
+                    logResult('Section Model Calculations', false, `Expected 25% progress, 75 remaining miles, 15000 calories. Got ${progress}%, ${remaining} miles, ${requiredCals} calories`);
+                }
+                
+                // Test database operations
+                const savedId = await section.save();
+                if (savedId) {
+                    logResult('Section Database Save', true, `Section saved with ID: ${savedId}`);
+                    
+                    // Clean up
+                    await section.delete();
+                    logResult('Section Database Delete', true, 'Section deleted successfully');
+                } else {
+                    logResult('Section Database Save', false, 'Failed to save section');
+                }
+            } catch (error) {
+                logResult('Section Model', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function testGPSTracker() {
+            try {
+                const gps = new GPSTracker();
+                
+                // Test mile marker loading
+                const markers = await gps.loadSamplePCTData();
+                if (markers && markers.length > 0) {
+                    logResult('GPS Mile Markers', true, `Loaded ${markers.length} mile markers`);
+                } else {
+                    logResult('GPS Mile Markers', false, 'Failed to load mile markers');
+                }
+                
+                // Test distance calculation
+                const distance = gps.calculateDistance(32.5951, -116.4656, 32.6023, -116.4703);
+                if (distance > 0 && distance < 2000) {
+                    logResult('GPS Distance Calculation', true, `Distance calculation working: ${Math.round(distance)}m`);
+                } else {
+                    logResult('GPS Distance Calculation', false, `Unexpected distance: ${distance}m`);
+                }
+            } catch (error) {
+                logResult('GPS Tracker', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function testRouterURLParsing() {
+            try {
+                // Mock window.location for testing
+                const originalLocation = window.location;
+                window.location = { hash: '#/sections/123/food?sort=name&filter=active' };
+                
+                const result = Router.parseUrl();
+                
+                if (result.path === '/sections/123/food' && result.params.sort === 'name') {
+                    logResult('Router URL Parsing', true, 'URL parsing working correctly');
+                } else {
+                    logResult('Router URL Parsing', false, `Expected path '/sections/123/food' and param 'sort=name', got '${result.path}' and '${result.params.sort}'`);
+                }
+                
+                // Restore original location
+                window.location = originalLocation;
+            } catch (error) {
+                logResult('Router URL Parsing', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function testDOMIntegration() {
+            try {
+                // Create a test element
+                const testDiv = document.createElement('div');
+                testDiv.id = 'test-content';
+                document.body.appendChild(testDiv);
+                
+                // Test that we can find it
+                const found = document.getElementById('test-content');
+                if (found) {
+                    logResult('DOM Integration', true, 'DOM manipulation working correctly');
+                } else {
+                    logResult('DOM Integration', false, 'Failed to find created element');
+                }
+                
+                // Clean up
+                testDiv.remove();
+            } catch (error) {
+                logResult('DOM Integration', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function testLocalStorage() {
+            try {
+                const testKey = 'planmyhike_test';
+                const testValue = 'test_data_' + Date.now();
+                
+                localStorage.setItem(testKey, testValue);
+                const retrieved = localStorage.getItem(testKey);
+                
+                if (retrieved === testValue) {
+                    logResult('Local Storage', true, 'Local storage working correctly');
+                } else {
+                    logResult('Local Storage', false, `Expected '${testValue}', got '${retrieved}'`);
+                }
+                
+                // Clean up
+                localStorage.removeItem(testKey);
+            } catch (error) {
+                logResult('Local Storage', false, `Error: ${error.message}`);
+            }
+        }
+
+        // Global test functions
+        window.runBasicTests = async function() {
+            testResults.length = 0;
+            updateResultsDisplay();
+            
+            await testDatabaseConnection();
+            await testDOMIntegration();
+            await testLocalStorage();
+            await testRouterURLParsing();
+        };
+
+        window.runAllTests = async function() {
+            testResults.length = 0;
+            updateResultsDisplay();
+            
+            await testDatabaseConnection();
+            await testDOMIntegration();
+            await testLocalStorage();
+            await testRouterURLParsing();
+            await testFoodModel();
+            await testSectionModel();
+            await testGPSTracker();
+        };
+
+        window.clearResults = function() {
+            testResults.length = 0;
+            updateResultsDisplay();
+        };
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            setTimeout(runBasicTests, 1000);
+        });
+    </script>
+</body>
+</html>

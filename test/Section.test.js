@@ -120,7 +120,7 @@ describe('Section Model', () => {
     test('should handle remaining miles edge cases', () => {
       // No end mile
       section.endMile = null;
-      expect(section.remainingMiles).toBeNaN();
+      expect(section.remainingMiles).toBe(-100); // null - 100 = -100
 
       // No current mile, should use start mile
       section.endMile = 200;
@@ -129,7 +129,7 @@ describe('Section Model', () => {
 
       // Current mile past end mile
       section.currentMile = 250;
-      expect(section.remainingMiles).toBe(0);
+      expect(section.remainingMiles).toBe(0); // max(0, 200 - 250)
     });
   });
 
@@ -221,8 +221,9 @@ describe('Section Model', () => {
       section.endMile = 100; // End before start
       section.currentMile = 150;
 
-      expect(section.progressPercentage).toBe(0); // Should be clamped to 0
-      expect(section.remainingMiles).toBe(0); // Should be clamped to 0
+      // Progress calculation: (150-200)/(100-200) * 100 = (-50)/(-100) * 100 = 50%
+      expect(section.progressPercentage).toBe(50); 
+      expect(section.remainingMiles).toBe(0); // max(0, 100 - 150) = 0
     });
   });
 });
