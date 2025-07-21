@@ -883,7 +883,7 @@ p {
 
 .config-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--spacing-3);
 }
 
@@ -1003,7 +1003,7 @@ p {
 /* Stats improvements */
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-4);
 }
@@ -1133,11 +1133,11 @@ p {
   }
 
   .stats-overview {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .config-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
