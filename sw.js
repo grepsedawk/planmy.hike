@@ -1,9 +1,4 @@
-const CACHE_NAME = "planmyhike-v2"
-// Get the base path from the service worker location
-const BASE_PATH = self.location.pathname.substring(
-  0,
-  self.location.pathname.lastIndexOf("/") + 1,
-)
+const CACHE_NAME = "planmyhike-v6"
 
 const urlsToCache = [
   "./",

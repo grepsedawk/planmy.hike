@@ -28,17 +28,43 @@
   <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
   
   <title>Plan my Hike!</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
   <link href="index.css" rel="stylesheet" />
 </head>
 <body>
-  <nav>
-    <a href="#/">Home</a>
-    <a href="#/sections">Section Planner (demo)</a>
-  </nav>
-  <div id="content"></div>
+  <div class="app">
+    <div class="app-header">
+      <nav>
+        <div class="flex items-center gap-4">
+          <span class="material-icons">hiking</span>
+          <span class="font-weight-semibold">Plan My Hike</span>
+        </div>
+        <div class="flex gap-2">
+          <a href="#/" class="nav-link">
+            <span class="material-icons">home</span>
+            Home
+          </a>
+          <a href="#/sections" class="nav-link">
+            <span class="material-icons">map</span>
+            Sections
+          </a>
+        </div>
+      </nav>
+    </div>
+    <div class="app-content">
+      <div id="content"></div>
+    </div>
+  </div>
 
   <script src="js/html5-qrcode.min.js"></script>
   <script src="js/dexie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="js/index.js"></script>
 </body>
 </html>

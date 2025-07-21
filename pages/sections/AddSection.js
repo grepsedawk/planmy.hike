@@ -9,7 +9,11 @@ class AddSection extends Renderer {
 
   static renderTrigger(parent) {
     const button = document.createElement("button")
-    button.innerText = "➕"
+    button.classList.add("btn", "btn-primary")
+    button.innerHTML = `
+      <span class="material-icons">add</span>
+      Create New Section
+    `
     button.addEventListener("click", () => AddSection.render())
 
     parent.appendChild(button)
@@ -20,40 +24,124 @@ class AddSection extends Renderer {
   }
 
   render() {
+    // Create modal overlay
+    this.overlay = document.createElement("div")
+    this.overlay.classList.add("food-form-modal")
+    
     this.div = document.createElement("div")
-    this.div.classList.add("card", "float")
-    this.nameInput = this.renderNameInput(this.div)
-    this.startMile = this.renderNumberInput(
-      this.div,
-      this.section.startMile,
-      "Start Mile",
-    )
-    this.endMile = this.renderNumberInput(
-      this.div,
-      this.section.endMile,
-      "End Mile",
-    )
-    this.caloriesPerDay = this.renderNumberInput(
-      this.div,
-      this.section.caloriesPerDay,
-      "Cal/day",
-    )
-    this.days = this.renderNumberInput(this.div, this.section.days, "Days")
-
-    this.saveButton = this.renderButton(this.div, "Save", () => this.save())
-
-    document.body.appendChild(this.div)
+    this.div.classList.add("food-form-container")
+    
+    // Header
+    const header = document.createElement("div")
+    header.classList.add("food-form-header")
+    
+    const title = document.createElement("h3")
+    title.innerHTML = `<span class="material-icons mr-3">hiking</span>${this.section.id ? "Edit Trail Section" : "Create New Trail Section"}`
+    title.style.margin = "0"
+    title.style.display = "flex"
+    title.style.alignItems = "center"
+    
+    this.closeButton = document.createElement("button")
+    this.closeButton.classList.add("food-form-close")
+    this.closeButton.innerHTML = `<span class="material-icons">close</span>`
+    this.closeButton.addEventListener("click", () => this.close())
+    
+    header.appendChild(title)
+    header.appendChild(this.closeButton)
+    this.div.appendChild(header)
+    
+    // Form container
+    const formContainer = document.createElement("div")
+    formContainer.classList.add("food-form-grid")
+    
+    // Section name input (full width)
+    this.nameInput = this.renderFormGroup(formContainer, "Section Name", "text", this.section.name, "Enter section name...", ["food-form-group"])
+    
+    // Start and end mile
+    this.startMile = this.renderFormGroup(formContainer, "Start Mile", "number", this.section.startMile, "0", ["food-form-group-half"])
+    this.endMile = this.renderFormGroup(formContainer, "End Mile", "number", this.section.endMile, "0", ["food-form-group-half"])
+    
+    // Days and calories per day
+    this.days = this.renderFormGroup(formContainer, "Days", "number", this.section.days, "1", ["food-form-group-half"])
+    this.caloriesPerDay = this.renderFormGroup(formContainer, "Calories Per Day", "number", this.section.caloriesPerDay, "2500", ["food-form-group-half"])
+    
+    // Save button (full width)
+    const buttonContainer = document.createElement("div")
+    buttonContainer.classList.add("food-form-group")
+    this.saveButton = document.createElement("button")
+    this.saveButton.classList.add("btn", "btn-primary", "btn-lg")
+    this.saveButton.innerHTML = `<span class="material-icons">save</span> ${this.section.id ? "Update Section" : "Create Section"}`
+    this.saveButton.style.width = "100%"
+    this.saveButton.addEventListener("click", () => this.save())
+    buttonContainer.appendChild(this.saveButton)
+    
+    formContainer.appendChild(buttonContainer)
+    this.div.appendChild(formContainer)
+    this.overlay.appendChild(this.div)
+    
+    // Close on overlay click
+    this.overlay.addEventListener("click", (e) => {
+      if (e.target === this.overlay) {
+        this.close()
+      }
+    })
+    
+    document.body.appendChild(this.overlay)
+    
+    // Focus on name input
+    setTimeout(() => this.nameInput.focus(), 100)
   }
 
-  renderNameInput(parent) {
-    const div = document.createElement("div")
+  renderFormGroup(parent, label, type, value, placeholder, classNames = ["food-form-group"]) {
+    const group = document.createElement("div")
+    
+    // Handle multiple class names properly
+    if (Array.isArray(classNames)) {
+      classNames.forEach(cls => {
+        if (cls && cls.trim()) {
+          group.classList.add(cls.trim())
+        }
+      })
+    } else {
+      // Fallback for string input
+      const classes = classNames.split(" ")
+      classes.forEach(cls => {
+        if (cls.trim()) {
+          group.classList.add(cls.trim())
+        }
+      })
+    }
+    
+    const labelEl = document.createElement("label")
+    labelEl.classList.add("form-label")
+    labelEl.textContent = label
+    
     const input = document.createElement("input")
-    input.placeholder = "Name"
-    input.value = this.section.name
-
-    div.appendChild(input)
-    parent.appendChild(div)
-
+    input.classList.add("form-control")
+    input.type = type
+    input.value = value || ""
+    input.placeholder = placeholder
+    
+    // Add step for number inputs
+    if (type === "number") {
+      input.step = "0.1"
+      if (label.toLowerCase().includes("mile")) {
+        input.min = "0"
+      }
+      if (label.toLowerCase().includes("days")) {
+        input.min = "1"
+        input.step = "1"
+      }
+      if (label.toLowerCase().includes("calories")) {
+        input.min = "0"
+        input.step = "50"
+      }
+    }
+    
+    group.appendChild(labelEl)
+    group.appendChild(input)
+    parent.appendChild(group)
+    
     return input
   }
 
@@ -63,21 +151,45 @@ class AddSection extends Renderer {
     }
 
     this.section.name = this.nameInput.value
-    this.section.startMile = this.startMile.value
-    this.section.endMile = this.endMile.value
-    this.section.caloriesPerDay = this.caloriesPerDay.value
-    this.section.days = this.days.value
+    this.section.startMile = parseFloat(this.startMile.value) || 0
+    this.section.endMile = parseFloat(this.endMile.value) || 0
+    this.section.caloriesPerDay = parseFloat(this.caloriesPerDay.value) || 2500
+    this.section.days = parseInt(this.days.value) || 1
 
     this.section
       .save()
-      .then((id) => (window.location = `#/sections/${id}/food`))
-
-    this.div.remove()
+      .then((id) => {
+        this.close()
+        // Refresh the sections page to show the new/updated section
+        if (window.location.hash.includes('/sections')) {
+          window.location.reload()
+        } else {
+          window.location = `#/sections/${id}/food`
+        }
+      })
   }
 
   validate() {
+    // Remove any existing error messages
+    const existingErrors = this.div.querySelectorAll(".error-message")
+    existingErrors.forEach(error => error.remove())
+    
     if (!this.nameInput.value.trim()) {
-      this.renderError("Name is required")
+      this.renderError("Section name is required")
+      return false
+    }
+
+    const startMile = parseFloat(this.startMile.value) || 0
+    const endMile = parseFloat(this.endMile.value) || 0
+    
+    if (endMile <= startMile) {
+      this.renderError("End mile must be greater than start mile")
+      return false
+    }
+
+    const days = parseInt(this.days.value) || 0
+    if (days < 1) {
+      this.renderError("Days must be at least 1")
       return false
     }
 
@@ -86,9 +198,9 @@ class AddSection extends Renderer {
 
   renderError(message) {
     const errorDiv = document.createElement("div")
-    errorDiv.className = "error"
+    errorDiv.className = "error-message"
     errorDiv.textContent = message
-
+    
     errorDiv.addEventListener("click", () => {
       errorDiv.remove()
     })
@@ -97,7 +209,15 @@ class AddSection extends Renderer {
       errorDiv.remove()
     })
 
-    this.div.appendChild(errorDiv)
+    // Insert error after the form header
+    const header = this.div.querySelector(".food-form-header")
+    header.insertAdjacentElement("afterend", errorDiv)
+  }
+
+  close() {
+    if (this.overlay) {
+      this.overlay.remove()
+    }
   }
 }
 
