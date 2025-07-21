@@ -74,8 +74,8 @@ class ShowTotals extends Renderer {
     )
     progressSection.appendChild(calorieProgress)
 
-    const proteinCalorieProgress = this.createProteinCalorieProgressBar()
-    progressSection.appendChild(proteinCalorieProgress)
+    const proteinCarbProgress = this.createProteinCarbProgressBar()
+    progressSection.appendChild(proteinCarbProgress)
 
     this.div.appendChild(progressSection)
 
@@ -142,13 +142,13 @@ class ShowTotals extends Renderer {
     return container
   }
 
-  createProteinCalorieProgressBar() {
+  createProteinCarbProgressBar() {
     const container = document.createElement("div")
     container.style.marginBottom = "var(--spacing-3)"
 
-    const currentRatio = this.proteinCalorieRatio()
-    const goalRatio = 0.18 // 18% of calories from protein (good for endurance activities)
-    const maxRatio = 0.3 // Maximum reasonable ratio for display (30%)
+    const currentRatio = this.proteinCarbRatio()
+    const goalRatio = 0.25 // Good protein:carb ratio for endurance activities (0.2-0.3 range)
+    const maxRatio = 1.0 // Maximum reasonable ratio for display
 
     const labelEl = document.createElement("div")
     labelEl.style.cssText =
@@ -157,13 +157,13 @@ class ShowTotals extends Renderer {
     const labelText = document.createElement("span")
     labelText.style.cssText =
       "font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--text-primary);"
-    labelText.textContent = "Protein:Calorie Ratio"
+    labelText.textContent = "Protein:Carb Ratio"
 
     const ratioText = document.createElement("span")
     ratioText.style.cssText =
       "font-size: var(--font-size-sm); color: var(--text-tertiary);"
     const percentage = ((currentRatio / goalRatio) * 100).toFixed(0)
-    ratioText.textContent = `${(currentRatio * 100).toFixed(1)}% (${percentage}% of goal)`
+    ratioText.textContent = `${currentRatio.toFixed(2)} (${percentage}% of goal)`
 
     labelEl.appendChild(labelText)
     labelEl.appendChild(ratioText)
@@ -195,7 +195,7 @@ class ShowTotals extends Renderer {
       border-top: 8px solid var(--success);
       z-index: 10;
     `
-    goalIndicator.title = `Goal: ${(goalRatio * 100).toFixed(0)}% protein`
+    goalIndicator.title = `Goal: ${goalRatio.toFixed(2)} protein:carb ratio`
 
     // Goal line
     const goalLine = document.createElement("div")
@@ -245,11 +245,6 @@ class ShowTotals extends Renderer {
   proteinCarbRatio() {
     const totalCarbs = this.totalCarbs()
     return totalCarbs > 0 ? this.totalProtein() / totalCarbs : 0
-  }
-
-  proteinCalorieRatio() {
-    const totalCals = this.totalCalories()
-    return totalCals > 0 ? this.totalProtein() / totalCals : 0
   }
 
   totalNetWeight() {
