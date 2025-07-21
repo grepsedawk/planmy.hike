@@ -1,0 +1,125 @@
+<div class="page-header">
+  <h1 class="flex items-center gap-3">
+    <span class="material-icons">backpack</span>
+    Gear Manager
+  </h1>
+  <p>Manage your hiking gear and equipment</p>
+</div>
+
+<div class="gear-stats grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="stat-card">
+    <div class="stat-value" id="totalItems">0</div>
+    <div class="stat-label">Total Items</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="totalWeight">0oz</div>
+    <div class="stat-label">Total Weight</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="totalPrice">$0.00</div>
+    <div class="stat-label">Total Price</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="totalCategories">0</div>
+    <div class="stat-label">Categories</div>
+  </div>
+</div>
+
+<div class="gear-controls flex flex-wrap items-center justify-between gap-4 mb-6">
+  <div class="flex flex-wrap gap-2">
+    <button onclick="showAddGearModal()" class="btn btn-primary">
+      <span class="material-icons">add</span>
+      Add Gear
+    </button>
+    <button onclick="manageCategoriesModal()" class="btn btn-outline">
+      <span class="material-icons">category</span>
+      Categories
+    </button>
+  </div>
+  
+  <div class="flex flex-wrap gap-2">
+    <select id="sortSelect" class="form-control">
+      <option value="name">Sort by Name</option>
+      <option value="weight">Sort by Weight</option>
+      <option value="price">Sort by Price</option>
+      <option value="category">Sort by Category</option>
+    </select>
+    <input 
+      type="text" 
+      id="filterInput" 
+      placeholder="Filter gear..." 
+      class="form-control"
+    />
+  </div>
+  
+  <div class="flex gap-2">
+    <button onclick="importGear()" class="btn btn-outline">
+      <span class="material-icons">upload</span>
+      Import
+    </button>
+    <button onclick="exportGear()" class="btn btn-outline">
+      <span class="material-icons">download</span>
+      Export
+    </button>
+  </div>
+</div>
+
+<div id="gearList" class="gear-list">
+  <!-- Gear items will be rendered here -->
+</div>
+
+<style>
+.stat-card {
+  @apply bg-white p-4 rounded-lg border text-center;
+}
+
+.stat-value {
+  @apply text-2xl font-bold text-primary mb-1;
+}
+
+.stat-label {
+  @apply text-sm text-tertiary;
+}
+
+.category-section {
+  @apply bg-white rounded-lg border overflow-hidden;
+}
+
+.category-header {
+  @apply bg-gray-50 border-b;
+}
+
+.gear-item {
+  @apply transition-colors duration-200;
+}
+
+.gear-item:hover {
+  @apply bg-gray-50;
+}
+
+.badge {
+  @apply px-2 py-1 text-xs bg-primary text-white rounded-full;
+}
+
+.badge-outline {
+  @apply bg-transparent text-primary border border-primary;
+}
+
+@media (max-width: 768px) {
+  .gear-controls {
+    @apply flex-col items-stretch;
+  }
+  
+  .gear-controls > div {
+    @apply w-full justify-center;
+  }
+  
+  .gear-item {
+    @apply flex-col items-stretch gap-2;
+  }
+  
+  .gear-item > div:last-child {
+    @apply flex justify-between items-center;
+  }
+}
+</style>
