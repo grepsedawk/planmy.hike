@@ -76,6 +76,18 @@ class SectionPage extends Page {
           )
         : "0"
 
+    // Current mile and progress display
+    const currentMileInfo = section.currentMile 
+      ? `<div class="stat-item">
+           <div class="stat-number">${section.currentMile}</div>
+           <div class="stat-label">Current Mile</div>
+         </div>
+         <div class="stat-item">
+           <div class="stat-number">${(section.progressPercentage || 0).toFixed(1)}%</div>
+           <div class="stat-label">Progress</div>
+         </div>`
+      : ''
+
     sectionCard.innerHTML = `
       <div class="card-header">
         <h3 class="card-title">
@@ -94,6 +106,7 @@ class SectionPage extends Page {
             <div class="stat-number">${section.endMile || 0}</div>
             <div class="stat-label">End Mile</div>
           </div>
+          ${currentMileInfo}
           <div class="stat-item">
             <div class="stat-number">${section.days || 0}</div>
             <div class="stat-label">Days</div>
