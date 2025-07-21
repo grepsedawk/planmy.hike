@@ -1,4 +1,4 @@
-const CACHE_NAME = "planmyhike-v5"
+const CACHE_NAME = "planmyhike-v6"
 
 const urlsToCache = [
   "./",
