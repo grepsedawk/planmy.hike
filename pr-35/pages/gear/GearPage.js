@@ -1,4 +1,5 @@
 import Page from "../../js/Page.js"
+import AddGearModal from "./AddGearModal.js"
 
 class GearPage extends Page {
   constructor(parent, params) {
@@ -15,6 +16,9 @@ class GearPage extends Page {
     await this.loadGear()
     this.setupEventListeners()
     this.setupFilters()
+    
+    // Make this page available globally for modal callbacks
+    window.currentGearPage = this
   }
 
   async loadGear() {
@@ -138,8 +142,8 @@ class GearPage extends Page {
   setupEventListeners() {
     // Global functions for gear management
     window.showAddGearModal = () => {
-      // TODO: Implement add gear modal
-      alert('Add gear functionality coming soon!')
+      const modal = new AddGearModal()
+      modal.show()
     }
 
     window.editGear = (id) => {
