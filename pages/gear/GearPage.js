@@ -215,8 +215,6 @@ class GearPage extends Page {
     }
   }
 
-  showImportModal() {
-
   setupFilters() {
     // TODO: Implement filtering and sorting
     const sortSelect = document.getElementById('sortSelect')
