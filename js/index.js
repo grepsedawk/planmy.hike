@@ -1,6 +1,8 @@
 import Router from "./Router.js"
 import Food from "./Food.js"
 import Section from "./Section.js"
+import GPSTracker from "./GPSTracker.js"
+import MileLogger from "./MileLogger.js"
 
 console.debug("app booting...")
 
@@ -40,11 +42,20 @@ db.version(1).stores({
     endMile,
     currentMile,
     caloriesPerDay,
-    days
+    days,
+    gpsTrackingEnabled,
+    trail
     `,
 })
 
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
+
+// Initialize GPS tracker and mile logger
+window.gpsTracker = new GPSTracker()
+window.mileLogger = new MileLogger()
+
+// Load mile logging data
+window.mileLogger.loadLogs()
 
 Router.init()

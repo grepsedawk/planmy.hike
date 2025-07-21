@@ -1,4 +1,4 @@
-const CACHE_NAME = "planmyhike-v6"
+const CACHE_NAME = "planmyhike-v7"
 
 const urlsToCache = [
   "./",
@@ -11,8 +11,11 @@ const urlsToCache = [
   "./js/Renderer.js",
   "./js/Food.js",
   "./js/Section.js",
+  "./js/GPSTracker.js",
+  "./js/MileLogger.js",
   "./js/dexie.min.js",
   "./js/html5-qrcode.min.js",
+  "./data/Full_PCT_Mile_Marker.gpx",
   "./pages/home/index.html",
   "./pages/home/index.js",
   "./pages/sections/SectionsPage.js",

@@ -155,6 +155,7 @@ class AddSection extends Renderer {
     this.section.endMile = parseFloat(this.endMile.value) || 0
     this.section.caloriesPerDay = parseFloat(this.caloriesPerDay.value) || 2500
     this.section.days = parseInt(this.days.value) || 1
+    this.section.trail = "PCT" // Default to PCT for now
 
     this.section
       .save()
