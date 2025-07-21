@@ -106,7 +106,7 @@
   --text-secondary: var(--gray-700);
   --text-tertiary: var(--gray-500);
   --border-color: var(--gray-300);
-  
+
   /* Status colors - light theme */
   --success-bg: #e8f5e8;
   --success-text: #2e7d32;
@@ -126,7 +126,7 @@
     --text-secondary: #e0e0e0;
     --text-tertiary: #b0b0b0;
     --border-color: #4a4a4a;
-    
+
     /* Status colors - dark theme */
     --success-bg: #1b5e20;
     --success-text: #81c784;
@@ -1125,7 +1125,9 @@ p {
   }
 
   /* Ensure all inputs and selects are constrained */
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     max-width: 100%;
     box-sizing: border-box;
   }
