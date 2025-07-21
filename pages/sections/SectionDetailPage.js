@@ -168,21 +168,27 @@ class SectionDetailPage extends Page {
   }
 
   updateMileManually() {
-    const mileInput = document.getElementById('mile-input')
-    if (!mileInput) {
-      alert("Mile input not found")
-      return
+    try {
+      const mileInput = document.getElementById('mile-input')
+      if (!mileInput) {
+        alert("Mile input not found")
+        return
+      }
+      
+      console.debug("Manual mile update - input value:", mileInput.value)
+      const mile = parseFloat(mileInput.value)
+      if (isNaN(mile)) {
+        alert("Please enter a valid mile number")
+        return
+      }
+      
+      this.section.updateCurrentMile(mile, 'manual')
+      this.refreshSectionInfo()
+      alert(`Mile manually updated to ${mile}`)
+    } catch (error) {
+      console.error("Error in updateMileManually:", error)
+      alert("Error updating mile: " + error.message)
     }
-    
-    const mile = parseFloat(mileInput.value)
-    if (isNaN(mile)) {
-      alert("Please enter a valid mile number")
-      return
-    }
-    
-    this.section.updateCurrentMile(mile, 'manual')
-    this.refreshSectionInfo()
-    alert(`Mile manually updated to ${mile}`)
   }
 
   refreshSectionInfo() {
