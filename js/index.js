@@ -67,13 +67,7 @@ db.version(1).stores({
     ++id,
     name,
     description,
-    parentId,
-    weight,
-    price,
-    vendor,
-    url,
     color,
-    sortOrder,
     dateCreated
     `,
 })

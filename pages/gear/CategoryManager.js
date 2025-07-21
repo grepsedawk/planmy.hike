@@ -216,12 +216,6 @@ class CategoryManager {
         name: name,
         description: descInput.value.trim(),
         color: colorInput.value,
-        parentId: null,
-        weight: 0,
-        price: 0,
-        vendor: '',
-        url: '',
-        sortOrder: this.categories.length,
         dateCreated: new Date()
       }
       
@@ -283,13 +277,7 @@ class CategoryManager {
         name: name,
         description: descInput.value.trim(),
         color: colorInput.value,
-        // Keep existing fields
-        parentId: null,
-        weight: 0,
-        price: 0,
-        vendor: '',
-        url: '',
-        sortOrder: 0
+        dateCreated: new Date()
       }
       
       await db.gearCategories.put(categoryData)
