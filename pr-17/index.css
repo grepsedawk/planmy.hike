@@ -187,7 +187,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-4) var(--spacing-6);
+  padding: var(--spacing-4) var(--spacing-4);
   background-color: var(--primary-500);
   color: white;
 }
@@ -1001,16 +1001,55 @@ p {
 
 /* Responsive improvements */
 @media (max-width: 768px) {
+  /* Navigation mobile fixes */
+  nav {
+    padding: var(--spacing-3) var(--spacing-4);
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+  
+  .nav-link {
+    padding: var(--spacing-2);
+    font-size: var(--font-size-xs);
+    gap: var(--spacing-1);
+  }
+  
+  .nav-link .material-icons {
+    font-size: 16px;
+  }
+  
+  /* App content mobile fixes */
+  .app-content {
+    padding: var(--spacing-3);
+  }
+  
   .dashboard-header h1 {
     font-size: var(--font-size-3xl);
   }
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+  
+  /* Ensure cards don't overflow */
+  .card {
+    min-width: 0;
+    overflow-wrap: break-word;
   }
   
   .feature-item {
     padding: var(--spacing-2);
+  }
+  
+  /* Button improvements for mobile */
+  .btn {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+  
+  .btn-lg {
+    padding: var(--spacing-3) var(--spacing-4);
   }
   
   .fab-group {
