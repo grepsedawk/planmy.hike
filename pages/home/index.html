@@ -47,8 +47,19 @@
 
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Quick Actions</h3>
-      <p class="card-subtitle">Get started with your hike planning</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="card-title">Quick Actions</h3>
+          <p class="card-subtitle">Get started with your hike planning</p>
+        </div>
+        <div id="syncStatus">
+          <!-- Sync status will be inserted here -->
+        </div>
+        <button class="btn btn-sm btn-outline" onclick="window.syncSettings?.showSyncModal()">
+          <span class="material-icons text-sm">settings</span>
+          Sync Settings
+        </button>
+      </div>
     </div>
     <div class="card-content">
       <div class="grid grid-cols-3">
@@ -64,6 +75,15 @@
           <span class="material-icons">download</span>
           Export Data
         </button>
+      </div>
+      <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+        <p class="text-sm text-tertiary mb-2">
+          <span class="material-icons text-sm mr-1">sync</span>
+          Sync your data across devices by exporting from one device and importing on another.
+        </p>
+        <p class="text-xs text-tertiary">
+          Your data is automatically backed up locally and can be exported as a backup file.
+        </p>
       </div>
     </div>
   </div>

@@ -3,6 +3,8 @@ import Food from "./Food.js"
 import Section from "./Section.js"
 import GPSTracker from "./GPSTracker.js"
 import MileLogger from "./MileLogger.js"
+import SyncManager from "./SyncManager.js"
+import SyncSettings from "./SyncSettings.js"
 
 console.debug("app booting...")
 
@@ -54,6 +56,12 @@ db.sections.mapToClass(Section)
 // Initialize GPS tracker and mile logger
 window.gpsTracker = new GPSTracker()
 window.mileLogger = new MileLogger()
+
+// Initialize sync manager
+window.syncManager = new SyncManager(db)
+
+// Initialize sync settings UI
+window.syncSettings = new SyncSettings(window.syncManager)
 
 // Load mile logging data
 window.mileLogger.loadLogs()

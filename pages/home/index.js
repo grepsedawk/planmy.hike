@@ -68,6 +68,13 @@ class HomePage extends Page {
     const ctx = document.getElementById('progressChart')
     if (!ctx) return
 
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js not loaded, skipping chart setup')
+      ctx.innerHTML = '<div class="text-center text-tertiary p-4">Chart functionality requires Chart.js library</div>'
+      return
+    }
+
     // Create a simple progress chart
     new Chart(ctx, {
       type: 'doughnut',
@@ -96,28 +103,64 @@ class HomePage extends Page {
   }
 
   setupEventListeners() {
-    // Add global functions for import/export
+    // Sync functionality using SyncManager
     window.importData = () => {
-      alert('Import functionality coming soon!')
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.json'
+      input.onchange = async (e) => {
+        try {
+          const file = e.target.files[0]
+          if (!file) return
+          
+          if (confirm('This will import data and merge it with your existing data. Continue?')) {
+            await window.syncManager.uploadBackup(file)
+            alert('Data imported successfully!')
+            // Refresh the page data
+            await this.loadDashboardData()
+          }
+        } catch (error) {
+          console.error('Error importing data:', error)
+          alert('Error importing data: ' + error.message)
+        }
+      }
+      input.click()
     }
 
     window.exportData = async () => {
       try {
-        const sections = await db.sections.toArray()
-        const foods = await db.foods.toArray()
-        const data = { sections, foods }
-        
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = 'planmyhike-data.json'
-        a.click()
-        URL.revokeObjectURL(url)
+        await window.syncManager.downloadBackup()
+        alert('Data exported successfully!')
       } catch (error) {
         console.error('Error exporting data:', error)
-        alert('Error exporting data')
+        alert('Error exporting data: ' + error.message)
       }
+    }
+
+    // Listen for sync status changes
+    window.addEventListener('syncStatusChange', (event) => {
+      this.updateSyncStatus(event.detail)
+    })
+
+    // Initial sync status update
+    this.updateSyncStatus(window.syncManager.getSyncStatus())
+  }
+
+  updateSyncStatus(status) {
+    // Update sync indicators if they exist in the UI
+    const syncIndicator = document.getElementById('syncStatus')
+    if (syncIndicator) {
+      syncIndicator.innerHTML = `
+        <div class="flex items-center gap-2 text-sm">
+          <span class="material-icons text-sm ${status.isOnline ? 'text-green-500' : 'text-gray-400'}">
+            ${status.isOnline ? 'cloud_done' : 'cloud_off'}
+          </span>
+          <span class="text-tertiary">
+            ${status.isOnline ? 'Online' : 'Offline'}
+            ${status.lastSyncTime ? ` • Last backup: ${new Date(status.lastSyncTime).toLocaleDateString()}` : ''}
+          </span>
+        </div>
+      `
     }
   }
 }
