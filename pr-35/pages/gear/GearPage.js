@@ -429,9 +429,11 @@ class GearPage extends Page {
     try {
       if (clearExisting) {
         await db.gear.clear()
+        await db.gearCategories.clear()
       }
       
       const imported = []
+      const categoryMap = new Map() // Track created categories
       
       for (const row of data) {
         if (row.length < 2) continue // Skip empty rows
@@ -440,7 +442,7 @@ class GearPage extends Page {
         
         if (isLighterPack) {
           // Map LighterPack format
-          gearData = this.mapLighterPackRow(headers, row)
+          gearData = await this.mapLighterPackRow(headers, row, categoryMap)
         } else {
           // Map our format
           gearData = this.mapPlanMyHikeRow(headers, row)
@@ -463,7 +465,7 @@ class GearPage extends Page {
         // Refresh gear list
         this.loadGear()
         
-        alert(`Successfully imported ${imported.length} gear items!`)
+        alert(`Successfully imported ${imported.length} gear items and ${categoryMap.size} categories!`)
       } else {
         alert('No valid gear items found to import.')
       }
@@ -474,7 +476,7 @@ class GearPage extends Page {
     }
   }
 
-  mapLighterPackRow(headers, row) {
+  async mapLighterPackRow(headers, row, categoryMap) {
     const getValue = (fieldNames) => {
       for (const name of fieldNames) {
         const index = headers.findIndex(h => h.toLowerCase().includes(name.toLowerCase()))
@@ -488,13 +490,46 @@ class GearPage extends Page {
     const name = getValue(['item', 'name', 'description'])
     if (!name) return null
     
+    // Handle category creation
+    let categoryId = null
+    const categoryName = getValue(['category'])
+    if (categoryName && categoryName !== '') {
+      // Check if we've already created this category
+      if (categoryMap.has(categoryName)) {
+        categoryId = categoryMap.get(categoryName)
+      } else {
+        // Check if category already exists
+        const existingCategory = await db.gearCategories.where({ name: categoryName }).first()
+        if (existingCategory) {
+          categoryId = existingCategory.id
+          categoryMap.set(categoryName, categoryId)
+        } else {
+          // Create new category
+          const newCategory = {
+            name: categoryName,
+            description: `Imported from LighterPack`,
+            parentId: null,
+            weight: 0,
+            price: 0,
+            vendor: "",
+            url: "",
+            color: this.getRandomCategoryColor(),
+            sortOrder: 0,
+            dateCreated: new Date()
+          }
+          categoryId = await db.gearCategories.add(newCategory)
+          categoryMap.set(categoryName, categoryId)
+        }
+      }
+    }
+    
     const weightStr = getValue(['weight', 'oz', 'grams'])
     let weight = 0
     if (weightStr) {
       const weightMatch = weightStr.match(/[\d.]+/)
       if (weightMatch) {
         weight = parseFloat(weightMatch[0])
-        // Convert oz to grams if needed
+        // Convert oz to grams if needed (LighterPack uses grams by default)
         if (weightStr.toLowerCase().includes('oz')) {
           weight = weight * 28.3495
         }
@@ -514,16 +549,24 @@ class GearPage extends Page {
       name: name,
       weight: weight,
       price: price,
-      quantity: 1,
+      quantity: parseInt(getValue(['qty', 'quantity'])) || 1,
       description: getValue(['desc', 'description', 'notes']) || '',
       vendor: getValue(['brand', 'vendor', 'manufacturer']) || '',
       url: getValue(['url', 'link']) || '',
       notes: '',
-      categoryId: null,
+      categoryId: categoryId,
       dateAdded: new Date(),
       lastUsed: null,
       timesUsed: 0
     }
+  }
+
+  getRandomCategoryColor() {
+    const colors = [
+      '#2196f3', '#4caf50', '#ff9800', '#f44336', '#9c27b0',
+      '#00bcd4', '#795548', '#607d8b', '#3f51b5', '#009688'
+    ]
+    return colors[Math.floor(Math.random() * colors.length)]
   }
 
   mapPlanMyHikeRow(headers, row) {
