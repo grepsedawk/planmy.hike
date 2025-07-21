@@ -157,7 +157,7 @@ class ShowTotals extends Renderer {
     const labelText = document.createElement("span")
     labelText.style.cssText =
       "font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--text-primary);"
-    labelText.textContent = "Protein:Calorie Ratio"
+    labelText.textContent = "protein:carb ratio"
 
     const ratioText = document.createElement("span")
     ratioText.style.cssText =
