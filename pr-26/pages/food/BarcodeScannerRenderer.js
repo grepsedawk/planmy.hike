@@ -23,28 +23,35 @@ class BarcodeScannerRenderer {
     this.canvasElement = null
     this.barcodeDetector = null
     this.scanInterval = null
-    
+
     // Check for native BarcodeDetector support (Chrome/Edge)
     this.checkNativeSupport()
   }
 
   async checkNativeSupport() {
-    if ('BarcodeDetector' in window) {
+    if ("BarcodeDetector" in window) {
       try {
         const formats = await BarcodeDetector.getSupportedFormats()
         // Check if common grocery barcode formats are supported
-        const groceryFormats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128']
-        const hasGrocerySupport = groceryFormats.some(format => formats.includes(format))
-        
+        const groceryFormats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"]
+        const hasGrocerySupport = groceryFormats.some((format) =>
+          formats.includes(format),
+        )
+
         if (hasGrocerySupport) {
           this.useNativeScanner = true
           this.barcodeDetector = new BarcodeDetector({
-            formats: groceryFormats.filter(format => formats.includes(format))
+            formats: groceryFormats.filter((format) =>
+              formats.includes(format),
+            ),
           })
-          console.log('🚀 Native BarcodeDetector enabled with formats:', groceryFormats.filter(format => formats.includes(format)))
+          console.log(
+            "🚀 Native BarcodeDetector enabled with formats:",
+            groceryFormats.filter((format) => formats.includes(format)),
+          )
         }
       } catch (err) {
-        console.warn('BarcodeDetector check failed:', err)
+        console.warn("BarcodeDetector check failed:", err)
         this.useNativeScanner = false
       }
     }
@@ -57,15 +64,15 @@ class BarcodeScannerRenderer {
       this.scanCount = 0
     }
     this.scanCount++
-    
+
     // Auto-adjust scanning parameters based on performance
     if (this.scanCount % 10 === 0) {
       const elapsed = Date.now() - this.performanceStart
       const scansPerSecond = this.scanCount / (elapsed / 1000)
-      
+
       if (scansPerSecond < 5 && this.useNativeScanner) {
         // Reduce scanning frequency if performance is poor
-        console.log('📊 Adjusting scan rate for better performance')
+        console.log("📊 Adjusting scan rate for better performance")
       }
     }
   }
@@ -83,25 +90,8 @@ class BarcodeScannerRenderer {
     disableFlip: false,
     // Optimize for 1D barcodes
     experimentalFeatures: {
-      useBarCodeDetectorIfSupported: true
-    }
-  }
-
-  constructor(section) {
-    this.section = section
-    this.isScannerStopped = false
-    this.verbose = false
-    this.torchEnabled = false
-    this.scanAttempts = 0
-    this.maxScanAttempts = 15
-    this.useNativeScanner = false
-    this.videoElement = null
-    this.canvasElement = null
-    this.barcodeDetector = null
-    this.scanInterval = null
-    
-    // Check for native BarcodeDetector support (Chrome/Edge)
-    this.checkNativeSupport()
+      useBarCodeDetectorIfSupported: true,
+    },
   }
 
   static renderTrigger(parent, section) {
@@ -138,7 +128,9 @@ class BarcodeScannerRenderer {
     })
 
     // Create instruction text with scanner type indicator
-    const scannerType = this.useNativeScanner ? "(High-Speed Mode)" : "(Compatible Mode)"
+    const scannerType = this.useNativeScanner
+      ? "(High-Speed Mode)"
+      : "(Compatible Mode)"
     const instructions = document.createElement("div")
     instructions.style.cssText =
       "color: white; text-align: center; margin-bottom: 20px; padding: 0 20px;"
@@ -176,18 +168,19 @@ class BarcodeScannerRenderer {
   async startNativeScanner() {
     try {
       const scannerContainer = document.getElementById("scanner")
-      
+
       // Create video element for native scanning
       this.videoElement = document.createElement("video")
-      this.videoElement.style.cssText = "width: 100%; height: auto; background: black;"
+      this.videoElement.style.cssText =
+        "width: 100%; height: auto; background: black;"
       this.videoElement.autoplay = true
       this.videoElement.muted = true
       this.videoElement.playsInline = true
-      
+
       // Create canvas for frame capture
       this.canvasElement = document.createElement("canvas")
       this.canvasElement.style.display = "none"
-      
+
       scannerContainer.appendChild(this.videoElement)
       scannerContainer.appendChild(this.canvasElement)
 
@@ -197,8 +190,8 @@ class BarcodeScannerRenderer {
           facingMode: "environment",
           width: { ideal: 1280 },
           height: { ideal: 720 },
-          frameRate: { ideal: 30 }
-        }
+          frameRate: { ideal: 30 },
+        },
       })
 
       this.videoElement.srcObject = stream
@@ -210,7 +203,6 @@ class BarcodeScannerRenderer {
 
       this.onCameraReady()
       this.startNativeScanning()
-
     } catch (err) {
       console.error("Native scanner failed, falling back to html5-qrcode:", err)
       this.useNativeScanner = false
@@ -219,10 +211,10 @@ class BarcodeScannerRenderer {
   }
 
   startNativeScanning() {
-    const ctx = this.canvasElement.getContext('2d')
+    const ctx = this.canvasElement.getContext("2d")
     let frameSkipCounter = 0
     const frameSkipRate = 2 // Process every 2nd frame for better performance
-    
+
     const scanFrame = async () => {
       if (this.isScannerStopped) return
 
@@ -237,17 +229,33 @@ class BarcodeScannerRenderer {
 
       try {
         // Capture current video frame
-        ctx.drawImage(this.videoElement, 0, 0, this.canvasElement.width, this.canvasElement.height)
-        
+        ctx.drawImage(
+          this.videoElement,
+          0,
+          0,
+          this.canvasElement.width,
+          this.canvasElement.height,
+        )
+
         // Convert to ImageData for BarcodeDetector
-        const imageData = ctx.getImageData(0, 0, this.canvasElement.width, this.canvasElement.height)
-        
+        const imageData = ctx.getImageData(
+          0,
+          0,
+          this.canvasElement.width,
+          this.canvasElement.height,
+        )
+
         // Detect barcodes
         const barcodes = await this.barcodeDetector.detect(imageData)
-        
+
         if (barcodes.length > 0) {
           const barcode = barcodes[0]
-          console.log('🎯 Native barcode detected:', barcode.rawValue, 'Format:', barcode.format)
+          console.log(
+            "🎯 Native barcode detected:",
+            barcode.rawValue,
+            "Format:",
+            barcode.format,
+          )
           this.handleBarcodeDetection(barcode.rawValue)
           return
         }
@@ -255,9 +263,8 @@ class BarcodeScannerRenderer {
         this.scanAttempts++
         this.updateScanCounter()
         this.trackPerformance()
-
       } catch (err) {
-        console.warn('Native scan frame error:', err)
+        console.warn("Native scan frame error:", err)
         this.scanAttempts++
       }
 
@@ -280,9 +287,9 @@ class BarcodeScannerRenderer {
       advanced: [
         {
           focusMode: "continuous",
-          focusDistance: 0.1
-        }
-      ]
+          focusDistance: 0.1,
+        },
+      ],
     }
 
     try {
@@ -320,7 +327,9 @@ class BarcodeScannerRenderer {
   onCameraReady() {
     const statusElement = document.getElementById("scanner-status")
     if (statusElement) {
-      const mode = this.useNativeScanner ? "High-Speed Native Scanner" : "Compatible Scanner"
+      const mode = this.useNativeScanner
+        ? "High-Speed Native Scanner"
+        : "Compatible Scanner"
       statusElement.textContent = `${mode} ready - Point at barcode`
       statusElement.style.color = "rgba(255,255,255,0.6)"
     }
@@ -332,16 +341,29 @@ class BarcodeScannerRenderer {
     const torchButton = document.getElementById("torch-toggle")
     if (!torchButton) return
 
-    if (this.useNativeScanner && this.videoElement && this.videoElement.srcObject) {
+    if (
+      this.useNativeScanner &&
+      this.videoElement &&
+      this.videoElement.srcObject
+    ) {
       // Native mode torch control
       const stream = this.videoElement.srcObject
       const videoTrack = stream.getVideoTracks()[0]
-      
-      if (videoTrack && videoTrack.getCapabilities && videoTrack.getCapabilities().torch) {
+
+      if (
+        videoTrack &&
+        videoTrack.getCapabilities &&
+        videoTrack.getCapabilities().torch
+      ) {
         torchButton.style.display = "inline-block"
-        torchButton.addEventListener("click", () => this.toggleNativeTorch(videoTrack))
+        torchButton.addEventListener("click", () =>
+          this.toggleNativeTorch(videoTrack),
+        )
       }
-    } else if (this.html5QrCode && this.html5QrCode.getRunningTrackCapabilities) {
+    } else if (
+      this.html5QrCode &&
+      this.html5QrCode.getRunningTrackCapabilities
+    ) {
       // html5-qrcode mode torch control
       const capabilities = this.html5QrCode.getRunningTrackCapabilities()
       if (capabilities && capabilities.torch) {
@@ -483,10 +505,10 @@ class BarcodeScannerRenderer {
 
   close() {
     this.isScannerStopped = true
-    
+
     // Clear scanning interval for native mode
     if (this.scanInterval) {
-      if (typeof this.scanInterval === 'number' && this.scanInterval > 1000) {
+      if (typeof this.scanInterval === "number" && this.scanInterval > 1000) {
         clearTimeout(this.scanInterval)
       } else {
         cancelAnimationFrame(this.scanInterval)
@@ -498,7 +520,7 @@ class BarcodeScannerRenderer {
     if (this.videoElement && this.videoElement.srcObject) {
       const stream = this.videoElement.srcObject
       const tracks = stream.getTracks()
-      tracks.forEach(track => track.stop())
+      tracks.forEach((track) => track.stop())
       this.videoElement.srcObject = null
     }
 
@@ -520,7 +542,7 @@ class BarcodeScannerRenderer {
   cleanup() {
     // Clear scanning interval (both setTimeout and requestAnimationFrame)
     if (this.scanInterval) {
-      if (typeof this.scanInterval === 'number' && this.scanInterval > 1000) {
+      if (typeof this.scanInterval === "number" && this.scanInterval > 1000) {
         // setTimeout ID
         clearTimeout(this.scanInterval)
       } else {
@@ -534,7 +556,7 @@ class BarcodeScannerRenderer {
     if (this.videoElement && this.videoElement.srcObject) {
       const stream = this.videoElement.srcObject
       const tracks = stream.getTracks()
-      tracks.forEach(track => track.stop())
+      tracks.forEach((track) => track.stop())
     }
 
     // Clean up DOM elements
@@ -542,7 +564,7 @@ class BarcodeScannerRenderer {
       this.scannerDiv.remove()
       this.scannerDiv = null
     }
-    
+
     // Reset state
     this.html5QrCode = null
     this.videoElement = null
