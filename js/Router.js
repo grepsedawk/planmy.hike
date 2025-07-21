@@ -6,7 +6,7 @@ import HomePage from "../pages/home/index.js"
 
 class Router {
   static routes = {
-    "/404": NotFoundPage, 
+    "/404": NotFoundPage,
     "/": HomePage,
     "/sections": SectionsPage,
     "/sections/:id": SectionDetailPage,
@@ -69,7 +69,6 @@ class Router {
     const page = this.matchRoute(path, urlParams)
     console.debug("Routing to", path, page)
 
-
     return page
       .render()
       .catch((e) =>
@@ -81,7 +80,9 @@ class Router {
 
   static async init() {
     console.debug("Starting Router.init()")
-    window.addEventListener("hashchange", () => this.route().catch((e) => console.error("Error routing:", e.message)))
+    window.addEventListener("hashchange", () =>
+      this.route().catch((e) => console.error("Error routing:", e.message)),
+    )
     await this.route()
     console.debug("Router.init() completed successfully!")
   }

@@ -1,2 +1,5 @@
 /localStorage.json
 /node_modules/**
+/gh-pages/
+/gh-pages-existing/
+/deploy/
