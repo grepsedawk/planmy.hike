@@ -106,18 +106,34 @@
   --text-secondary: var(--gray-700);
   --text-tertiary: var(--gray-500);
   --border-color: var(--gray-300);
+  
+  /* Status colors - light theme */
+  --success-bg: #e8f5e8;
+  --success-text: #2e7d32;
+  --warning-bg: #fff3e0;
+  --warning-text: #f57c00;
+  --error-bg: #ffebee;
+  --error-text: #c62828;
 }
 
 /* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: var(--gray-900);
-    --bg-secondary: var(--gray-800);
-    --bg-tertiary: var(--gray-700);
-    --text-primary: var(--gray-100);
-    --text-secondary: var(--gray-300);
-    --text-tertiary: var(--gray-400);
-    --border-color: var(--gray-600);
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3d3d3d;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-tertiary: #b0b0b0;
+    --border-color: #4a4a4a;
+    
+    /* Status colors - dark theme */
+    --success-bg: #1b5e20;
+    --success-text: #81c784;
+    --warning-bg: #e65100;
+    --warning-text: #ffb74d;
+    --error-bg: #b71c1c;
+    --error-text: #ef5350;
   }
 }
 
@@ -157,12 +173,17 @@ body {
   transition: var(--transition-colors);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 /* App Layout */
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .app-header {
@@ -179,6 +200,8 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 @media (min-width: 768px) {
@@ -391,7 +414,7 @@ p {
 }
 
 .btn-success:hover:not(:disabled) {
-  background-color: #45a049;
+  background-color: var(--success-text);
 }
 
 .btn-danger {
@@ -400,7 +423,7 @@ p {
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #d32f2f;
+  background-color: var(--error-text);
 }
 
 .btn-outline {
@@ -592,18 +615,18 @@ p {
 }
 
 .badge.success {
-  background-color: #e8f5e8;
-  color: #2e7d32;
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
 .badge.warning {
-  background-color: #fff3e0;
-  color: #f57c00;
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 .badge.danger {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--error-bg);
+  color: var(--error-text);
 }
 
 /* Modal/Dialog */
@@ -801,6 +824,8 @@ p {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-4);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .food-planner-layout {
@@ -965,7 +990,7 @@ p {
 }
 
 .food-form-close:hover {
-  background: #d32f2f;
+  background: var(--error-text);
   transform: scale(1.05);
 }
 
@@ -995,7 +1020,7 @@ p {
 }
 
 .error-message:hover {
-  background: #d32f2f;
+  background: var(--error-text);
 }
 
 /* Stats improvements */
@@ -1077,6 +1102,9 @@ p {
   /* App content mobile fixes */
   .app-content {
     padding: var(--spacing-3);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   .dashboard-header h1 {
@@ -1092,6 +1120,20 @@ p {
   .card {
     min-width: 0;
     overflow-wrap: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure all inputs and selects are constrained */
+  input, select, textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure forms don't cause overflow */
+  form {
+    width: 100%;
+    max-width: 100%;
   }
 
   .feature-item {
@@ -1113,6 +1155,14 @@ p {
     right: var(--spacing-4);
   }
 
+  /* Food planner mobile layout improvements */
+  .food-planner-container {
+    padding: var(--spacing-3);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
   .food-planner-layout {
     grid-template-areas:
       "config"
@@ -1120,6 +1170,17 @@ p {
       "items";
     grid-template-columns: 1fr;
     gap: var(--spacing-4);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .food-config-section,
+  .food-stats-section,
+  .food-items-section {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .food-form-grid {
@@ -1139,6 +1200,72 @@ p {
   }
 }
 
+/* Additional responsive improvements for very small screens */
+@media (max-width: 480px) {
+  .food-planner-container {
+    padding: var(--spacing-2);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .food-planner-layout {
+    gap: var(--spacing-3);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-content {
+    padding: var(--spacing-2);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .dashboard-header {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  /* Ensure stats cards stack properly on very small screens */
+  .stats-overview,
+  .config-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+
+  /* Make buttons more touch-friendly on small screens */
+  .btn {
+    min-height: 44px; /* Touch target size */
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .btn-sm {
+    min-height: 36px;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  /* Card improvements for small screens */
+  .card {
+    padding: var(--spacing-3);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .card-header {
+    padding-bottom: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+  }
+
+  /* Food item cards on small screens */
+  .food-item-card {
+    padding: var(--spacing-3);
+    margin-bottom: var(--spacing-2);
+  }
+}
+
 /* GPS tracking styles */
 .section-item {
   border: 1px solid #ddd;
@@ -1150,7 +1277,7 @@ p {
 }
 
 .section-item:hover {
-  background-color: #f8f9fa;
+  background-color: var(--bg-tertiary);
 }
 
 .section-name {
@@ -1159,7 +1286,7 @@ p {
 }
 
 .section-miles {
-  color: #666;
+  color: var(--text-tertiary);
   font-size: 0.9em;
   margin: 0.5rem 0;
 }
@@ -1170,10 +1297,11 @@ p {
 }
 
 .gps-controls {
-  background-color: #f8f9fa;
+  background-color: var(--bg-tertiary);
   padding: 1rem;
   border-radius: 5px;
   margin: 1rem 0;
+  border: 1px solid var(--border-color);
 }
 
 .gps-buttons {
@@ -1185,20 +1313,28 @@ p {
 
 .gps-buttons button {
   padding: 0.5rem 1rem;
-  border: none;
+  border: 1px solid var(--primary-500);
   border-radius: 3px;
   cursor: pointer;
-  background-color: #007bff;
+  background-color: var(--primary-500);
   color: white;
+  transition: var(--transition-base);
+}
+
+.gps-buttons button:hover {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
 }
 
 .gps-buttons button:disabled {
-  background-color: #6c757d;
+  background-color: var(--gray-500);
+  border-color: var(--gray-500);
+  color: var(--text-tertiary);
   cursor: not-allowed;
 }
 
 .manual-mile {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--border-color);
   padding-top: 1rem;
   margin-top: 1rem;
 }
@@ -1208,14 +1344,15 @@ p {
 }
 
 .mile-log {
-  background-color: #f8f9fa;
+  background-color: var(--bg-tertiary);
   padding: 1rem;
   border-radius: 5px;
   margin: 1rem 0;
+  border: 1px solid var(--border-color);
 }
 
 .log-entry {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color);
   padding: 0.5rem 0;
 }
 
@@ -1229,34 +1366,8 @@ p {
 }
 
 .log-details {
-  color: #666;
+  color: var(--text-tertiary);
   font-size: 0.8em;
 }
 
-@media (prefers-color-scheme: dark) {
-  .section-item {
-    border-color: #555;
-  }
-
-  .section-item:hover {
-    background-color: #444;
-  }
-
-  .section-miles,
-  .log-details {
-    color: #aaa;
-  }
-
-  .gps-controls,
-  .mile-log {
-    background-color: #444;
-  }
-
-  .manual-mile {
-    border-top-color: #555;
-  }
-
-  .log-entry {
-    border-bottom-color: #555;
-  }
-}
+/* Dark theme specific overrides are now handled by CSS variables */
