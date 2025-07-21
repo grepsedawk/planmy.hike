@@ -1,5 +1,6 @@
 import Page from "../../js/Page.js"
 import AddGearModal from "./AddGearModal.js"
+import CategoryManager from "./CategoryManager.js"
 
 class GearPage extends Page {
   constructor(parent, params) {
@@ -205,10 +206,16 @@ class GearPage extends Page {
     }
 
     window.importGear = () => {
-      // TODO: Implement import functionality
-      alert('Import gear functionality coming soon!')
+      this.showImportModal()
+    }
+
+    window.manageCategoriesModal = () => {
+      const categoryManager = new CategoryManager()
+      categoryManager.show()
     }
   }
+
+  showImportModal() {
 
   setupFilters() {
     // TODO: Implement filtering and sorting
@@ -225,6 +232,261 @@ class GearPage extends Page {
       filterInput.addEventListener('input', () => {
         // TODO: Implement filtering
       })
+    }
+  }
+
+  showImportModal() {
+    const modal = document.createElement('div')
+    modal.className = 'modal-overlay'
+    modal.innerHTML = `
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Import Gear</h3>
+          <button type="button" class="modal-close" aria-label="Close">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="text-tertiary mb-4">
+            Import gear from CSV files. Supports LighterPack exports and our format.
+          </p>
+          
+          <div class="form-group">
+            <label for="importFile">Select CSV File</label>
+            <input type="file" id="importFile" accept=".csv" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="clearExisting"> 
+              Clear existing gear before import
+            </label>
+          </div>
+          
+          <div class="import-preview" id="importPreview" style="display: none;">
+            <h4>Preview</h4>
+            <div id="previewContent"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline import-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary import-confirm" disabled>Import Gear</button>
+        </div>
+      </div>
+    `
+
+    // Setup event listeners
+    const closeBtn = modal.querySelector('.modal-close')
+    const cancelBtn = modal.querySelector('.import-cancel')
+    const confirmBtn = modal.querySelector('.import-confirm')
+    const fileInput = modal.querySelector('#importFile')
+    
+    const closeModal = () => {
+      modal.classList.remove('show')
+      setTimeout(() => {
+        if (modal.parentNode) modal.parentNode.removeChild(modal)
+      }, 300)
+    }
+    
+    closeBtn.addEventListener('click', closeModal)
+    cancelBtn.addEventListener('click', closeModal)
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal()
+    })
+    
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0]
+      if (file) {
+        this.previewImport(file, modal)
+      }
+    })
+    
+    confirmBtn.addEventListener('click', () => {
+      this.executeImport(modal)
+    })
+    
+    document.body.appendChild(modal)
+    setTimeout(() => modal.classList.add('show'), 100)
+  }
+
+  async previewImport(file, modal) {
+    try {
+      const text = await file.text()
+      const rows = text.split('\n').map(row => {
+        // Simple CSV parsing - could be enhanced for complex cases
+        return row.split(',').map(cell => cell.replace(/^"|"$/g, '').trim())
+      }).filter(row => row.length > 1 && row[0])
+      
+      if (rows.length === 0) {
+        alert('No data found in CSV file')
+        return
+      }
+      
+      const headers = rows[0]
+      const data = rows.slice(1)
+      
+      // Detect format (LighterPack vs our format)
+      const isLighterPack = headers.some(h => 
+        h.toLowerCase().includes('item') || 
+        h.toLowerCase().includes('category') ||
+        h.toLowerCase().includes('weight')
+      )
+      
+      const preview = modal.querySelector('#importPreview')
+      const content = modal.querySelector('#previewContent')
+      
+      content.innerHTML = `
+        <p><strong>Format:</strong> ${isLighterPack ? 'LighterPack' : 'Plan My Hike'}</p>
+        <p><strong>Items found:</strong> ${data.length}</p>
+        <div class="preview-table">
+          <table class="table">
+            <thead>
+              <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              ${data.slice(0, 5).map(row => 
+                `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
+              ).join('')}
+              ${data.length > 5 ? `<tr><td colspan="${headers.length}">... and ${data.length - 5} more items</td></tr>` : ''}
+            </tbody>
+          </table>
+        </div>
+      `
+      
+      preview.style.display = 'block'
+      modal.querySelector('.import-confirm').disabled = false
+      
+      // Store data for import
+      modal.importData = { headers, data, isLighterPack }
+      
+    } catch (error) {
+      console.error('Error parsing CSV:', error)
+      alert('Error reading CSV file. Please check the format.')
+    }
+  }
+
+  async executeImport(modal) {
+    const clearExisting = modal.querySelector('#clearExisting').checked
+    const { headers, data, isLighterPack } = modal.importData
+    
+    try {
+      if (clearExisting) {
+        await db.gear.clear()
+      }
+      
+      const imported = []
+      
+      for (const row of data) {
+        if (row.length < 2) continue // Skip empty rows
+        
+        let gearData
+        
+        if (isLighterPack) {
+          // Map LighterPack format
+          gearData = this.mapLighterPackRow(headers, row)
+        } else {
+          // Map our format
+          gearData = this.mapPlanMyHikeRow(headers, row)
+        }
+        
+        if (gearData && gearData.name) {
+          imported.push(gearData)
+        }
+      }
+      
+      if (imported.length > 0) {
+        await db.gear.bulkAdd(imported)
+        
+        // Close modal
+        modal.classList.remove('show')
+        setTimeout(() => {
+          if (modal.parentNode) modal.parentNode.removeChild(modal)
+        }, 300)
+        
+        // Refresh gear list
+        this.loadGear()
+        
+        alert(`Successfully imported ${imported.length} gear items!`)
+      } else {
+        alert('No valid gear items found to import.')
+      }
+      
+    } catch (error) {
+      console.error('Error importing gear:', error)
+      alert('Error importing gear. Please try again.')
+    }
+  }
+
+  mapLighterPackRow(headers, row) {
+    const getValue = (fieldNames) => {
+      for (const name of fieldNames) {
+        const index = headers.findIndex(h => h.toLowerCase().includes(name.toLowerCase()))
+        if (index >= 0 && row[index]) {
+          return row[index].trim()
+        }
+      }
+      return ''
+    }
+    
+    const name = getValue(['item', 'name', 'description'])
+    if (!name) return null
+    
+    const weightStr = getValue(['weight', 'oz', 'grams'])
+    let weight = 0
+    if (weightStr) {
+      const weightMatch = weightStr.match(/[\d.]+/)
+      if (weightMatch) {
+        weight = parseFloat(weightMatch[0])
+        // Convert oz to grams if needed
+        if (weightStr.toLowerCase().includes('oz')) {
+          weight = weight * 28.3495
+        }
+      }
+    }
+    
+    const priceStr = getValue(['price', 'cost', '$'])
+    let price = 0
+    if (priceStr) {
+      const priceMatch = priceStr.match(/[\d.]+/)
+      if (priceMatch) {
+        price = Math.round(parseFloat(priceMatch[0]) * 100) // Convert to cents
+      }
+    }
+    
+    return {
+      name: name,
+      weight: weight,
+      price: price,
+      quantity: 1,
+      description: getValue(['desc', 'description', 'notes']) || '',
+      vendor: getValue(['brand', 'vendor', 'manufacturer']) || '',
+      url: getValue(['url', 'link']) || '',
+      notes: '',
+      categoryId: null,
+      dateAdded: new Date(),
+      lastUsed: null,
+      timesUsed: 0
+    }
+  }
+
+  mapPlanMyHikeRow(headers, row) {
+    const getValue = (index) => index < row.length ? row[index].trim() : ''
+    
+    if (!getValue(0)) return null // Name is required
+    
+    return {
+      name: getValue(0),
+      weight: parseFloat(getValue(2)) || 0,
+      price: Math.round((parseFloat(getValue(4).replace('$', '')) || 0) * 100),
+      quantity: parseInt(getValue(5)) || 1,
+      description: getValue(6) || '',
+      vendor: getValue(7) || '',
+      url: getValue(8) || '',
+      notes: '',
+      categoryId: null,
+      dateAdded: new Date(),
+      lastUsed: null,
+      timesUsed: 0
     }
   }
 }
