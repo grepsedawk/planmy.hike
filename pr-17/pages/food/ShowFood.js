@@ -1,5 +1,6 @@
 import Renderer from "../../js/Renderer.js"
 import ShowTotals from "./ShowTotals.js"
+import NewFood from "./NewFood.js"
 
 class ShowFood extends Renderer {
   constructor(parent, food, section) {
@@ -41,12 +42,19 @@ class ShowFood extends Renderer {
     actions.style.display = "flex"
     actions.style.gap = "var(--spacing-2)"
 
+    this.editButton = document.createElement("button")
+    this.editButton.classList.add("btn", "btn-secondary", "btn-sm")
+    this.editButton.innerHTML = `<span class="material-icons">edit</span>`
+    this.editButton.title = "Edit food item"
+    this.editButton.addEventListener("click", () => this.edit())
+
     this.deleteButton = document.createElement("button")
     this.deleteButton.classList.add("btn", "btn-danger", "btn-sm")
     this.deleteButton.innerHTML = `<span class="material-icons">delete</span>`
     this.deleteButton.title = "Delete food item"
     this.deleteButton.addEventListener("click", () => this.delete())
 
+    actions.appendChild(this.editButton)
     actions.appendChild(this.deleteButton)
     header.appendChild(title)
     header.appendChild(actions)
@@ -83,6 +91,11 @@ class ShowFood extends Renderer {
     item.appendChild(labelEl)
     item.appendChild(valueEl)
     parent.appendChild(item)
+  }
+
+  edit() {
+    const editForm = new NewFood(this.section, this.food)
+    editForm.render()
   }
 
   delete() {
