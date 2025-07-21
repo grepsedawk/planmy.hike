@@ -1,6 +1,5 @@
 import FoodPage from "../pages/food/FoodPage.js"
 import SectionsPage from "../pages/sections/SectionsPage.js"
-import SectionDetailPage from "../pages/sections/SectionDetailPage.js"
 import NotFoundPage from "../pages/404/NotFoundPage.js"
 import HomePage from "../pages/home/index.js"
 
@@ -9,7 +8,6 @@ class Router {
     "/404": NotFoundPage,
     "/": HomePage,
     "/sections": SectionsPage,
-    "/sections/:id": SectionDetailPage,
     "/sections/:id/food": FoodPage,
   }
 
@@ -43,14 +41,6 @@ class Router {
           return acc
         }, additionalParams)
         console.debug("params", params)
-        
-        // For SectionDetailPage, pass the section ID as a parameter
-        if (this.routes[route].name === 'SectionDetailPage') {
-          return new this.routes[route](
-            document.getElementById("content"),
-            params.id // Pass section ID directly
-          )
-        }
         
         return new this.routes[route](
           document.getElementById("content"),

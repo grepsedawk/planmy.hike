@@ -76,11 +76,6 @@ class SectionPage extends Page {
           )
         : "0"
 
-    // GPS status badge
-    const gpsStatusBadge = section.gpsTrackingEnabled 
-      ? '<span class="badge success" style="margin-left: 8px;">📍 GPS</span>' 
-      : ''
-    
     // Current mile and progress display
     const currentMileInfo = section.currentMile 
       ? `<div class="stat-item">
@@ -99,10 +94,7 @@ class SectionPage extends Page {
           <span class="material-icons mr-3">hiking</span>
           ${section.name || "Unnamed Section"}
         </h3>
-        <div>
-          <span class="badge primary">${miles} miles</span>
-          ${gpsStatusBadge}
-        </div>
+        <span class="badge primary">${miles} miles</span>
       </div>
       <div class="card-content">
         <div class="stats-mini">
@@ -129,10 +121,6 @@ class SectionPage extends Page {
         <button class="btn btn-primary btn-sm">
           <span class="material-icons">restaurant</span>
           Plan Food
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); window.location='#/sections/${section.id}'">
-          <span class="material-icons">gps_fixed</span>
-          GPS
         </button>
       </div>
     `
