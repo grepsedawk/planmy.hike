@@ -115,7 +115,7 @@ describe("Router", () => {
 
       expect(result.path).toBe("/sections")
       expect(result.params).toEqual({
-        undefined: undefined,
+        invalidparam: null,
         key: "value",
       })
     })
