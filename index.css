@@ -242,6 +242,55 @@ nav a.active {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Sync Status */
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-base);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.sync-status:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sync-status.synced {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.sync-status.syncing {
+  background-color: rgba(255, 152, 0, 0.2);
+}
+
+.sync-status.error {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.sync-status.offline {
+  background-color: rgba(158, 158, 158, 0.2);
+}
+
+.sync-icon {
+  font-size: 1.2rem;
+  animation: none;
+}
+
+.sync-status.syncing .sync-icon {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Typography */
 h1,
 h2,

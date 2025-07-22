@@ -58,6 +58,10 @@
             <span class="material-icons">backpack</span>
             Gear
           </a>
+          <div id="sync-status" class="sync-status" title="Sync Status">
+            <span class="material-icons sync-icon">cloud_sync</span>
+            <span class="sync-text">Connecting...</span>
+          </div>
         </div>
       </nav>
     </div>
@@ -68,6 +72,8 @@
 
   <script src="js/html5-qrcode.min.js"></script>
   <script src="js/dexie.min.js"></script>
+  <!-- Dexie Cloud addon will be added when implementing real sync -->
+  <!-- <script src="https://unpkg.com/dexie-cloud-addon@latest/dist/dexie-cloud-addon.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="js/index.js"></script>
 </body>
