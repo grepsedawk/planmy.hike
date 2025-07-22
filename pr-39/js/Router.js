@@ -2,6 +2,7 @@ import FoodPage from "../pages/food/FoodPage.js"
 import SectionsPage from "../pages/sections/SectionsPage.js"
 import NotFoundPage from "../pages/404/NotFoundPage.js"
 import HomePage from "../pages/home/index.js"
+import GearPage from "../pages/gear/GearPage.js"
 
 class Router {
   static routes = {
@@ -9,6 +10,7 @@ class Router {
     "/": HomePage,
     "/sections": SectionsPage,
     "/sections/:id/food": FoodPage,
+    "/gear": GearPage,
   }
 
   static parseUrl() {
@@ -41,7 +43,7 @@ class Router {
           return acc
         }, additionalParams)
         console.debug("params", params)
-        
+
         return new this.routes[route](
           document.getElementById("content"),
           params,

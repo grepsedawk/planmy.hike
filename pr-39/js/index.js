@@ -1,6 +1,8 @@
 import Router from "./Router.js"
 import Food from "./Food.js"
 import Section from "./Section.js"
+import Gear from "./Gear.js"
+import GearCategory from "./GearCategory.js"
 import GPSTracker from "./GPSTracker.js"
 import MileLogger from "./MileLogger.js"
 
@@ -12,10 +14,10 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .register("./sw.js")
       .then((registration) => {
-        console.log("SW registered: ", registration)
+        console.debug("SW registered: ", registration)
       })
       .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError)
+        console.debug("SW registration failed: ", registrationError)
       })
   })
 }
@@ -46,10 +48,34 @@ db.version(1).stores({
     gpsTrackingEnabled,
     trail
     `,
+  gear: `
+    ++id,
+    name,
+    weight,
+    price,
+    description,
+    vendor,
+    url,
+    categoryId,
+    quantity,
+    notes,
+    dateAdded,
+    lastUsed,
+    timesUsed
+    `,
+  gearCategories: `
+    ++id,
+    name,
+    description,
+    color,
+    dateCreated
+    `,
 })
 
 db.foods.mapToClass(Food)
 db.sections.mapToClass(Section)
+db.gear.mapToClass(Gear)
+db.gearCategories.mapToClass(GearCategory)
 
 // Initialize GPS tracker and mile logger
 window.gpsTracker = new GPSTracker()
