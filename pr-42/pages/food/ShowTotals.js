@@ -103,7 +103,7 @@ class ShowTotals extends Renderer {
     parent.appendChild(item)
   }
 
-  createProgressBar(label, current, goal, variant = "") {
+  createProgressBar(label, current, goal, variant = "", unit = "") {
     const container = document.createElement("div")
     container.style.marginBottom = "var(--spacing-3)"
 
@@ -120,7 +120,9 @@ class ShowTotals extends Renderer {
     const percentageText = document.createElement("span")
     percentageText.style.cssText =
       "font-size: var(--font-size-sm); color: var(--text-tertiary);"
-    percentageText.textContent = `${Math.round(current)}/${Math.round(goal)} (${percentage.toFixed(0)}%)`
+    const currentFormatted = unit ? `${Math.round(current)}${unit}` : Math.round(current)
+    const goalFormatted = unit ? `${Math.round(goal)}${unit}` : Math.round(goal)
+    percentageText.textContent = `${currentFormatted}/${goalFormatted} (${percentage.toFixed(0)}%)`
 
     labelEl.appendChild(labelText)
     labelEl.appendChild(percentageText)
@@ -151,6 +153,7 @@ class ShowTotals extends Renderer {
       currentProtein,
       goalProtein,
       "primary",
+      "g"
     )
   }
 
