@@ -1,4 +1,4 @@
-const CACHE_NAME = "planmyhike-v8"
+const CACHE_NAME = "planmyhike-v9"
 
 const urlsToCache = [
   "./",
@@ -11,6 +11,8 @@ const urlsToCache = [
   "./js/Renderer.js",
   "./js/Food.js",
   "./js/Section.js",
+  "./js/Gear.js",
+  "./js/GearCategory.js",
   "./js/GPSTracker.js",
   "./js/MileLogger.js",
   "./js/dexie.min.js",
@@ -25,13 +27,19 @@ const urlsToCache = [
   "./pages/food/FoodPage.js",
   "./pages/food/BarcodeScannerRenderer.js",
   "./pages/food/ConfigureSection.js",
+  "./pages/food/GPSButton.js",
   "./pages/food/NewFood.js",
   "./pages/food/ShowFood.js",
   "./pages/food/ShowTotals.js",
+  "./pages/gear/index.html",
+  "./pages/gear/GearPage.js",
+  "./pages/gear/AddGearModal.js",
+  "./pages/gear/CategoryManager.js",
   "./pages/404/index.html",
   "./pages/404/NotFoundPage.js",
   "./icons/icon-192x192.png",
   "./icons/icon-512x512.png",
+  "./icons/icon.svg",
 ].map((url) => new URL(url, self.location).href)
 
 // Install event - cache app shell
