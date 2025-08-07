@@ -74,8 +74,8 @@ class ShowTotals extends Renderer {
     )
     progressSection.appendChild(calorieProgress)
 
-    const proteinCalorieProgress = this.createProteinCalorieProgressBar()
-    progressSection.appendChild(proteinCalorieProgress)
+    const proteinProgress = this.createProteinProgressBar()
+    progressSection.appendChild(proteinProgress)
 
     this.div.appendChild(progressSection)
 
@@ -103,7 +103,7 @@ class ShowTotals extends Renderer {
     parent.appendChild(item)
   }
 
-  createProgressBar(label, current, goal, variant = "") {
+  createProgressBar(label, current, goal, variant = "", unit = "") {
     const container = document.createElement("div")
     container.style.marginBottom = "var(--spacing-3)"
 
@@ -120,7 +120,9 @@ class ShowTotals extends Renderer {
     const percentageText = document.createElement("span")
     percentageText.style.cssText =
       "font-size: var(--font-size-sm); color: var(--text-tertiary);"
-    percentageText.textContent = `${Math.round(current)}/${Math.round(goal)} (${percentage.toFixed(0)}%)`
+    const currentFormatted = unit ? `${Math.round(current)}${unit}` : Math.round(current)
+    const goalFormatted = unit ? `${Math.round(goal)}${unit}` : Math.round(goal)
+    percentageText.textContent = `${currentFormatted}/${goalFormatted} (${percentage.toFixed(0)}%)`
 
     labelEl.appendChild(labelText)
     labelEl.appendChild(percentageText)
@@ -142,84 +144,22 @@ class ShowTotals extends Renderer {
     return container
   }
 
-  createProteinCalorieProgressBar() {
-    const container = document.createElement("div")
-    container.style.marginBottom = "var(--spacing-3)"
+  createProteinProgressBar() {
+    const currentProtein = this.totalProtein()
+    const goalProtein = this.goalProtein()
+    
+    return this.createProgressBar(
+      "Protein Progress",
+      currentProtein,
+      goalProtein,
+      "primary",
+      "g"
+    )
+  }
 
-    const currentRatio = this.proteinCalorieRatio()
-    const goalRatio = 0.18 // 18% of calories from protein (good for endurance activities)
-    const maxRatio = 0.3 // Maximum reasonable ratio for display (30%)
-
-    const labelEl = document.createElement("div")
-    labelEl.style.cssText =
-      "display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-1);"
-
-    const labelText = document.createElement("span")
-    labelText.style.cssText =
-      "font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--text-primary);"
-    labelText.textContent = "Protein:Calorie Ratio"
-
-    const ratioText = document.createElement("span")
-    ratioText.style.cssText =
-      "font-size: var(--font-size-sm); color: var(--text-tertiary);"
-    const percentage = ((currentRatio / goalRatio) * 100).toFixed(0)
-    ratioText.textContent = `${(currentRatio * 100).toFixed(1)}% (${percentage}% of goal)`
-
-    labelEl.appendChild(labelText)
-    labelEl.appendChild(ratioText)
-
-    // Progress bar container with goal indicator
-    const progressContainer = document.createElement("div")
-    progressContainer.style.cssText = "position: relative;"
-
-    const progressBar = document.createElement("div")
-    progressBar.classList.add("progress")
-
-    const progressFill = document.createElement("div")
-    progressFill.classList.add("progress-bar", "primary")
-    const fillPercentage = Math.min((currentRatio / maxRatio) * 100, 100)
-    progressFill.style.width = `${fillPercentage}%`
-
-    // Goal indicator (arrow/marker)
-    const goalIndicator = document.createElement("div")
-    const goalPosition = (goalRatio / maxRatio) * 100
-    goalIndicator.style.cssText = `
-      position: absolute;
-      top: -8px;
-      left: ${goalPosition}%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 8px solid var(--success);
-      z-index: 10;
-    `
-    goalIndicator.title = `Goal: ${(goalRatio * 100).toFixed(0)}% protein`
-
-    // Goal line
-    const goalLine = document.createElement("div")
-    goalLine.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: ${goalPosition}%;
-      transform: translateX(-50%);
-      width: 2px;
-      height: 100%;
-      background-color: var(--success);
-      opacity: 0.7;
-      z-index: 5;
-    `
-
-    progressBar.appendChild(progressFill)
-    progressContainer.appendChild(progressBar)
-    progressContainer.appendChild(goalIndicator)
-    progressContainer.appendChild(goalLine)
-
-    container.appendChild(labelEl)
-    container.appendChild(progressContainer)
-
-    return container
+  goalProtein() {
+    // 18% of calories from protein (4 calories per gram of protein)
+    return (this.goalCalories() * 0.18) / 4
   }
 
   totalCalories() {
