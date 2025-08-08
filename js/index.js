@@ -35,7 +35,8 @@ db.version(1).stores({
     protein,
     fat,
     netWeight,
-    servingSize
+    servingSize,
+    price
     `,
   sections: `
     ++id,
