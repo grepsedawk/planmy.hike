@@ -69,8 +69,16 @@ class ShowFood extends Renderer {
     this.addDetailItem(details, "Total Carbs", this.food.totalCarbs, "g")
     this.addDetailItem(details, "Total Protein", this.food.totalProtein, "g")
     this.addDetailItem(details, "Total Fat", this.food.totalFat, "g")
-    this.addDetailItem(details, "P:C Ratio", this.food.proteinToCarbsRatio?.toFixed(2) || "0.00")
-    this.addDetailItem(details, "Cal/oz", this.food.caloriePerOunce?.toFixed(0) || "0")
+    this.addDetailItem(
+      details,
+      "P:C Ratio",
+      this.food.proteinToCarbsRatio?.toFixed(2) || "0.00",
+    )
+    this.addDetailItem(
+      details,
+      "Cal/oz",
+      this.food.caloriePerOunce?.toFixed(0) || "0",
+    )
 
     this.div.appendChild(details)
     this.parent.appendChild(this.div)

@@ -113,7 +113,7 @@ class ConfigureSection extends Renderer {
 
     const valueDisplay = document.createElement("div")
     valueDisplay.classList.add("config-value")
-    
+
     let displayValue = value
     if (type === "number" && options.round !== undefined) {
       displayValue = parseFloat(value).toFixed(options.round)
@@ -129,7 +129,7 @@ class ConfigureSection extends Renderer {
 
     item.appendChild(valueDisplay)
     item.appendChild(labelEl)
-    
+
     // Make item editable on click
     item.addEventListener("click", () => {
       this.makeEditable(item, valueDisplay, value, type, callback, options)
@@ -143,8 +143,9 @@ class ConfigureSection extends Renderer {
     input.type = type
     input.value = currentValue
     input.classList.add("form-control")
-    input.style.cssText = "text-align: center; font-weight: bold; color: var(--primary-600);"
-    
+    input.style.cssText =
+      "text-align: center; font-weight: bold; color: var(--primary-600);"
+
     // Replace the value display with input
     item.replaceChild(input, valueDisplay)
     input.focus()
@@ -155,9 +156,9 @@ class ConfigureSection extends Renderer {
       if (type === "number") {
         newValue = parseFloat(newValue) || 0
       }
-      
+
       callback(newValue)
-      
+
       // Update display
       let displayValue = newValue
       if (type === "number" && options.round !== undefined) {
@@ -167,7 +168,7 @@ class ConfigureSection extends Renderer {
         displayValue += ` ${options.unit}`
       }
       valueDisplay.textContent = displayValue
-      
+
       item.replaceChild(valueDisplay, input)
     }
 
@@ -184,15 +185,15 @@ class ConfigureSection extends Renderer {
   renderHeader() {
     const header = document.createElement("div")
     header.classList.add("card-header")
-    
+
     const title = document.createElement("h3")
     title.classList.add("card-title")
     title.innerHTML = `<span class="material-icons">settings</span> Section Configuration`
-    
+
     const description = document.createElement("p")
     description.classList.add("card-subtitle")
     description.textContent = "Click any value to edit"
-    
+
     header.appendChild(title)
     header.appendChild(description)
     this.div.appendChild(header)

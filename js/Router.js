@@ -43,7 +43,7 @@ class Router {
           return acc
         }, additionalParams)
         console.debug("params", params)
-        
+
         return new this.routes[route](
           document.getElementById("content"),
           params,
