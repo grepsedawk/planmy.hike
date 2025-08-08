@@ -27,25 +27,27 @@ class Section {
   }
 
   // Update current mile (can be called manually or by GPS tracker)
-  async updateCurrentMile(mile, source = 'manual') {
+  async updateCurrentMile(mile, source = "manual") {
     const previousMile = this.currentMile
     this.currentMile = mile
-    
+
     // Log the mile update if mile logger is available
-    if (window.mileLogger && source === 'gps') {
+    if (window.mileLogger && source === "gps") {
       window.mileLogger.logMileUpdate({
         sectionId: this.id,
         mile: mile,
         previousMile: previousMile,
         position: window.gpsTracker?.getPosition(),
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     }
-    
+
     // Save the updated section
     await this.save()
-    
-    console.debug(`Section ${this.id} mile updated: ${previousMile} -> ${mile} (${source})`)
+
+    console.debug(
+      `Section ${this.id} mile updated: ${previousMile} -> ${mile} (${source})`,
+    )
     return mile
   }
 
@@ -54,10 +56,10 @@ class Section {
     if (!this.startMile || !this.endMile || !this.currentMile) {
       return 0
     }
-    
+
     const totalMiles = this.endMile - this.startMile
     const completedMiles = this.currentMile - this.startMile
-    
+
     return Math.max(0, Math.min(100, (completedMiles / totalMiles) * 100))
   }
 
@@ -66,7 +68,7 @@ class Section {
     if (!this.endMile || !this.currentMile) {
       return this.endMile - (this.startMile || 0)
     }
-    
+
     return Math.max(0, this.endMile - this.currentMile)
   }
 }

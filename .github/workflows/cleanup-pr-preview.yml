@@ -19,7 +19,7 @@ jobs:
           ref: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
-        
+
       - name: Remove PR preview directory
         run: |
           if [ -d "pr-${{ github.event.number }}" ]; then
@@ -28,12 +28,12 @@ jobs:
           else
             echo "No preview directory found for PR #${{ github.event.number }}"
           fi
-          
+
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
+
           if git diff --quiet; then
             echo "No changes to commit"
           else

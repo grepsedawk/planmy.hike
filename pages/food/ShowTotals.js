@@ -120,7 +120,9 @@ class ShowTotals extends Renderer {
     const percentageText = document.createElement("span")
     percentageText.style.cssText =
       "font-size: var(--font-size-sm); color: var(--text-tertiary);"
-    const currentFormatted = unit ? `${Math.round(current)}${unit}` : Math.round(current)
+    const currentFormatted = unit
+      ? `${Math.round(current)}${unit}`
+      : Math.round(current)
     const goalFormatted = unit ? `${Math.round(goal)}${unit}` : Math.round(goal)
     percentageText.textContent = `${currentFormatted}/${goalFormatted} (${percentage.toFixed(0)}%)`
 
@@ -147,13 +149,13 @@ class ShowTotals extends Renderer {
   createProteinProgressBar() {
     const currentProtein = this.totalProtein()
     const goalProtein = this.goalProtein()
-    
+
     return this.createProgressBar(
       "Protein Progress",
       currentProtein,
       goalProtein,
       "primary",
-      "g"
+      "g",
     )
   }
 

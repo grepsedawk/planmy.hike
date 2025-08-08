@@ -13,13 +13,13 @@ class MileLogger {
       previousMile: mileData.previousMile,
       position: mileData.position,
       timestamp: mileData.timestamp || new Date(),
-      accuracy: mileData.position?.accuracy
+      accuracy: mileData.position?.accuracy,
     }
 
     this.logs.unshift(logEntry) // Add to beginning for chronological order
     this.saveLogs()
-    
-    console.debug('Mile update logged:', logEntry)
+
+    console.debug("Mile update logged:", logEntry)
     return logEntry
   }
 
@@ -28,34 +28,34 @@ class MileLogger {
     try {
       // Currently using localStorage for simplicity
       // TODO: Migrate to IndexedDB for better performance and storage capacity
-      localStorage.setItem('mile_logs', JSON.stringify(this.logs))
+      localStorage.setItem("mile_logs", JSON.stringify(this.logs))
     } catch (error) {
-      console.error('Failed to save mile logs:', error)
+      console.error("Failed to save mile logs:", error)
     }
   }
 
   // Load logs from storage
   async loadLogs() {
     try {
-      const stored = localStorage.getItem('mile_logs')
+      const stored = localStorage.getItem("mile_logs")
       if (stored) {
         this.logs = JSON.parse(stored)
       }
       return this.logs
     } catch (error) {
-      console.error('Failed to load mile logs:', error)
+      console.error("Failed to load mile logs:", error)
       return []
     }
   }
 
   // Get logs for a specific section
   getLogsForSection(sectionId) {
-    return this.logs.filter(log => log.sectionId === sectionId)
+    return this.logs.filter((log) => log.sectionId === sectionId)
   }
 
   // Get logs within a time range
   getLogsByTimeRange(startDate, endDate) {
-    return this.logs.filter(log => {
+    return this.logs.filter((log) => {
       const logDate = new Date(log.timestamp)
       return logDate >= startDate && logDate <= endDate
     })
@@ -68,7 +68,7 @@ class MileLogger {
 
   // Calculate progress statistics
   getProgressStats(sectionId = null) {
-    const relevantLogs = sectionId 
+    const relevantLogs = sectionId
       ? this.getLogsForSection(sectionId)
       : this.logs
 
@@ -78,20 +78,24 @@ class MileLogger {
         milesTracked: 0,
         firstUpdate: null,
         lastUpdate: null,
-        averageAccuracy: 0
+        averageAccuracy: 0,
       }
     }
 
-    const sortedLogs = relevantLogs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+    const sortedLogs = relevantLogs.sort(
+      (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+    )
     const firstLog = sortedLogs[0]
     const lastLog = sortedLogs[sortedLogs.length - 1]
-    
-    const milesWithAccuracy = relevantLogs.filter(log => log.accuracy)
-    const averageAccuracy = milesWithAccuracy.length > 0
-      ? milesWithAccuracy.reduce((sum, log) => sum + log.accuracy, 0) / milesWithAccuracy.length
-      : 0
 
-    const uniqueMiles = new Set(relevantLogs.map(log => log.mile))
+    const milesWithAccuracy = relevantLogs.filter((log) => log.accuracy)
+    const averageAccuracy =
+      milesWithAccuracy.length > 0
+        ? milesWithAccuracy.reduce((sum, log) => sum + log.accuracy, 0) /
+          milesWithAccuracy.length
+        : 0
+
+    const uniqueMiles = new Set(relevantLogs.map((log) => log.mile))
 
     return {
       totalUpdates: relevantLogs.length,
@@ -102,20 +106,20 @@ class MileLogger {
       mileCoverage: {
         first: firstLog.mile,
         last: lastLog.mile,
-        range: Math.abs(lastLog.mile - firstLog.mile)
-      }
+        range: Math.abs(lastLog.mile - firstLog.mile),
+      },
     }
   }
 
   // Clear all logs
   clearLogs() {
     this.logs = []
-    localStorage.removeItem('mile_logs')
+    localStorage.removeItem("mile_logs")
   }
 
   // Clear logs for a specific section
   clearSectionLogs(sectionId) {
-    this.logs = this.logs.filter(log => log.sectionId !== sectionId)
+    this.logs = this.logs.filter((log) => log.sectionId !== sectionId)
     this.saveLogs()
   }
 
@@ -135,7 +139,7 @@ class MileLogger {
       }
       return false
     } catch (error) {
-      console.error('Failed to import logs:', error)
+      console.error("Failed to import logs:", error)
       return false
     }
   }

@@ -7,17 +7,19 @@ This document outlines how to test the PR preview deployment system.
 The GitHub Actions workflows will be triggered automatically when:
 
 1. **PR Opened/Updated**: The `pr-preview.yml` workflow will run
-2. **PR Closed**: The `cleanup-pr-preview.yml` workflow will run  
+2. **PR Closed**: The `cleanup-pr-preview.yml` workflow will run
 3. **Main Branch Updated**: The `deploy-pages.yml` workflow will run
 
 ## Manual Testing Steps
 
 ### Step 1: Enable GitHub Pages
+
 1. Go to repository Settings → Pages
 2. Set Source to "GitHub Actions"
 3. This enables the deployment workflows
 
 ### Step 2: Test PR Preview
+
 1. Create a test PR with some changes to the application
 2. Check that the workflow runs successfully in the Actions tab
 3. Verify a comment is added to the PR with the preview link
@@ -25,6 +27,7 @@ The GitHub Actions workflows will be triggered automatically when:
 5. Make another commit to the PR and verify the preview updates
 
 ### Step 3: Test Cleanup
+
 1. Close or merge the test PR
 2. Check that the cleanup workflow runs
 3. Verify the preview directory is removed from gh-pages branch

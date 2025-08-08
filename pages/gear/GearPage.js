@@ -17,7 +17,7 @@ class GearPage extends Page {
     await this.loadGear()
     this.setupEventListeners()
     this.setupFilters()
-    
+
     // Make this page available globally for modal callbacks
     window.currentGearPage = this
   }
@@ -26,22 +26,22 @@ class GearPage extends Page {
     try {
       const [gear, categories] = await Promise.all([
         db.gear.toArray(),
-        db.gearCategories.toArray()
+        db.gearCategories.toArray(),
       ])
 
       // Apply current filters and sorting
       const filteredAndSortedGear = this.applyFiltersAndSort(gear)
-      
+
       this.renderGearList(filteredAndSortedGear, categories)
       this.updateStats(gear, categories) // Use original gear for stats
     } catch (error) {
-      console.error('Error loading gear:', error)
+      console.error("Error loading gear:", error)
     }
   }
 
   async renderGearList(gear, categories) {
-    const gearListElement = document.getElementById('gearList')
-    
+    const gearListElement = document.getElementById("gearList")
+
     if (gear.length === 0) {
       gearListElement.innerHTML = `
         <div class="text-center py-8">
@@ -64,7 +64,7 @@ class GearPage extends Page {
     }, {})
 
     const gearByCategory = gear.reduce((groups, item) => {
-      const categoryId = item.categoryId || 'uncategorized'
+      const categoryId = item.categoryId || "uncategorized"
       if (!groups[categoryId]) {
         groups[categoryId] = []
       }
@@ -72,12 +72,12 @@ class GearPage extends Page {
       return groups
     }, {})
 
-    let html = ''
-    
+    let html = ""
+
     // Render each category
     for (const [categoryId, items] of Object.entries(gearByCategory)) {
       const category = categoryMap[categoryId]
-      const categoryName = category ? category.name : 'Uncategorized'
+      const categoryName = category ? category.name : "Uncategorized"
       const totalWeight = items.reduce((sum, item) => sum + item.totalWeight, 0)
       const totalPrice = items.reduce((sum, item) => sum + item.totalPrice, 0)
 
@@ -94,7 +94,7 @@ class GearPage extends Page {
             </div>
           </div>
           <div class="gear-items">
-            ${items.map(item => this.renderGearItem(item)).join('')}
+            ${items.map((item) => this.renderGearItem(item)).join("")}
           </div>
         </div>
       `
@@ -109,10 +109,10 @@ class GearPage extends Page {
         <div class="flex-1">
           <div class="flex items-center gap-3">
             <div class="font-medium">${item.name}</div>
-            ${item.quantity > 1 ? `<span class="badge badge-outline">×${item.quantity}</span>` : ''}
+            ${item.quantity > 1 ? `<span class="badge badge-outline">×${item.quantity}</span>` : ""}
           </div>
-          ${item.description ? `<div class="text-sm text-tertiary mt-1">${item.description}</div>` : ''}
-          ${item.vendor ? `<div class="text-sm text-tertiary">Brand: ${item.vendor}</div>` : ''}
+          ${item.description ? `<div class="text-sm text-tertiary mt-1">${item.description}</div>` : ""}
+          ${item.vendor ? `<div class="text-sm text-tertiary">Brand: ${item.vendor}</div>` : ""}
         </div>
         <div class="flex items-center gap-4">
           <div class="text-right">
@@ -137,10 +137,12 @@ class GearPage extends Page {
     const totalWeight = gear.reduce((sum, item) => sum + item.totalWeight, 0)
     const totalPrice = gear.reduce((sum, item) => sum + item.totalPrice, 0)
 
-    document.getElementById('totalItems').textContent = totalItems
-    document.getElementById('totalWeight').textContent = `${(totalWeight / 28.3495).toFixed(1)}oz`
-    document.getElementById('totalPrice').textContent = `$${(totalPrice / 100).toFixed(2)}`
-    document.getElementById('totalCategories').textContent = categories.length
+    document.getElementById("totalItems").textContent = totalItems
+    document.getElementById("totalWeight").textContent =
+      `${(totalWeight / 28.3495).toFixed(1)}oz`
+    document.getElementById("totalPrice").textContent =
+      `$${(totalPrice / 100).toFixed(2)}`
+    document.getElementById("totalCategories").textContent = categories.length
   }
 
   setupEventListeners() {
@@ -157,22 +159,22 @@ class GearPage extends Page {
           const modal = new AddGearModal(gearItem)
           modal.show()
         } else {
-          alert('Gear item not found')
+          alert("Gear item not found")
         }
       } catch (error) {
-        console.error('Error loading gear for edit:', error)
-        alert('Error loading gear item')
+        console.error("Error loading gear for edit:", error)
+        alert("Error loading gear item")
       }
     }
 
     window.deleteGear = async (id) => {
-      if (confirm('Are you sure you want to delete this gear item?')) {
+      if (confirm("Are you sure you want to delete this gear item?")) {
         try {
           await db.gear.delete(id)
           this.loadGear() // Refresh the list
         } catch (error) {
-          console.error('Error deleting gear:', error)
-          alert('Error deleting gear item')
+          console.error("Error deleting gear:", error)
+          alert("Error deleting gear item")
         }
       }
     }
@@ -181,40 +183,50 @@ class GearPage extends Page {
       try {
         const gear = await db.gear.toArray()
         const categories = await db.gearCategories.toArray()
-        
+
         // Create CSV content
-        const csvHeaders = ['Name', 'Category', 'Weight (g)', 'Weight (oz)', 'Price', 'Quantity', 'Description', 'Vendor', 'URL']
+        const csvHeaders = [
+          "Name",
+          "Category",
+          "Weight (g)",
+          "Weight (oz)",
+          "Price",
+          "Quantity",
+          "Description",
+          "Vendor",
+          "URL",
+        ]
         const csvRows = []
-        
+
         for (const item of gear) {
-          const category = categories.find(c => c.id === item.categoryId)
+          const category = categories.find((c) => c.id === item.categoryId)
           csvRows.push([
             item.name,
-            category ? category.name : 'Uncategorized',
+            category ? category.name : "Uncategorized",
             item.totalWeight.toFixed(1),
             item.weightInOunces.toFixed(2),
             item.priceFormatted,
             item.quantity,
-            item.description || '',
-            item.vendor || '',
-            item.url || ''
+            item.description || "",
+            item.vendor || "",
+            item.url || "",
           ])
         }
-        
-        const csvContent = [csvHeaders, ...csvRows].map(row => 
-          row.map(field => `"${field}"`).join(',')
-        ).join('\n')
-        
-        const blob = new Blob([csvContent], { type: 'text/csv' })
+
+        const csvContent = [csvHeaders, ...csvRows]
+          .map((row) => row.map((field) => `"${field}"`).join(","))
+          .join("\n")
+
+        const blob = new Blob([csvContent], { type: "text/csv" })
         const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
+        const a = document.createElement("a")
         a.href = url
-        a.download = 'gear-list.csv'
+        a.download = "gear-list.csv"
         a.click()
         URL.revokeObjectURL(url)
       } catch (error) {
-        console.error('Error exporting gear:', error)
-        alert('Error exporting gear list')
+        console.error("Error exporting gear:", error)
+        alert("Error exporting gear list")
       }
     }
 
@@ -229,17 +241,17 @@ class GearPage extends Page {
   }
 
   setupFilters() {
-    const sortSelect = document.getElementById('sortSelect')
-    const filterInput = document.getElementById('filterInput')
-    
+    const sortSelect = document.getElementById("sortSelect")
+    const filterInput = document.getElementById("filterInput")
+
     if (sortSelect) {
-      sortSelect.addEventListener('change', () => {
+      sortSelect.addEventListener("change", () => {
         this.loadGear() // Reload with new sorting
       })
     }
-    
+
     if (filterInput) {
-      filterInput.addEventListener('input', () => {
+      filterInput.addEventListener("input", () => {
         this.loadGear() // Reload with new filtering
       })
     }
@@ -247,54 +259,56 @@ class GearPage extends Page {
 
   applyFiltersAndSort(gear) {
     let filteredGear = [...gear]
-    
+
     // Apply text filter
-    const filterInput = document.getElementById('filterInput')
+    const filterInput = document.getElementById("filterInput")
     if (filterInput && filterInput.value.trim()) {
       const filterText = filterInput.value.toLowerCase().trim()
-      filteredGear = filteredGear.filter(item => 
-        item.name.toLowerCase().includes(filterText) ||
-        (item.description && item.description.toLowerCase().includes(filterText)) ||
-        (item.vendor && item.vendor.toLowerCase().includes(filterText)) ||
-        (item.notes && item.notes.toLowerCase().includes(filterText))
+      filteredGear = filteredGear.filter(
+        (item) =>
+          item.name.toLowerCase().includes(filterText) ||
+          (item.description &&
+            item.description.toLowerCase().includes(filterText)) ||
+          (item.vendor && item.vendor.toLowerCase().includes(filterText)) ||
+          (item.notes && item.notes.toLowerCase().includes(filterText)),
       )
     }
-    
+
     // Apply sorting
-    const sortSelect = document.getElementById('sortSelect')
+    const sortSelect = document.getElementById("sortSelect")
     if (sortSelect && sortSelect.value) {
       const sortBy = sortSelect.value
-      
+
       filteredGear.sort((a, b) => {
         switch (sortBy) {
-          case 'name':
+          case "name":
             return a.name.localeCompare(b.name)
-          case 'name-desc':
+          case "name-desc":
             return b.name.localeCompare(a.name)
-          case 'weight':
+          case "weight":
             return a.totalWeight - b.totalWeight
-          case 'weight-desc':
+          case "weight-desc":
             return b.totalWeight - a.totalWeight
-          case 'price':
+          case "price":
             return a.totalPrice - b.totalPrice
-          case 'price-desc':
+          case "price-desc":
             return b.totalPrice - a.totalPrice
-          case 'date':
+          case "date":
             return new Date(a.dateAdded) - new Date(b.dateAdded)
-          case 'date-desc':
+          case "date-desc":
             return new Date(b.dateAdded) - new Date(a.dateAdded)
           default:
             return 0
         }
       })
     }
-    
+
     return filteredGear
   }
 
   showImportModal() {
-    const modal = document.createElement('div')
-    modal.className = 'modal-overlay'
+    const modal = document.createElement("div")
+    modal.className = "modal-overlay"
     modal.innerHTML = `
       <div class="modal">
         <div class="modal-header">
@@ -333,113 +347,120 @@ class GearPage extends Page {
     `
 
     // Setup event listeners
-    const closeBtn = modal.querySelector('.modal-close')
-    const cancelBtn = modal.querySelector('.import-cancel')
-    const confirmBtn = modal.querySelector('.import-confirm')
-    const fileInput = modal.querySelector('#importFile')
-    
+    const closeBtn = modal.querySelector(".modal-close")
+    const cancelBtn = modal.querySelector(".import-cancel")
+    const confirmBtn = modal.querySelector(".import-confirm")
+    const fileInput = modal.querySelector("#importFile")
+
     const closeModal = () => {
-      modal.classList.remove('show')
+      modal.classList.remove("show")
       setTimeout(() => {
         if (modal.parentNode) modal.parentNode.removeChild(modal)
       }, 300)
     }
-    
-    closeBtn.addEventListener('click', closeModal)
-    cancelBtn.addEventListener('click', closeModal)
-    modal.addEventListener('click', (e) => {
+
+    closeBtn.addEventListener("click", closeModal)
+    cancelBtn.addEventListener("click", closeModal)
+    modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal()
     })
-    
-    fileInput.addEventListener('change', (e) => {
+
+    fileInput.addEventListener("change", (e) => {
       const file = e.target.files[0]
       if (file) {
         this.previewImport(file, modal)
       }
     })
-    
-    confirmBtn.addEventListener('click', () => {
+
+    confirmBtn.addEventListener("click", () => {
       this.executeImport(modal)
     })
-    
+
     document.body.appendChild(modal)
-    setTimeout(() => modal.classList.add('show'), 100)
+    setTimeout(() => modal.classList.add("show"), 100)
   }
 
   async previewImport(file, modal) {
     try {
       const text = await file.text()
-      const rows = text.split('\n').map(row => {
-        // Simple CSV parsing - could be enhanced for complex cases
-        return row.split(',').map(cell => cell.replace(/^"|"$/g, '').trim())
-      }).filter(row => row.length > 1 && row[0])
-      
+      const rows = text
+        .split("\n")
+        .map((row) => {
+          // Simple CSV parsing - could be enhanced for complex cases
+          return row.split(",").map((cell) => cell.replace(/^"|"$/g, "").trim())
+        })
+        .filter((row) => row.length > 1 && row[0])
+
       if (rows.length === 0) {
-        alert('No data found in CSV file')
+        alert("No data found in CSV file")
         return
       }
-      
+
       const headers = rows[0]
       const data = rows.slice(1)
-      
+
       // Detect format (LighterPack vs our format)
-      const isLighterPack = headers.some(h => 
-        h.toLowerCase().includes('item') || 
-        h.toLowerCase().includes('category') ||
-        h.toLowerCase().includes('weight')
+      const isLighterPack = headers.some(
+        (h) =>
+          h.toLowerCase().includes("item") ||
+          h.toLowerCase().includes("category") ||
+          h.toLowerCase().includes("weight"),
       )
-      
-      const preview = modal.querySelector('#importPreview')
-      const content = modal.querySelector('#previewContent')
-      
+
+      const preview = modal.querySelector("#importPreview")
+      const content = modal.querySelector("#previewContent")
+
       content.innerHTML = `
-        <p><strong>Format:</strong> ${isLighterPack ? 'LighterPack' : 'Plan My Hike'}</p>
+        <p><strong>Format:</strong> ${isLighterPack ? "LighterPack" : "Plan My Hike"}</p>
         <p><strong>Items found:</strong> ${data.length}</p>
         <div class="preview-table">
           <table class="table">
             <thead>
-              <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+              <tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr>
             </thead>
             <tbody>
-              ${data.slice(0, 5).map(row => 
-                `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
-              ).join('')}
-              ${data.length > 5 ? `<tr><td colspan="${headers.length}">... and ${data.length - 5} more items</td></tr>` : ''}
+              ${data
+                .slice(0, 5)
+                .map(
+                  (row) =>
+                    `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`,
+                )
+                .join("")}
+              ${data.length > 5 ? `<tr><td colspan="${headers.length}">... and ${data.length - 5} more items</td></tr>` : ""}
             </tbody>
           </table>
         </div>
       `
-      
-      preview.style.display = 'block'
-      modal.querySelector('.import-confirm').disabled = false
-      
+
+      preview.style.display = "block"
+      modal.querySelector(".import-confirm").disabled = false
+
       // Store data for import
       modal.importData = { headers, data, isLighterPack }
-      
     } catch (error) {
-      console.error('Error parsing CSV:', error)
-      alert('Error reading CSV file. Please check the format.')
+      console.error("Error parsing CSV:", error)
+      alert("Error reading CSV file. Please check the format.")
     }
   }
 
   async executeImport(modal) {
-    const clearExisting = modal.querySelector('#clearExisting').checked
+    const clearExisting = modal.querySelector("#clearExisting").checked
     const { headers, data, isLighterPack } = modal.importData
-    
+
     try {
       if (clearExisting) {
         await db.gear.clear()
         await db.gearCategories.clear()
       }
-      
+
       const imported = []
       const categoryMap = new Map() // Track created categories
-      
+
       for (const row of data) {
         if (row.length < 2) continue // Skip empty rows
-        
+
         let gearData
-        
+
         if (isLighterPack) {
           // Map LighterPack format
           gearData = await this.mapLighterPackRow(headers, row, categoryMap)
@@ -447,59 +468,64 @@ class GearPage extends Page {
           // Map our format
           gearData = this.mapPlanMyHikeRow(headers, row)
         }
-        
+
         if (gearData && gearData.name) {
           imported.push(gearData)
         }
       }
-      
+
       if (imported.length > 0) {
         await db.gear.bulkAdd(imported)
-        
+
         // Close modal
-        modal.classList.remove('show')
+        modal.classList.remove("show")
         setTimeout(() => {
           if (modal.parentNode) modal.parentNode.removeChild(modal)
         }, 300)
-        
+
         // Refresh gear list
         this.loadGear()
-        
-        alert(`Successfully imported ${imported.length} gear items and ${categoryMap.size} categories!`)
+
+        alert(
+          `Successfully imported ${imported.length} gear items and ${categoryMap.size} categories!`,
+        )
       } else {
-        alert('No valid gear items found to import.')
+        alert("No valid gear items found to import.")
       }
-      
     } catch (error) {
-      console.error('Error importing gear:', error)
-      alert('Error importing gear. Please try again.')
+      console.error("Error importing gear:", error)
+      alert("Error importing gear. Please try again.")
     }
   }
 
   async mapLighterPackRow(headers, row, categoryMap) {
     const getValue = (fieldNames) => {
       for (const name of fieldNames) {
-        const index = headers.findIndex(h => h.toLowerCase().includes(name.toLowerCase()))
+        const index = headers.findIndex((h) =>
+          h.toLowerCase().includes(name.toLowerCase()),
+        )
         if (index >= 0 && row[index]) {
           return row[index].trim()
         }
       }
-      return ''
+      return ""
     }
-    
-    const name = getValue(['item', 'name', 'description'])
+
+    const name = getValue(["item", "name", "description"])
     if (!name) return null
-    
+
     // Handle category creation
     let categoryId = null
-    const categoryName = getValue(['category'])
-    if (categoryName && categoryName !== '') {
+    const categoryName = getValue(["category"])
+    if (categoryName && categoryName !== "") {
       // Check if we've already created this category
       if (categoryMap.has(categoryName)) {
         categoryId = categoryMap.get(categoryName)
       } else {
         // Check if category already exists
-        const existingCategory = await db.gearCategories.where({ name: categoryName }).first()
+        const existingCategory = await db.gearCategories
+          .where({ name: categoryName })
+          .first()
         if (existingCategory) {
           categoryId = existingCategory.id
           categoryMap.set(categoryName, categoryId)
@@ -509,28 +535,28 @@ class GearPage extends Page {
             name: categoryName,
             description: `Imported from LighterPack`,
             color: this.getRandomCategoryColor(),
-            dateCreated: new Date()
+            dateCreated: new Date(),
           }
           categoryId = await db.gearCategories.add(newCategory)
           categoryMap.set(categoryName, categoryId)
         }
       }
     }
-    
-    const weightStr = getValue(['weight', 'oz', 'grams'])
+
+    const weightStr = getValue(["weight", "oz", "grams"])
     let weight = 0
     if (weightStr) {
       const weightMatch = weightStr.match(/[\d.]+/)
       if (weightMatch) {
         weight = parseFloat(weightMatch[0])
         // Convert oz to grams if needed (LighterPack uses grams by default)
-        if (weightStr.toLowerCase().includes('oz')) {
+        if (weightStr.toLowerCase().includes("oz")) {
           weight = weight * 28.3495
         }
       }
     }
-    
-    const priceStr = getValue(['price', 'cost', '$'])
+
+    const priceStr = getValue(["price", "cost", "$"])
     let price = 0
     if (priceStr) {
       const priceMatch = priceStr.match(/[\d.]+/)
@@ -538,49 +564,57 @@ class GearPage extends Page {
         price = Math.round(parseFloat(priceMatch[0]) * 100) // Convert to cents
       }
     }
-    
+
     return {
       name: name,
       weight: weight,
       price: price,
-      quantity: parseInt(getValue(['qty', 'quantity'])) || 1,
-      description: getValue(['desc', 'description', 'notes']) || '',
-      vendor: getValue(['brand', 'vendor', 'manufacturer']) || '',
-      url: getValue(['url', 'link']) || '',
-      notes: '',
+      quantity: parseInt(getValue(["qty", "quantity"])) || 1,
+      description: getValue(["desc", "description", "notes"]) || "",
+      vendor: getValue(["brand", "vendor", "manufacturer"]) || "",
+      url: getValue(["url", "link"]) || "",
+      notes: "",
       categoryId: categoryId,
       dateAdded: new Date(),
       lastUsed: null,
-      timesUsed: 0
+      timesUsed: 0,
     }
   }
 
   getRandomCategoryColor() {
     const colors = [
-      '#2196f3', '#4caf50', '#ff9800', '#f44336', '#9c27b0',
-      '#00bcd4', '#795548', '#607d8b', '#3f51b5', '#009688'
+      "#2196f3",
+      "#4caf50",
+      "#ff9800",
+      "#f44336",
+      "#9c27b0",
+      "#00bcd4",
+      "#795548",
+      "#607d8b",
+      "#3f51b5",
+      "#009688",
     ]
     return colors[Math.floor(Math.random() * colors.length)]
   }
 
   mapPlanMyHikeRow(headers, row) {
-    const getValue = (index) => index < row.length ? row[index].trim() : ''
-    
+    const getValue = (index) => (index < row.length ? row[index].trim() : "")
+
     if (!getValue(0)) return null // Name is required
-    
+
     return {
       name: getValue(0),
       weight: parseFloat(getValue(2)) || 0,
-      price: Math.round((parseFloat(getValue(4).replace('$', '')) || 0) * 100),
+      price: Math.round((parseFloat(getValue(4).replace("$", "")) || 0) * 100),
       quantity: parseInt(getValue(5)) || 1,
-      description: getValue(6) || '',
-      vendor: getValue(7) || '',
-      url: getValue(8) || '',
-      notes: '',
+      description: getValue(6) || "",
+      vendor: getValue(7) || "",
+      url: getValue(8) || "",
+      notes: "",
       categoryId: null,
       dateAdded: new Date(),
       lastUsed: null,
-      timesUsed: 0
+      timesUsed: 0,
     }
   }
 }
