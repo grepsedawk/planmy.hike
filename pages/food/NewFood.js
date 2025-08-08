@@ -66,6 +66,10 @@ class NewFood extends Renderer {
     this.quantity = this.renderFormGroup(formContainer, "Quantity", "number", this.food.quantity, "1", ["food-form-group-half"])
     this.netWeight = this.renderFormGroup(formContainer, "Net Weight (g)", "number", this.food.netWeight, "0", ["food-form-group-half"])
     
+    // Price input
+    this.priceInput = this.renderFormGroup(formContainer, "Price ($)", "number", this.food.price, "0.00", ["food-form-group-half"])
+    this.priceInput.step = "0.01"
+    
     // Serving size and calories
     this.servingSize = this.renderFormGroup(formContainer, "Serving Size (g)", "number", this.food.servingSize, "0", ["food-form-group-half"])
     this.calInput = this.renderFormGroup(formContainer, "Calories (per serving)", "number", this.food.calories, "0", ["food-form-group-half"])
@@ -152,6 +156,7 @@ class NewFood extends Renderer {
     this.food.fat = parseFloat(this.fatInput.value) || 0
     this.food.netWeight = parseFloat(this.netWeight.value) || 0
     this.food.servingSize = parseFloat(this.servingSize.value) || 0
+    this.food.price = parseFloat(this.priceInput.value) || 0
     this.food.sectionId = parseInt(this.section.id)
 
     this.food.save()

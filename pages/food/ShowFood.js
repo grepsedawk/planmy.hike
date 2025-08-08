@@ -65,6 +65,8 @@ class ShowFood extends Renderer {
     details.classList.add("food-item-details")
 
     this.addDetailItem(details, "Net Weight", this.food.netWeight, "g")
+    this.addDetailItem(details, "Price", `$${(this.food.price || 0).toFixed(2)}`)
+    this.addDetailItem(details, "Total Price", `$${this.food.totalPrice.toFixed(2)}`)
     this.addDetailItem(details, "Total Calories", this.food.totalCalories)
     this.addDetailItem(details, "Total Carbs", this.food.totalCarbs, "g")
     this.addDetailItem(details, "Total Protein", this.food.totalProtein, "g")
