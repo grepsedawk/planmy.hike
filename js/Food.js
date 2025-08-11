@@ -18,28 +18,30 @@ class Food {
   }
 
   get totalCalories() {
-    return this.calories * this.servings
+    return Math.round(this.calories * this.servings)
   }
 
   get totalFat() {
-    return this.fat * this.servings
+    return Math.round(this.fat * this.servings * 100) / 100
   }
 
   get totalCarbs() {
-    return this.carbs * this.servings
+    return Math.round(this.carbs * this.servings * 100) / 100
   }
 
   get totalProtein() {
-    return this.protein * this.servings
+    return Math.round(this.protein * this.servings * 100) / 100
   }
 
   get caloriePerOunce() {
     const weightInOunces = (this.netWeight * this.quantity) / 28.3495
-    return weightInOunces > 0 ? this.totalCalories / weightInOunces : 0
+    const ratio = weightInOunces > 0 ? this.totalCalories / weightInOunces : 0
+    return Math.round(ratio)
   }
 
   get proteinToCarbsRatio() {
-    return this.totalCarbs > 0 ? this.totalProtein / this.totalCarbs : 0
+    const ratio = this.totalCarbs > 0 ? this.totalProtein / this.totalCarbs : 0
+    return Math.round(ratio * 100) / 100
   }
 
   get totalPrice() {
