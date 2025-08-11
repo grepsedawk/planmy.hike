@@ -33,27 +33,13 @@ class ShowTotals extends Renderer {
     const statsGrid = document.createElement("div")
     statsGrid.classList.add("stats-overview")
 
-    this.addStatItem(
-      statsGrid,
-      Math.round(this.totalCalories()),
-      "Calories",
-      "primary",
-    )
-    this.addStatItem(
-      statsGrid,
-      Math.round(this.goalCalories()),
-      "Goal",
-      "success",
-    )
-    this.addStatItem(statsGrid, `${this.totalCarbs().toFixed(1)}g`, "Carbs")
-    this.addStatItem(statsGrid, `${this.totalProtein().toFixed(1)}g`, "Protein")
-    this.addStatItem(statsGrid, `${this.totalFat().toFixed(1)}g`, "Fat")
-    this.addStatItem(statsGrid, this.proteinCarbRatio().toFixed(2), "P:C Ratio")
-    this.addStatItem(
-      statsGrid,
-      `${this.caloriesPerOunce().toFixed(0)}`,
-      "Cal/oz",
-    )
+    this.addStatItem(statsGrid, this.totalCalories(), "Calories", "primary")
+    this.addStatItem(statsGrid, this.goalCalories(), "Goal", "success")
+    this.addStatItem(statsGrid, `${this.totalCarbs()}g`, "Carbs")
+    this.addStatItem(statsGrid, `${this.totalProtein()}g`, "Protein")
+    this.addStatItem(statsGrid, `${this.totalFat()}g`, "Fat")
+    this.addStatItem(statsGrid, this.proteinCarbRatio(), "P:C Ratio")
+    this.addStatItem(statsGrid, `${this.caloriesPerOunce()}`, "Cal/oz")
     this.addStatItem(
       statsGrid,
       `${(this.totalNetWeight() / 453.592).toFixed(1)} lbs`,
@@ -160,12 +146,15 @@ class ShowTotals extends Renderer {
   }
 
   goalProtein() {
-    // 18% of calories from protein (4 calories per gram of protein)
-    return (this.goalCalories() * 0.18) / 4
+    // 12.5% of calories from protein (middle of 10-15% range for endurance activities)
+    // 4 calories per gram of protein
+    return (this.goalCalories() * 0.125) / 4
   }
 
   totalCalories() {
-    return this.foods.reduce((total, food) => total + food.totalCalories, 0)
+    return Math.round(
+      this.foods.reduce((total, food) => total + food.totalCalories, 0),
+    )
   }
 
   goalCalories() {
@@ -173,25 +162,39 @@ class ShowTotals extends Renderer {
   }
 
   totalCarbs() {
-    return this.foods.reduce((total, food) => total + food.totalCarbs, 0)
+    return (
+      Math.round(
+        this.foods.reduce((total, food) => total + food.totalCarbs, 0) * 100,
+      ) / 100
+    )
   }
 
   totalProtein() {
-    return this.foods.reduce((total, food) => total + food.totalProtein, 0)
+    return (
+      Math.round(
+        this.foods.reduce((total, food) => total + food.totalProtein, 0) * 100,
+      ) / 100
+    )
   }
 
   totalFat() {
-    return this.foods.reduce((total, food) => total + food.totalFat, 0)
+    return (
+      Math.round(
+        this.foods.reduce((total, food) => total + food.totalFat, 0) * 100,
+      ) / 100
+    )
   }
 
   proteinCarbRatio() {
     const totalCarbs = this.totalCarbs()
-    return totalCarbs > 0 ? this.totalProtein() / totalCarbs : 0
+    const ratio = totalCarbs > 0 ? this.totalProtein() / totalCarbs : 0
+    return Math.round(ratio * 100) / 100
   }
 
   proteinCalorieRatio() {
     const totalCals = this.totalCalories()
-    return totalCals > 0 ? this.totalProtein() / totalCals : 0
+    const ratio = totalCals > 0 ? this.totalProtein() / totalCals : 0
+    return Math.round(ratio * 100) / 100
   }
 
   totalNetWeight() {
@@ -200,7 +203,9 @@ class ShowTotals extends Renderer {
 
   caloriesPerOunce() {
     const totalWeight = this.totalNetWeight()
-    return totalWeight > 0 ? this.totalCalories() / (totalWeight / 28.3495) : 0
+    const ratio =
+      totalWeight > 0 ? this.totalCalories() / (totalWeight / 28.3495) : 0
+    return Math.round(ratio)
   }
 }
 
