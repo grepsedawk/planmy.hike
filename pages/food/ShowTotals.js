@@ -158,8 +158,9 @@ class ShowTotals extends Renderer {
   }
 
   goalProtein() {
-    // 18% of calories from protein (4 calories per gram of protein)
-    return (this.goalCalories() * 0.18) / 4
+    // 12.5% of calories from protein (middle of 10-15% range for endurance activities)
+    // 4 calories per gram of protein
+    return (this.goalCalories() * 0.125) / 4
   }
 
   totalCalories() {
