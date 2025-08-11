@@ -35,7 +35,7 @@ class Gear {
     return this.totalWeight / 453.592
   }
 
-  // Price calculations  
+  // Price calculations
   get priceFormatted() {
     return `$${(this.price / 100).toFixed(2)}`
   }
@@ -62,23 +62,23 @@ class Gear {
   }
 
   // Convert weight to display format
-  getWeightDisplay(unit = 'auto') {
-    if (unit === 'auto') {
+  getWeightDisplay(unit = "auto") {
+    if (unit === "auto") {
       if (this.totalWeight < 28.35) {
-        unit = 'g'
+        unit = "g"
       } else if (this.totalWeight < 453.59) {
-        unit = 'oz'
+        unit = "oz"
       } else {
-        unit = 'lbs'
+        unit = "lbs"
       }
     }
 
     switch (unit) {
-      case 'g':
+      case "g":
         return `${this.totalWeight.toFixed(1)}g`
-      case 'oz':
+      case "oz":
         return `${this.weightInOunces.toFixed(2)}oz`
-      case 'lbs':
+      case "lbs":
         return `${this.weightInPounds.toFixed(2)}lbs`
       default:
         return `${this.totalWeight.toFixed(1)}g`
