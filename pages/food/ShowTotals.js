@@ -63,6 +63,9 @@ class ShowTotals extends Renderer {
     const proteinProgress = this.createProteinProgressBar()
     progressSection.appendChild(proteinProgress)
 
+    const macroBreakdown = this.createMacroBreakdownBar()
+    progressSection.appendChild(macroBreakdown)
+
     this.div.appendChild(progressSection)
 
     this.parent.innerHTML = ""
@@ -149,6 +152,113 @@ class ShowTotals extends Renderer {
     // 12.5% of calories from protein (middle of 10-15% range for endurance activities)
     // 4 calories per gram of protein
     return (this.goalCalories() * 0.125) / 4
+  }
+
+  createMacroBreakdownBar() {
+    const container = document.createElement("div")
+    container.style.marginBottom = "var(--spacing-3)"
+
+    // Calculate totals
+    const totalCarbs = this.totalCarbs()
+    const totalProtein = this.totalProtein()
+    const totalFat = this.totalFat()
+    
+    // Calculate calories from each macro (carbs=4cal/g, protein=4cal/g, fat=9cal/g)
+    const carbCalories = totalCarbs * 4
+    const proteinCalories = totalProtein * 4
+    const fatCalories = totalFat * 9
+    const totalMacroCalories = carbCalories + proteinCalories + fatCalories
+
+    // Calculate percentages
+    const carbPercent = totalMacroCalories > 0 ? (carbCalories / totalMacroCalories) * 100 : 0
+    const proteinPercent = totalMacroCalories > 0 ? (proteinCalories / totalMacroCalories) * 100 : 0
+    const fatPercent = totalMacroCalories > 0 ? (fatCalories / totalMacroCalories) * 100 : 0
+
+    // Label
+    const labelEl = document.createElement("div")
+    labelEl.style.cssText =
+      "font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--text-primary); margin-bottom: var(--spacing-2);"
+    labelEl.textContent = "Macro Breakdown"
+
+    // Bar container
+    const barContainer = document.createElement("div")
+    barContainer.style.cssText = `
+      display: flex;
+      height: 24px;
+      background-color: var(--background-tertiary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    `
+
+    // Carbs section
+    const carbsSection = document.createElement("div")
+    carbsSection.style.cssText = `
+      background-color: var(--primary);
+      width: ${carbPercent}%;
+      transition: all 0.3s ease;
+    `
+
+    // Protein section  
+    const proteinSection = document.createElement("div")
+    proteinSection.style.cssText = `
+      background-color: var(--success);
+      width: ${proteinPercent}%;
+      transition: all 0.3s ease;
+    `
+
+    // Fat section
+    const fatSection = document.createElement("div")
+    fatSection.style.cssText = `
+      background-color: var(--warning);
+      width: ${fatPercent}%;
+      transition: all 0.3s ease;
+    `
+
+    barContainer.appendChild(carbsSection)
+    barContainer.appendChild(proteinSection)
+    barContainer.appendChild(fatSection)
+
+    // Labels container
+    const labelsContainer = document.createElement("div")
+    labelsContainer.style.cssText = `
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--spacing-1);
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+    `
+
+    // Individual labels
+    const carbLabel = document.createElement("div")
+    carbLabel.style.cssText = "display: flex; align-items: center; gap: var(--spacing-1);"
+    carbLabel.innerHTML = `
+      <div style="width: 12px; height: 12px; background-color: var(--primary); border-radius: 2px;"></div>
+      <span>Carbs: ${totalCarbs.toFixed(1)}g (${carbPercent.toFixed(0)}%)</span>
+    `
+
+    const proteinLabel = document.createElement("div")
+    proteinLabel.style.cssText = "display: flex; align-items: center; gap: var(--spacing-1);"
+    proteinLabel.innerHTML = `
+      <div style="width: 12px; height: 12px; background-color: var(--success); border-radius: 2px;"></div>
+      <span>Protein: ${totalProtein.toFixed(1)}g (${proteinPercent.toFixed(0)}%)</span>
+    `
+
+    const fatLabel = document.createElement("div")
+    fatLabel.style.cssText = "display: flex; align-items: center; gap: var(--spacing-1);"
+    fatLabel.innerHTML = `
+      <div style="width: 12px; height: 12px; background-color: var(--warning); border-radius: 2px;"></div>
+      <span>Fat: ${totalFat.toFixed(1)}g (${fatPercent.toFixed(0)}%)</span>
+    `
+
+    labelsContainer.appendChild(carbLabel)
+    labelsContainer.appendChild(proteinLabel)
+    labelsContainer.appendChild(fatLabel)
+
+    container.appendChild(labelEl)
+    container.appendChild(barContainer)
+    container.appendChild(labelsContainer)
+
+    return container
   }
 
   totalCalories() {
