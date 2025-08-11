@@ -2,6 +2,7 @@ class Food {
   constructor() {
     this.name = ""
     this.quantity = 1
+    this.price = 0
   }
 
   save() {
@@ -41,6 +42,10 @@ class Food {
   get proteinToCarbsRatio() {
     const ratio = this.totalCarbs > 0 ? this.totalProtein / this.totalCarbs : 0
     return Math.round(ratio * 100) / 100
+  }
+
+  get totalPrice() {
+    return (this.price || 0) * this.quantity
   }
 }
 
